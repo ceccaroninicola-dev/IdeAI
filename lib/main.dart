@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_theme.dart';
@@ -17,9 +19,14 @@ import 'package:ideai/services/ad_service.dart';
 /// Entry point dell'applicazione IdeAI.
 /// Avvolge tutto in un error zone per catturare crash non gestiti.
 void main() {
+  // LOG PRIMISSIMO: se non vediamo questo, il crash è nel runtime nativo
+  debugPrint('[IdeAI] APP STARTING...');
+
   runZonedGuarded(
     () async {
+      debugPrint('[IdeAI] BEFORE WIDGETS INIT...');
       WidgetsFlutterBinding.ensureInitialized();
+      debugPrint('[IdeAI] AFTER WIDGETS INIT...');
 
       // Cattura errori Flutter (widget, rendering)
       FlutterError.onError = (details) {
@@ -39,13 +46,21 @@ void main() {
       if (apiKey.isNotEmpty) {
         ApiService().impostaApiKey(apiKey);
       }
+      debugPrint('[IdeAI] API KEY CONFIGURED (present: ${apiKey.isNotEmpty})');
 
-      // Inizializza AdMob in modo NON bloccante.
-      // Se il SDK crasha (es. GADApplicationIdentifier non valido),
-      // l'app parte comunque senza pubblicità.
-      _inizializzaAdMobSafe();
+      // AdMob: COMPLETAMENTE DISABILITATO su iOS (crash nativo all'avvio).
+      // Inizializza solo su Android (e mai su web).
+      if (!kIsWeb && Platform.isAndroid) {
+        debugPrint('[IdeAI] BEFORE ADMOB INIT (Android)...');
+        _inizializzaAdMobSafe();
+        debugPrint('[IdeAI] AFTER ADMOB INIT (Android)...');
+      } else {
+        debugPrint('[IdeAI] AdMob SKIPPED (iOS/web) — pubblicità disabilitata');
+      }
 
+      debugPrint('[IdeAI] BEFORE runApp...');
       runApp(const PromptMasterApp());
+      debugPrint('[IdeAI] AFTER runApp...');
     },
     (error, stack) {
       debugPrint('[IdeAI] Errore non gestito nella zona: $error');
@@ -55,11 +70,10 @@ void main() {
 }
 
 /// Inizializza AdMob in modo completamente sicuro.
-/// Non blocca l'avvio dell'app e cattura qualsiasi errore.
+/// Chiamata SOLO su Android. Non blocca l'avvio dell'app.
 Future<void> _inizializzaAdMobSafe() async {
   try {
     await AdService().inizializza();
-    // Richiesta consenso GDPR (solo se AdMob si è inizializzato)
     AdService().richiestaConsensoGDPR();
   } catch (e, stack) {
     debugPrint('[IdeAI] AdMob init fallita (app continua senza ads): $e');
