@@ -1,25 +1,40 @@
 import UIKit
 import Flutter
-import package_info_plus
-import share_plus
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
-  lazy var flutterEngine = FlutterEngine(name: "main_engine")
+@objc class AppDelegate: UIResponder, UIApplicationDelegate {
 
-  override func application(
+  let flutterEngine = FlutterEngine(name: "main_engine")
+  var window: UIWindow?
+
+  func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     flutterEngine.run()
+    registerSafePlugins()
+    return true
+  }
 
-    // Registrazione manuale — NO GeneratedPluginRegistrant
-    // WebViewFlutterPlugin escluso: crash SIGSEGV su iOS 26
-    FPPPackageInfoPlusPlugin.register(
-      with: flutterEngine.registrar(forPlugin: "FPPPackageInfoPlusPlugin")!)
-    FPPSharePlusPlugin.register(
-      with: flutterEngine.registrar(forPlugin: "FPPSharePlusPlugin")!)
+  private func registerSafePlugins() {
+    // Plugin da ESCLUDERE (crash SIGSEGV su iOS 26)
+    // Quando il bug sarà fixato, rimuovere dalla lista e tornare a GeneratedPluginRegistrant
+    let excludedPlugins: Set<String> = [
+      "WebViewFlutterPlugin",
+      "FLTWebViewFlutterPlugin"
+    ]
 
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    let safePlugins = [
+      "FPPPackageInfoPlusPlugin",
+      "FPPSharePlusPlugin"
+    ]
+
+    for name in safePlugins {
+      if excludedPlugins.contains(name) { continue }
+      if let registrar = flutterEngine.registrar(forPlugin: name),
+         let cls = NSClassFromString(name) as? NSObjectProtocol {
+        cls.perform(NSSelectorFromString("registerWithRegistrar:"), with: registrar)
+      }
+    }
   }
 }
