@@ -17,50 +17,63 @@ import 'package:ideai/services/api_service.dart';
 import 'package:ideai/services/ad_service.dart';
 
 /// Entry point dell'applicazione IdeAI.
-/// Avvolge tutto in un error zone per catturare crash non gestiti.
+///
+/// TEST NUCLEARE iOS: su iOS avvia SOLO un MaterialApp minimale
+/// senza nessun plugin, provider o widget custom.
+/// Se funziona → il crash è nei nostri plugin/provider.
+/// Se crasha → il problema è nella configurazione nativa iOS.
 void main() {
-  // LOG PRIMISSIMO: se non vediamo questo, il crash è nel runtime nativo
-  debugPrint('[IdeAI] APP STARTING...');
+  // ── TEST NUCLEARE iOS ──
+  // Avvia un'app minimale senza NESSUN plugin per isolare il crash nativo.
+  // Quando il test è superato, rimuovere questo blocco e ripristinare il flusso normale.
+  if (!kIsWeb && Platform.isIOS) {
+    runApp(
+      MaterialApp(
+        title: 'IdeAI',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorSchemeSeed: const Color(0xFF6C63FF),
+          brightness: Brightness.light,
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          colorSchemeSeed: const Color(0xFF6C63FF),
+          brightness: Brightness.dark,
+          useMaterial3: true,
+        ),
+        home: const _TestNucleareiOS(),
+      ),
+    );
+    return;
+  }
 
+  // ── FLUSSO NORMALE (Android / Web) ──
   runZonedGuarded(
     () async {
-      debugPrint('[IdeAI] BEFORE WIDGETS INIT...');
+      debugPrint('[IdeAI] APP STARTING...');
       WidgetsFlutterBinding.ensureInitialized();
-      debugPrint('[IdeAI] AFTER WIDGETS INIT...');
 
-      // Cattura errori Flutter (widget, rendering)
       FlutterError.onError = (details) {
         debugPrint('[IdeAI] FlutterError: ${details.exception}');
         debugPrint('[IdeAI] Stack: ${details.stack}');
       };
 
-      // Cattura errori della piattaforma (plugin nativi, platform channels)
       PlatformDispatcher.instance.onError = (error, stack) {
         debugPrint('[IdeAI] PlatformError: $error');
         debugPrint('[IdeAI] Stack: $stack');
         return true;
       };
 
-      // Inizializza la API key da variabile d'ambiente (se disponibile)
       const apiKey = String.fromEnvironment('OPENAI_API_KEY');
       if (apiKey.isNotEmpty) {
         ApiService().impostaApiKey(apiKey);
       }
-      debugPrint('[IdeAI] API KEY CONFIGURED (present: ${apiKey.isNotEmpty})');
 
-      // AdMob: COMPLETAMENTE DISABILITATO su iOS (crash nativo all'avvio).
-      // Inizializza solo su Android (e mai su web).
       if (!kIsWeb && Platform.isAndroid) {
-        debugPrint('[IdeAI] BEFORE ADMOB INIT (Android)...');
         _inizializzaAdMobSafe();
-        debugPrint('[IdeAI] AFTER ADMOB INIT (Android)...');
-      } else {
-        debugPrint('[IdeAI] AdMob SKIPPED (iOS/web) — pubblicità disabilitata');
       }
 
-      debugPrint('[IdeAI] BEFORE runApp...');
       runApp(const PromptMasterApp());
-      debugPrint('[IdeAI] AFTER runApp...');
     },
     (error, stack) {
       debugPrint('[IdeAI] Errore non gestito nella zona: $error');
@@ -69,8 +82,7 @@ void main() {
   );
 }
 
-/// Inizializza AdMob in modo completamente sicuro.
-/// Chiamata SOLO su Android. Non blocca l'avvio dell'app.
+/// Inizializza AdMob in modo sicuro. Chiamata SOLO su Android.
 Future<void> _inizializzaAdMobSafe() async {
   try {
     await AdService().inizializza();
@@ -81,7 +93,44 @@ Future<void> _inizializzaAdMobSafe() async {
   }
 }
 
-/// Widget radice dell'applicazione.
+/// Schermata di test nucleare iOS — nessun plugin, nessun provider, nessun widget custom.
+class _TestNucleareiOS extends StatelessWidget {
+  const _TestNucleareiOS();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0F172A),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.check_circle_outline, color: Color(0xFF6C63FF), size: 80),
+              const SizedBox(height: 24),
+              const Text(
+                'IdeAI funziona su iOS!',
+                style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Test nucleare superato.\n'
+                'Nessun plugin inizializzato.\n'
+                'Versione: 1.0.12+13',
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Widget radice dell'applicazione (Android / Web).
 class PromptMasterApp extends StatelessWidget {
   const PromptMasterApp({super.key});
 
