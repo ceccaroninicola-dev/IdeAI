@@ -1,12 +1,11 @@
-import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ideai/services/ad_service.dart';
 
 /// Widget che mostra un banner pubblicitario AdMob.
-/// Su Flutter Web e iOS, NON mostra nulla (AdMob disabilitato).
-/// Altezza fissa 50px, larghezza piena su Android.
+/// Su Flutter Web NON mostra nulla.
+/// Altezza fissa 50px, larghezza piena su Android e iOS.
 class BannerAdWidget extends StatefulWidget {
   const BannerAdWidget({super.key});
 
@@ -18,9 +17,6 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _caricato = false;
 
-  /// true se la piattaforma non supporta gli annunci (iOS o web)
-  bool get _disabilitato => kIsWeb || Platform.isIOS;
-
   @override
   void initState() {
     super.initState();
@@ -28,8 +24,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   }
 
   void _caricaBanner() {
-    // Su iOS e web non caricare nulla
-    if (_disabilitato) return;
+    if (kIsWeb) return;
 
     _bannerAd = AdService().creaBanner(
       onCaricato: () {
@@ -55,8 +50,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Su iOS, web o se il banner non è caricato, non mostrare nulla
-    if (_disabilitato || !_caricato || _bannerAd == null) {
+    if (kIsWeb || !_caricato || _bannerAd == null) {
       return const SizedBox.shrink();
     }
 

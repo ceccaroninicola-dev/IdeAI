@@ -7,23 +7,14 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 /// Servizio centralizzato per la gestione della pubblicità AdMob.
 /// Gestisce banner, interstitial e rewarded video.
-///
-/// ATTENZIONE: AdMob è COMPLETAMENTE DISABILITATO su iOS
-/// a causa di crash nativi all'avvio. Funziona solo su Android.
-/// Su Flutter Web e iOS, la pubblicità NON viene mostrata.
 class AdService {
   /// Singleton
   static final AdService _istanza = AdService._interno();
   factory AdService() => _istanza;
   AdService._interno();
 
-  /// Helper: true se AdMob deve essere disabilitato
-  /// (web o iOS — entrambi non supportati)
-  static bool get _disabilitato {
-    if (kIsWeb) return true;
-    if (Platform.isIOS) return true;
-    return false;
-  }
+  /// Helper: true se AdMob deve essere disabilitato (solo web)
+  static bool get _disabilitato => kIsWeb;
 
   // === ID PUBBLICITARI ===
   // Android
@@ -31,11 +22,25 @@ class AdService {
   static const _androidInterstitialId = 'ca-app-pub-7715514651566286/9101167493';
   static const _androidRewardedId = 'ca-app-pub-7715514651566286/7788085822';
 
-  /// ID banner (solo Android — stringa vuota su iOS/web)
-  static String get bannerId => _disabilitato ? '' : _androidBannerId;
-  static String get interstitialId =>
-      _disabilitato ? '' : _androidInterstitialId;
-  static String get rewardedId => _disabilitato ? '' : _androidRewardedId;
+  // iOS — stessi ad unit (AdMob gestisce la piattaforma automaticamente)
+  static const _iosBannerId = 'ca-app-pub-7715514651566286/8619753512';
+  static const _iosInterstitialId = 'ca-app-pub-7715514651566286/9101167493';
+  static const _iosRewardedId = 'ca-app-pub-7715514651566286/7788085822';
+
+  static String get bannerId {
+    if (_disabilitato) return '';
+    return Platform.isIOS ? _iosBannerId : _androidBannerId;
+  }
+
+  static String get interstitialId {
+    if (_disabilitato) return '';
+    return Platform.isIOS ? _iosInterstitialId : _androidInterstitialId;
+  }
+
+  static String get rewardedId {
+    if (_disabilitato) return '';
+    return Platform.isIOS ? _iosRewardedId : _androidRewardedId;
+  }
 
   // === STATO INTERNO ===
   InterstitialAd? _interstitialAd;
@@ -53,10 +58,9 @@ class AdService {
   bool consensoRichiesto = false;
 
   /// Inizializza il Mobile Ads SDK.
-  /// SU iOS E WEB NON FA NULLA.
   Future<void> inizializza() async {
     if (_disabilitato) {
-      debugPrint('[AdService] AdMob disabilitato (iOS/web) — skip init');
+      debugPrint('[AdService] AdMob disabilitato (web) — skip init');
       return;
     }
 
@@ -74,7 +78,6 @@ class AdService {
   }
 
   /// Richiede il consenso GDPR tramite il Google UMP SDK.
-  /// SU iOS E WEB NON FA NULLA.
   Future<void> richiestaConsensoGDPR() async {
     if (_disabilitato || !_inizializzato) {
       consensoRichiesto = true;
@@ -145,7 +148,6 @@ class AdService {
   // === BANNER ===
 
   /// Crea un BannerAd pronto per essere inserito in un widget.
-  /// Restituisce null su iOS/web.
   BannerAd? creaBanner({VoidCallback? onCaricato, VoidCallback? onErrore}) {
     if (_disabilitato || !_inizializzato) return null;
 
@@ -169,7 +171,7 @@ class AdService {
 
   // === INTERSTITIAL ===
 
-  /// Pre-carica un interstitial. SU iOS E WEB NON FA NULLA.
+  /// Pre-carica un interstitial.
   void precaricaInterstitial() {
     if (_disabilitato || !_inizializzato) return;
 
@@ -189,7 +191,7 @@ class AdService {
     );
   }
 
-  /// Mostra l'interstitial se disponibile. SU iOS E WEB NON FA NULLA.
+  /// Mostra l'interstitial se disponibile.
   Future<bool> mostraInterstitial() async {
     if (_disabilitato || !_inizializzato) return false;
 
@@ -233,7 +235,7 @@ class AdService {
 
   // === REWARDED VIDEO ===
 
-  /// Pre-carica un rewarded video. SU iOS E WEB NON FA NULLA.
+  /// Pre-carica un rewarded video.
   void precaricaRewarded() {
     if (_disabilitato || !_inizializzato) return;
 
@@ -253,11 +255,11 @@ class AdService {
     );
   }
 
-  /// Verifica se un rewarded video è disponibile (false su iOS/web)
+  /// Verifica se un rewarded video è disponibile
   bool get rewardedDisponibile =>
       !_disabilitato && _rewardedAd != null;
 
-  /// Mostra il rewarded video. SU iOS E WEB NON FA NULLA.
+  /// Mostra il rewarded video.
   Future<bool> mostraRewarded() async {
     if (_disabilitato || !_inizializzato || _rewardedAd == null) return false;
 
@@ -294,8 +296,6 @@ class AdService {
 
   // === UTILITÀ ===
 
-  /// Crea la richiesta pubblicitaria con le impostazioni di consenso.
-  /// Se l'utente non ha dato il consenso, richiede annunci non personalizzati.
   AdRequest _creaRichiesta() {
     if (_consensoPersonalizzata) {
       return const AdRequest();
@@ -305,7 +305,6 @@ class AdService {
     );
   }
 
-  /// Libera tutte le risorse. SU iOS È UN NO-OP.
   void dispose() {
     if (_disabilitato) return;
     _interstitialAd?.dispose();
