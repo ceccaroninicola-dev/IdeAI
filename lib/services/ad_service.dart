@@ -7,40 +7,29 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 /// Servizio centralizzato per la gestione della pubblicità AdMob.
 /// Gestisce banner, interstitial e rewarded video.
+///
+/// AdMob è disabilitato su iOS (per ora) e su web.
 class AdService {
   /// Singleton
   static final AdService _istanza = AdService._interno();
   factory AdService() => _istanza;
   AdService._interno();
 
-  /// Helper: true se AdMob deve essere disabilitato (solo web)
-  static bool get _disabilitato => kIsWeb;
+  /// Helper: true se AdMob deve essere disabilitato (web o iOS)
+  static bool get _disabilitato {
+    if (kIsWeb) return true;
+    if (Platform.isIOS) return true;
+    return false;
+  }
 
   // === ID PUBBLICITARI ===
-  // Android
   static const _androidBannerId = 'ca-app-pub-7715514651566286/8619753512';
   static const _androidInterstitialId = 'ca-app-pub-7715514651566286/9101167493';
   static const _androidRewardedId = 'ca-app-pub-7715514651566286/7788085822';
 
-  // iOS — stessi ad unit (AdMob gestisce la piattaforma automaticamente)
-  static const _iosBannerId = 'ca-app-pub-7715514651566286/8619753512';
-  static const _iosInterstitialId = 'ca-app-pub-7715514651566286/9101167493';
-  static const _iosRewardedId = 'ca-app-pub-7715514651566286/7788085822';
-
-  static String get bannerId {
-    if (_disabilitato) return '';
-    return Platform.isIOS ? _iosBannerId : _androidBannerId;
-  }
-
-  static String get interstitialId {
-    if (_disabilitato) return '';
-    return Platform.isIOS ? _iosInterstitialId : _androidInterstitialId;
-  }
-
-  static String get rewardedId {
-    if (_disabilitato) return '';
-    return Platform.isIOS ? _iosRewardedId : _androidRewardedId;
-  }
+  static String get bannerId => _disabilitato ? '' : _androidBannerId;
+  static String get interstitialId => _disabilitato ? '' : _androidInterstitialId;
+  static String get rewardedId => _disabilitato ? '' : _androidRewardedId;
 
   // === STATO INTERNO ===
   InterstitialAd? _interstitialAd;
