@@ -25,16 +25,6 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
-# Rimuovi google_mobile_ads da .flutter-plugins prima di installare i pod.
-# Il SDK nativo Google-Mobile-Ads-SDK causa crash SIGSEGV su iOS.
-# AdMob resta in pubspec.yaml e funziona normalmente su Android.
-plugins_file = File.join('..', '.flutter-plugins')
-if File.exist?(plugins_file)
-  content = File.read(plugins_file)
-  content = content.lines.reject { |l| l.include?('google_mobile_ads') }.join
-  File.write(plugins_file, content)
-end
-
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
