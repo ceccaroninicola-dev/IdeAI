@@ -10,6 +10,7 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     flutterEngine.run()
+    PluginHelper.disableWebViewPlugin()
     GeneratedPluginRegistrant.register(with: flutterEngine)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
