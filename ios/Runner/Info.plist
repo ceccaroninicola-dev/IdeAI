@@ -49,11 +49,10 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<!-- AdMob disabilitato a livello Dart su iOS.
-	     GADApplicationIdentifier DEVE essere presente per evitare crash nativo
-	     del SDK Google-Mobile-Ads-SDK al caricamento del plugin. -->
+	<!-- AdMob disabilitato a livello Dart su iOS ma il SDK nativo richiede
+	     GADApplicationIdentifier per non crashare durante la registrazione plugin. -->
 	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<string>ca-app-pub-7715514651566286~8348290777</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
