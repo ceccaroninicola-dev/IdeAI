@@ -154,7 +154,6 @@
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
 				9740EEB61CF901F6004384FC /* Run Script */,
-				A1B2C3D51234567800AABBCC /* Strip AdMob from Registrant */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
@@ -261,21 +260,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
-		};
-		A1B2C3D51234567800AABBCC /* Strip AdMob from Registrant */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Strip AdMob from Registrant";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Rimuovi google_mobile_ads da GeneratedPluginRegistrant.m\n# Il file viene rigenerato da xcode_backend.sh build, quindi\n# lo strippiamo qui DOPO la generazione e PRIMA della compilazione.\nREGISTRANT=\"${SRCROOT}/Runner/GeneratedPluginRegistrant.m\"\nif [ -f \"$REGISTRANT\" ]; then\n  # Rimuovi righe che contengono google_mobile_ads o FLTGoogleMobileAds\n  sed -i '' '/google_mobile_ads/d' \"$REGISTRANT\"\n  sed -i '' '/FLTGoogleMobileAds/d' \"$REGISTRANT\"\n  # Pulisci blocchi #if vuoti residui\n  sed -i '' '/#if/{N;/#endif/d;}' \"$REGISTRANT\"\n  echo \"[IdeAI] Stripped google_mobile_ads from GeneratedPluginRegistrant.m\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
