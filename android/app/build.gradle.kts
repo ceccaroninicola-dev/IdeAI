@@ -32,8 +32,8 @@ android {
         applicationId = "com.cortexlabs.ideai"
         minSdk = 21
         targetSdk = 35
-        versionCode = 13
-        versionName = "1.0.12"
+        versionCode = 14
+        versionName = "1.0.13"
         // Necessario per google_mobile_ads (multidex su API < 21 non serve con minSdk 21)
         multiDexEnabled = true
     }
