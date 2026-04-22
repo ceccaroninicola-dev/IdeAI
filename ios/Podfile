@@ -1,7 +1,5 @@
-# Piattaforma iOS minima — richiesta da google_mobile_ads e Flutter 3.41+
 platform :ios, '15.0'
 
-# CocoaPods analytics rallenta la build di Flutter
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -27,6 +25,23 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
+# ── Rimuovi google_mobile_ads da .flutter-plugins PRIMA di installare i pod ──
+# Questo impedisce a flutter_install_all_ios_pods di installare il pod nativo
+# Google-Mobile-Ads-SDK che causa un crash signal-level (SIGSEGV) su iOS.
+# Il pacchetto Dart resta in pubspec.yaml per Android.
+['.flutter-plugins', '.flutter-plugins-dependencies'].each do |filename|
+  filepath = File.join(__dir__, '..', filename)
+  if File.exist?(filepath)
+    content = File.read(filepath)
+    modified = content.gsub(/^google_mobile_ads=.*\n?/, '')
+    modified = modified.gsub(/"google_mobile_ads":\s*\{[^}]*\},?\s*/m, '')
+    if content != modified
+      File.write(filepath, modified)
+      Pod::UI.puts "[IdeAI] Stripped google_mobile_ads from #{filename}"
+    end
+  end
+end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
@@ -41,7 +56,6 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-    # Forza il deployment target minimo a 15.0 per tutti i pod
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
     end
