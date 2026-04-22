@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:ui' show VoidCallback;
-import 'package:flutter/foundation.dart'
-    show kIsWeb, debugPrint, defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -27,13 +27,19 @@ class AdService {
   static const _iosInterstitialId = 'ca-app-pub-7715514651566286/5993590170';
   static const _iosRewardedId = 'ca-app-pub-7715514651566286/3768949762';
 
-  /// Seleziona l'ID corretto in base alla piattaforma
-  static String get bannerId =>
-      defaultTargetPlatform == TargetPlatform.iOS ? _iosBannerId : _androidBannerId;
-  static String get interstitialId =>
-      defaultTargetPlatform == TargetPlatform.iOS ? _iosInterstitialId : _androidInterstitialId;
-  static String get rewardedId =>
-      defaultTargetPlatform == TargetPlatform.iOS ? _iosRewardedId : _androidRewardedId;
+  /// Seleziona l'ID corretto in base alla piattaforma (dart:io)
+  static String get bannerId {
+    if (kIsWeb) return '';
+    return Platform.isIOS ? _iosBannerId : _androidBannerId;
+  }
+  static String get interstitialId {
+    if (kIsWeb) return '';
+    return Platform.isIOS ? _iosInterstitialId : _androidInterstitialId;
+  }
+  static String get rewardedId {
+    if (kIsWeb) return '';
+    return Platform.isIOS ? _iosRewardedId : _androidRewardedId;
+  }
 
   // === STATO INTERNO ===
   InterstitialAd? _interstitialAd;
