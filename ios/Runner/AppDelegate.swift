@@ -1,5 +1,7 @@
 import UIKit
 import Flutter
+import package_info_plus
+import share_plus
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -10,8 +12,14 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     flutterEngine.run()
-    PluginHelper.disableWebViewPlugin()
-    GeneratedPluginRegistrant.register(with: flutterEngine)
+
+    // Registrazione manuale — NO GeneratedPluginRegistrant
+    // WebViewFlutterPlugin escluso: crash SIGSEGV su iOS 26
+    FPPPackageInfoPlusPlugin.register(
+      with: flutterEngine.registrar(forPlugin: "FPPPackageInfoPlusPlugin")!)
+    FPPSharePlusPlugin.register(
+      with: flutterEngine.registrar(forPlugin: "FPPSharePlusPlugin")!)
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
