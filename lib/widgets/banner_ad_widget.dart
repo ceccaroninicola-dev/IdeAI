@@ -18,7 +18,6 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _caricato = false;
 
-  /// true se la piattaforma non supporta gli annunci (iOS o web)
   bool get _disabilitato => kIsWeb || Platform.isIOS;
 
   @override
@@ -28,7 +27,6 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   }
 
   void _caricaBanner() {
-    // Su iOS e web non caricare nulla
     if (_disabilitato) return;
 
     _bannerAd = AdService().creaBanner(
@@ -55,7 +53,6 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Su iOS, web o se il banner non è caricato, non mostrare nulla
     if (_disabilitato || !_caricato || _bannerAd == null) {
       return const SizedBox.shrink();
     }
