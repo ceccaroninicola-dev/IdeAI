@@ -49,6 +49,12 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Consenti chiamate HTTPS alle API (OpenAI proxy, ecc.) -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<!-- AdMob App ID per iOS — necessario per l'inizializzazione del SDK -->
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-7715514651566286~8348290777</string>
