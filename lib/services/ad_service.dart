@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:ui' show VoidCallback;
-import 'package:flutter/foundation.dart'
-    show kIsWeb, debugPrint, defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 /// Servizio centralizzato per la gestione della pubblicità AdMob.
@@ -26,13 +27,19 @@ class AdService {
   static const _iosInterstitialId = 'ca-app-pub-7715514651566286/5993590170';
   static const _iosRewardedId = 'ca-app-pub-7715514651566286/3768949762';
 
-  /// Seleziona l'ID corretto in base alla piattaforma
-  static String get bannerId =>
-      defaultTargetPlatform == TargetPlatform.iOS ? _iosBannerId : _androidBannerId;
-  static String get interstitialId =>
-      defaultTargetPlatform == TargetPlatform.iOS ? _iosInterstitialId : _androidInterstitialId;
-  static String get rewardedId =>
-      defaultTargetPlatform == TargetPlatform.iOS ? _iosRewardedId : _androidRewardedId;
+  /// Seleziona l'ID corretto in base alla piattaforma (dart:io)
+  static String get bannerId {
+    if (kIsWeb) return '';
+    return Platform.isIOS ? _iosBannerId : _androidBannerId;
+  }
+  static String get interstitialId {
+    if (kIsWeb) return '';
+    return Platform.isIOS ? _iosInterstitialId : _androidInterstitialId;
+  }
+  static String get rewardedId {
+    if (kIsWeb) return '';
+    return Platform.isIOS ? _iosRewardedId : _androidRewardedId;
+  }
 
   // === STATO INTERNO ===
   InterstitialAd? _interstitialAd;
@@ -51,6 +58,8 @@ class AdService {
 
   /// Inizializza il Mobile Ads SDK.
   /// Chiamare una sola volta all'avvio dell'app.
+  /// Se l'inizializzazione fallisce (es. GADApplicationIdentifier errato su iOS),
+  /// l'app continua senza pubblicità.
   Future<void> inizializza() async {
     // Su web non facciamo nulla — AdMob non supporta web
     if (kIsWeb) {
@@ -64,37 +73,43 @@ class AdService {
       await MobileAds.instance.initialize();
       _inizializzato = true;
       debugPrint('[AdService] SDK AdMob inizializzato');
+    } on PlatformException catch (e) {
+      debugPrint('[AdService] Errore piattaforma AdMob (ads disabilitate): $e');
     } catch (e) {
-      debugPrint('[AdService] Errore inizializzazione AdMob: $e');
+      debugPrint('[AdService] Errore inizializzazione AdMob (ads disabilitate): $e');
     }
   }
 
   /// Richiede il consenso GDPR tramite il Google UMP SDK.
   /// Mostra il form di consenso se necessario (utenti EU).
+  /// Se AdMob non è inizializzato, salta la richiesta.
   Future<void> richiestaConsensoGDPR() async {
-    if (kIsWeb) return;
+    if (kIsWeb || !_inizializzato) {
+      consensoRichiesto = true;
+      return;
+    }
 
     try {
-      // Parametri della richiesta di consenso
       final params = ConsentRequestParameters();
 
-      // Richiede le informazioni sul consenso
       ConsentInformation.instance.requestConsentInfoUpdate(
         params,
         () async {
-          // Verifica se il form di consenso è disponibile
-          if (await ConsentInformation.instance.isConsentFormAvailable()) {
-            _mostraFormConsenso();
-          } else {
-            // Nessun form necessario (utente fuori dall'EU o già consensato)
+          try {
+            if (await ConsentInformation.instance.isConsentFormAvailable()) {
+              _mostraFormConsenso();
+            } else {
+              consensoRichiesto = true;
+              _consensoPersonalizzata = true;
+              debugPrint('[AdService] Consenso non necessario per questa regione');
+            }
+          } catch (e) {
+            debugPrint('[AdService] Errore verifica form consenso: $e');
             consensoRichiesto = true;
-            _consensoPersonalizzata = true;
-            debugPrint('[AdService] Consenso non necessario per questa regione');
           }
         },
         (error) {
           debugPrint('[AdService] Errore richiesta consenso: ${error.message}');
-          // In caso di errore, procedi senza pubblicità personalizzata
           consensoRichiesto = true;
           _consensoPersonalizzata = false;
         },

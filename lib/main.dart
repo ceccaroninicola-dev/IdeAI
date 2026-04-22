@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_theme.dart';
@@ -13,37 +15,65 @@ import 'package:ideai/services/api_service.dart';
 import 'package:ideai/services/ad_service.dart';
 
 /// Entry point dell'applicazione IdeAI.
-/// Configura i provider globali, inizializza l'API key, AdMob e avvia l'app.
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+/// Avvolge tutto in un error zone per catturare crash non gestiti.
+void main() {
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-  // Inizializza la API key da variabile d'ambiente (se disponibile)
-  // Su web, usa --dart-define=OPENAI_API_KEY=sk-xxx durante il build
-  const apiKey = String.fromEnvironment('OPENAI_API_KEY');
-  if (apiKey.isNotEmpty) {
-    ApiService().impostaApiKey(apiKey);
+      // Cattura errori Flutter (widget, rendering)
+      FlutterError.onError = (details) {
+        debugPrint('[IdeAI] FlutterError: ${details.exception}');
+        debugPrint('[IdeAI] Stack: ${details.stack}');
+      };
+
+      // Cattura errori della piattaforma (plugin nativi, platform channels)
+      PlatformDispatcher.instance.onError = (error, stack) {
+        debugPrint('[IdeAI] PlatformError: $error');
+        debugPrint('[IdeAI] Stack: $stack');
+        return true;
+      };
+
+      // Inizializza la API key da variabile d'ambiente (se disponibile)
+      const apiKey = String.fromEnvironment('OPENAI_API_KEY');
+      if (apiKey.isNotEmpty) {
+        ApiService().impostaApiKey(apiKey);
+      }
+
+      // Inizializza AdMob in modo NON bloccante.
+      // Se il SDK crasha (es. GADApplicationIdentifier non valido),
+      // l'app parte comunque senza pubblicità.
+      _inizializzaAdMobSafe();
+
+      runApp(const PromptMasterApp());
+    },
+    (error, stack) {
+      debugPrint('[IdeAI] Errore non gestito nella zona: $error');
+      debugPrint('[IdeAI] Stack: $stack');
+    },
+  );
+}
+
+/// Inizializza AdMob in modo completamente sicuro.
+/// Non blocca l'avvio dell'app e cattura qualsiasi errore.
+Future<void> _inizializzaAdMobSafe() async {
+  try {
+    await AdService().inizializza();
+    // Richiesta consenso GDPR (solo se AdMob si è inizializzato)
+    AdService().richiestaConsensoGDPR();
+  } catch (e, stack) {
+    debugPrint('[IdeAI] AdMob init fallita (app continua senza ads): $e');
+    debugPrint('[IdeAI] Stack: $stack');
   }
-
-  // Inizializza AdMob (su web è un no-op automatico)
-  await AdService().inizializza();
-
-  // Richiesta consenso GDPR (obbligatoria per l'Europa)
-  // Il form appare solo se necessario (utenti EU)
-  AdService().richiestaConsensoGDPR();
-
-  runApp(const PromptMasterApp());
 }
 
 /// Widget radice dell'applicazione.
-/// Utilizza MultiProvider per iniettare i provider globali
-/// e gestisce il tema chiaro/scuro tramite ThemeProvider.
 class PromptMasterApp extends StatelessWidget {
   const PromptMasterApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      // Lista dei provider globali disponibili in tutta l'app
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => SessioneProvider()),
@@ -58,13 +88,9 @@ class PromptMasterApp extends StatelessWidget {
           return MaterialApp(
             title: 'IdeAI',
             debugShowCheckedModeBanner: false,
-
-            // Configurazione dei temi
             theme: AppTheme.temaChiaro,
             darkTheme: AppTheme.temaScuro,
             themeMode: themeProvider.modalitaTema,
-
-            // Configurazione delle rotte
             initialRoute: AppRoutes.home,
             routes: AppRoutes.rotte,
           );
