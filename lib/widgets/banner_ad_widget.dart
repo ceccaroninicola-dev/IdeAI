@@ -5,8 +5,8 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ideai/services/ad_service.dart';
 
 /// Widget che mostra un banner pubblicitario AdMob.
-/// Su Flutter Web e iOS, NON mostra nulla (AdMob disabilitato).
-/// Altezza fissa 50px, larghezza piena su Android.
+/// Su Flutter Web NON mostra nulla (AdMob disabilitato).
+/// Altezza fissa 50px, larghezza piena su Android e iOS.
 class BannerAdWidget extends StatefulWidget {
   const BannerAdWidget({super.key});
 
@@ -18,7 +18,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _caricato = false;
 
-  bool get _disabilitato => kIsWeb || Platform.isIOS;
+  bool get _disabilitato => kIsWeb;
 
   @override
   void initState() {

@@ -42,9 +42,8 @@ void main() {
         ApiService().impostaApiKey(apiKey);
       }
 
-      // AdMob solo su Android. Su iOS: GADApplicationIdentifier rimosso da
-      // Info.plist, nessuna chiamata al SDK, nessun conflitto nativo.
-      if (!kIsWeb && Platform.isAndroid) {
+      // AdMob su Android e iOS
+      if (!kIsWeb) {
         await _inizializzaAdMobSafe();
       }
 

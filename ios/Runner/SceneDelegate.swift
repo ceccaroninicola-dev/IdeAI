@@ -1,27 +1,7 @@
 import Flutter
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-  var window: UIWindow?
-
-  func scene(
-    _ scene: UIScene,
-    willConnectTo session: UISceneSession,
-    options connectionOptions: UIScene.ConnectionOptions
-  ) {
-    guard let windowScene = scene as? UIWindowScene,
-          let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-      return
-    }
-
-    let flutterVC = FlutterViewController(
-      engine: appDelegate.flutterEngine,
-      nibName: nil,
-      bundle: nil
-    )
-
-    window = UIWindow(windowScene: windowScene)
-    window?.rootViewController = flutterVC
-    window?.makeKeyAndVisible()
-  }
+// SceneDelegate standard Flutter 3.41+: gestisce il ciclo di vita UIScene.
+// Il motore Flutter e la finestra vengono creati internamente da FlutterSceneDelegate.
+class SceneDelegate: FlutterSceneDelegate {
 }
