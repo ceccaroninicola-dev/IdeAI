@@ -22,8 +22,9 @@ void main() {
       WidgetsFlutterBinding.ensureInitialized();
 
       // ignore: avoid_print
-      print('[IdeAI] Dart main() avviato — piattaforma: '
-          '${kIsWeb ? "web" : Platform.operatingSystem}');
+      print('[IdeAI] === DART MAIN AVVIATO ===');
+      // ignore: avoid_print
+      print('[IdeAI] Piattaforma: ${kIsWeb ? "web" : Platform.operatingSystem}');
 
       FlutterError.onError = (details) {
         // ignore: avoid_print
@@ -37,47 +38,58 @@ void main() {
         return true;
       };
 
-      const apiKey = String.fromEnvironment('OPENAI_API_KEY');
-      if (apiKey.isNotEmpty) {
-        ApiService().impostaApiKey(apiKey);
-      }
-
-      // Inizializza AdMob su TUTTE le piattaforme mobile.
-      // Su iOS il SDK nativo si auto-inizializza leggendo GADApplicationIdentifier
-      // da Info.plist — chiamare initialize() da Dart previene conflitti.
-      // Le ads non vengono MAI mostrate su iOS (guard in AdService/BannerAdWidget).
-      if (!kIsWeb) {
-        await _inizializzaAdMobSafe();
-      }
-
+      // ============================================================
+      // TEST DIAGNOSTICO: widget minimale per verificare il rendering.
+      // Se vedi schermo BLU con "FLUTTER FUNZIONA" → il motore va,
+      // il problema è nel codice app (tema/provider/rotte).
+      // Se vedi ancora bianco → il motore Flutter non renderizza su iOS.
+      // ============================================================
       // ignore: avoid_print
-      print('[IdeAI] Avvio runApp...');
+      print('[IdeAI] Avvio widget TEST DIAGNOSTICO...');
 
-      try {
-        runApp(const PromptMasterApp());
-      } catch (e, stack) {
-        // ignore: avoid_print
-        print('[IdeAI] CRASH in runApp: $e');
-        // Mostra errore visibile all'utente
-        runApp(MaterialApp(
+      runApp(
+        MaterialApp(
           home: Scaffold(
-            backgroundColor: Colors.red.shade900,
-            body: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  'IdeAI ERRORE AVVIO:\n\n$e\n\n$stack',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontFamily: 'monospace',
+            backgroundColor: const Color(0xFF1565C0),
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white, size: 80),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'FLUTTER FUNZIONA',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.none,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Piattaforma: ${kIsWeb ? "web" : Platform.operatingSystem}',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Build: 1.0.40+41',
+                    style: const TextStyle(
+                      color: Colors.white54,
+                      fontSize: 14,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-        ));
-      }
+        ),
+      );
     },
     (error, stack) {
       // ignore: avoid_print
@@ -89,9 +101,7 @@ void main() {
 Future<void> _inizializzaAdMobSafe() async {
   try {
     await AdService().inizializza();
-    if (!kIsWeb && Platform.isAndroid) {
-      AdService().richiestaConsensoGDPR();
-    }
+    AdService().richiestaConsensoGDPR();
   } catch (e) {
     // ignore: avoid_print
     print('[IdeAI] AdMob init fallita (non bloccante): $e');
