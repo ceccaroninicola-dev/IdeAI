@@ -2,22 +2,26 @@ import Flutter
 import UIKit
 
 @main
-@objc class AppDelegate: UIResponder, UIApplicationDelegate {
-  let flutterEngine = FlutterEngine(name: "main")
-
-  func application(
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+  override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // Workaround Flutter #183900: swizzle per prevenire crash VSyncClient
-    // su iOS 26 + dispositivi ProMotion. Aggiunge guard nil engine prima
-    // di creare il VSync client per touch rate correction.
+    // Workaround Flutter #183900: no-op swizzle per prevenire crash SIGSEGV
+    // in VSyncClient su iOS 26 + dispositivi ProMotion (120Hz).
+    // Deve essere applicato PRIMA di super.application() che avvia il motore.
     Self.swizzleVSyncClientSafety()
-
-    flutterEngine.run()
-    GeneratedPluginRegistrant.register(with: flutterEngine)
-    return true
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+
+  // Registrazione plugin tramite il nuovo callback UIScene.
+  // In Flutter 3.41+ i plugin NON vanno registrati in didFinishLaunchingWithOptions
+  // perché il motore implicito non è ancora pronto a quel punto.
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+  }
+
+  // MARK: - Workaround VSyncClient SIGSEGV (Flutter #183900)
 
   private static var hasSwizzled = false
 
@@ -39,8 +43,7 @@ import UIKit
 
 extension FlutterViewController {
   @objc func ideai_safeCreateTouchRateCorrectionVSyncClient() {
-    // No-op: salta completamente createTouchRateCorrectionVSyncClientIfNeeded
-    // per evitare SIGSEGV su iOS 26 + ProMotion (task runner NULL).
-    // Sacrifica touch rate correction ma previene il crash.
+    // No-op: previene SIGSEGV su iOS 26 + ProMotion (task runner NULL).
+    // PR #184639 contiene il fix ufficiale, non ancora rilasciato.
   }
 }

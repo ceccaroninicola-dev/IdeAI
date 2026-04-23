@@ -8,28 +8,41 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 /// Servizio centralizzato per la gestione della pubblicità AdMob.
 /// Gestisce banner, interstitial e rewarded video.
 ///
-/// AdMob è disabilitato su iOS (per ora) e su web.
+/// AdMob è attivo su Android e iOS. Disabilitato su web.
 class AdService {
   /// Singleton
   static final AdService _istanza = AdService._interno();
   factory AdService() => _istanza;
   AdService._interno();
 
-  /// Helper: true se AdMob deve essere disabilitato (web o iOS)
-  static bool get _disabilitato {
-    if (kIsWeb) return true;
-    if (Platform.isIOS) return true;
-    return false;
-  }
+  /// Helper: true se AdMob deve essere disabilitato (solo web)
+  static bool get _disabilitato => kIsWeb;
 
   // === ID PUBBLICITARI ===
+  // Android
   static const _androidBannerId = 'ca-app-pub-7715514651566286/8619753512';
   static const _androidInterstitialId = 'ca-app-pub-7715514651566286/9101167493';
   static const _androidRewardedId = 'ca-app-pub-7715514651566286/7788085822';
 
-  static String get bannerId => _disabilitato ? '' : _androidBannerId;
-  static String get interstitialId => _disabilitato ? '' : _androidInterstitialId;
-  static String get rewardedId => _disabilitato ? '' : _androidRewardedId;
+  // iOS (test ads — sostituire con ID reali prima della pubblicazione)
+  static const _iosBannerId = 'ca-app-pub-3940256099942544/2934735716';
+  static const _iosInterstitialId = 'ca-app-pub-3940256099942544/4411468910';
+  static const _iosRewardedId = 'ca-app-pub-3940256099942544/1712485313';
+
+  static String get bannerId {
+    if (_disabilitato) return '';
+    return Platform.isIOS ? _iosBannerId : _androidBannerId;
+  }
+
+  static String get interstitialId {
+    if (_disabilitato) return '';
+    return Platform.isIOS ? _iosInterstitialId : _androidInterstitialId;
+  }
+
+  static String get rewardedId {
+    if (_disabilitato) return '';
+    return Platform.isIOS ? _iosRewardedId : _androidRewardedId;
+  }
 
   // === STATO INTERNO ===
   InterstitialAd? _interstitialAd;
@@ -46,7 +59,7 @@ class AdService {
   /// Flag: il consenso GDPR è stato richiesto
   bool consensoRichiesto = false;
 
-  /// Inizializza il Mobile Ads SDK (solo Android).
+  /// Inizializza il Mobile Ads SDK (Android e iOS).
   Future<void> inizializza() async {
     if (_disabilitato) {
       debugPrint('[AdService] AdMob disabilitato — skip init');
