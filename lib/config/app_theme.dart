@@ -48,8 +48,7 @@ class AppTheme {
       outlineVariant: Color(0xFFE8E8ED),
     ),
 
-    // Tipografia pulita — SF Pro style
-    fontFamily: '.SF Pro Text',
+    // Tipografia pulita — usa il font di sistema (SF Pro su iOS, Roboto su Android)
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         fontSize: 28,
@@ -256,8 +255,7 @@ class AppTheme {
       outlineVariant: Color(0xFF38383A),
     ),
 
-    // Tipografia — stessa struttura, colori scuri
-    fontFamily: '.SF Pro Text',
+    // Tipografia — usa il font di sistema, colori scuri
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         fontSize: 28,
