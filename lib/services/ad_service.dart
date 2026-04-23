@@ -46,14 +46,10 @@ class AdService {
   /// Flag: il consenso GDPR è stato richiesto
   bool consensoRichiesto = false;
 
-  /// Inizializza il Mobile Ads SDK.
-  /// Chiamata su TUTTE le piattaforme mobile (Android e iOS) perché il SDK
-  /// nativo si auto-inizializza leggendo GADApplicationIdentifier — chiamare
-  /// initialize() da Dart previene conflitti di stato.
-  /// Su web il SDK non esiste, quindi skip.
+  /// Inizializza il Mobile Ads SDK (solo Android).
   Future<void> inizializza() async {
-    if (kIsWeb) {
-      debugPrint('[AdService] Web — skip init');
+    if (_disabilitato) {
+      debugPrint('[AdService] AdMob disabilitato — skip init');
       return;
     }
 

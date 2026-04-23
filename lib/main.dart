@@ -42,11 +42,9 @@ void main() {
         ApiService().impostaApiKey(apiKey);
       }
 
-      // Inizializza AdMob su TUTTE le piattaforme mobile.
-      // Su iOS il SDK nativo si auto-inizializza leggendo GADApplicationIdentifier
-      // da Info.plist — chiamare initialize() da Dart previene conflitti.
-      // Le ads non vengono MAI mostrate su iOS (guard in AdService/BannerAdWidget).
-      if (!kIsWeb) {
+      // AdMob solo su Android. Su iOS: GADApplicationIdentifier rimosso da
+      // Info.plist, nessuna chiamata al SDK, nessun conflitto nativo.
+      if (!kIsWeb && Platform.isAndroid) {
         await _inizializzaAdMobSafe();
       }
 
@@ -89,9 +87,7 @@ void main() {
 Future<void> _inizializzaAdMobSafe() async {
   try {
     await AdService().inizializza();
-    if (!kIsWeb && Platform.isAndroid) {
-      AdService().richiestaConsensoGDPR();
-    }
+    AdService().richiestaConsensoGDPR();
   } catch (e) {
     // ignore: avoid_print
     print('[IdeAI] AdMob init fallita (non bloccante): $e');
