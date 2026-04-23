@@ -47,9 +47,13 @@ class AdService {
   bool consensoRichiesto = false;
 
   /// Inizializza il Mobile Ads SDK.
+  /// Chiamata su TUTTE le piattaforme mobile (Android e iOS) perché il SDK
+  /// nativo si auto-inizializza leggendo GADApplicationIdentifier — chiamare
+  /// initialize() da Dart previene conflitti di stato.
+  /// Su web il SDK non esiste, quindi skip.
   Future<void> inizializza() async {
-    if (_disabilitato) {
-      debugPrint('[AdService] AdMob disabilitato (web) — skip init');
+    if (kIsWeb) {
+      debugPrint('[AdService] Web — skip init');
       return;
     }
 
@@ -60,9 +64,9 @@ class AdService {
       _inizializzato = true;
       debugPrint('[AdService] SDK AdMob inizializzato');
     } on PlatformException catch (e) {
-      debugPrint('[AdService] Errore piattaforma AdMob (ads disabilitate): $e');
+      debugPrint('[AdService] Errore piattaforma AdMob: $e');
     } catch (e) {
-      debugPrint('[AdService] Errore inizializzazione AdMob (ads disabilitate): $e');
+      debugPrint('[AdService] Errore inizializzazione AdMob: $e');
     }
   }
 

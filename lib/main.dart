@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:ui';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_theme.dart';
@@ -16,18 +16,24 @@ import 'package:ideai/providers/community_provider.dart';
 import 'package:ideai/services/api_service.dart';
 import 'package:ideai/services/ad_service.dart';
 
-/// Entry point dell'applicazione IdeAI.
 void main() {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
+      // ignore: avoid_print
+      print('[IdeAI] Dart main() avviato — piattaforma: '
+          '${kIsWeb ? "web" : Platform.operatingSystem}');
+
       FlutterError.onError = (details) {
-        debugPrint('[IdeAI] FlutterError: ${details.exception}');
+        // ignore: avoid_print
+        print('[IdeAI] FlutterError: ${details.exception}');
+        debugPrint('[IdeAI] Stack: ${details.stack}');
       };
 
       PlatformDispatcher.instance.onError = (error, stack) {
-        debugPrint('[IdeAI] PlatformError: $error');
+        // ignore: avoid_print
+        print('[IdeAI] PlatformError: $error');
         return true;
       };
 
@@ -36,32 +42,62 @@ void main() {
         ApiService().impostaApiKey(apiKey);
       }
 
-      // AdMob: solo su Android. Su iOS il SDK nativo si registra ma non viene
-      // mai chiamato dal codice Dart (GADApplicationIdentifier in Info.plist
-      // previene il crash nativo alla registrazione).
-      if (!kIsWeb && Platform.isAndroid) {
-        _inizializzaAdMobSafe();
+      // Inizializza AdMob su TUTTE le piattaforme mobile.
+      // Su iOS il SDK nativo si auto-inizializza leggendo GADApplicationIdentifier
+      // da Info.plist — chiamare initialize() da Dart previene conflitti.
+      // Le ads non vengono MAI mostrate su iOS (guard in AdService/BannerAdWidget).
+      if (!kIsWeb) {
+        await _inizializzaAdMobSafe();
       }
 
-      runApp(const PromptMasterApp());
+      // ignore: avoid_print
+      print('[IdeAI] Avvio runApp...');
+
+      try {
+        runApp(const PromptMasterApp());
+      } catch (e, stack) {
+        // ignore: avoid_print
+        print('[IdeAI] CRASH in runApp: $e');
+        // Mostra errore visibile all'utente
+        runApp(MaterialApp(
+          home: Scaffold(
+            backgroundColor: Colors.red.shade900,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  'IdeAI ERRORE AVVIO:\n\n$e\n\n$stack',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ));
+      }
     },
     (error, stack) {
-      debugPrint('[IdeAI] Errore non gestito: $error');
+      // ignore: avoid_print
+      print('[IdeAI] Errore non gestito: $error\n$stack');
     },
   );
 }
 
-/// Inizializza AdMob in modo sicuro. Chiamata SOLO su Android.
 Future<void> _inizializzaAdMobSafe() async {
   try {
     await AdService().inizializza();
-    AdService().richiestaConsensoGDPR();
+    if (!kIsWeb && Platform.isAndroid) {
+      AdService().richiestaConsensoGDPR();
+    }
   } catch (e) {
-    debugPrint('[IdeAI] AdMob init fallita: $e');
+    // ignore: avoid_print
+    print('[IdeAI] AdMob init fallita (non bloccante): $e');
   }
 }
 
-/// Widget radice dell'applicazione.
 class PromptMasterApp extends StatelessWidget {
   const PromptMasterApp({super.key});
 
