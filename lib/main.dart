@@ -77,7 +77,7 @@ void main() {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Build: 1.0.41+42',
+                    'Build: 1.0.42+43',
                     style: const TextStyle(
                       color: Colors.white54,
                       fontSize: 14,
