@@ -24,10 +24,10 @@ class AdService {
   static const _androidInterstitialId = 'ca-app-pub-7715514651566286/9101167493';
   static const _androidRewardedId = 'ca-app-pub-7715514651566286/7788085822';
 
-  // iOS (test ads — sostituire con ID reali prima della pubblicazione)
-  static const _iosBannerId = 'ca-app-pub-3940256099942544/2934735716';
-  static const _iosInterstitialId = 'ca-app-pub-3940256099942544/4411468910';
-  static const _iosRewardedId = 'ca-app-pub-3940256099942544/1712485313';
+  // iOS
+  static const _iosBannerId = 'ca-app-pub-7715514651566286/5949925391';
+  static const _iosInterstitialId = 'ca-app-pub-7715514651566286/5993590170';
+  static const _iosRewardedId = 'ca-app-pub-7715514651566286/3768949762';
 
   static String get bannerId {
     if (_disabilitato) return '';
