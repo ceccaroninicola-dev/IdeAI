@@ -3,5 +3,13 @@
   "appTitle": "IdeAI",
   "@appTitle": {
     "description": "The application title"
+  },
+  "homeSubtitle": "Your assistant for creating perfect prompts",
+  "@homeSubtitle": {
+    "description": "Subtitle shown on the home screen"
+  },
+  "createNewPromptTitle": "Create new prompt",
+  "@createNewPromptTitle": {
+    "description": "Title of the create new prompt card"
   }
 }

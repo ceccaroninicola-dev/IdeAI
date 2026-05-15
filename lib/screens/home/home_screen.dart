@@ -95,7 +95,7 @@ class HomeScreen extends StatelessWidget {
 
                 // Sottotitolo
                 Text(
-                  'Il tuo assistente per creare prompt perfetti',
+                  AppLocalizations.of(context)!.homeSubtitle,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -107,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                 _buildCardAzione(
                   context: context,
                   icona: Icons.add_circle_outline,
-                  etichetta: 'Crea nuovo prompt',
+                  etichetta: AppLocalizations.of(context)!.createNewPromptTitle,
                   descrizione: 'Crea un prompt da zero con l\'aiuto dell\'AI',
                   isDark: isDark,
                   colorScheme: colorScheme,

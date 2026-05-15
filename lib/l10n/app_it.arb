@@ -1,4 +1,6 @@
 {
   "@@locale": "it",
-  "appTitle": "IdeAI"
+  "appTitle": "IdeAI",
+  "homeSubtitle": "Il tuo assistente per creare prompt perfetti",
+  "createNewPromptTitle": "Crea nuovo prompt"
 }
