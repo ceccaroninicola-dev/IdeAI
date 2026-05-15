@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ideai/config/app_routes.dart';
 import 'package:ideai/providers/theme_provider.dart';
 import 'package:ideai/widgets/barra_navigazione.dart';
@@ -20,7 +21,7 @@ class HomeScreen extends StatelessWidget {
       canPop: false,
       child: Scaffold(
       appBar: AppBar(
-        title: const Text('IdeAI'),
+        title: Text(AppLocalizations.of(context)!.appTitle),
         automaticallyImplyLeading: false,
         actions: [
           // Icona profilo utente

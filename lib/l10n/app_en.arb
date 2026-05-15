@@ -1,0 +1,7 @@
+{
+  "@@locale": "en",
+  "appTitle": "IdeAI",
+  "@appTitle": {
+    "description": "The application title"
+  }
+}
