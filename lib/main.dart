@@ -3,6 +3,8 @@ import 'dart:io' show Platform;
 import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_theme.dart';
 import 'package:ideai/config/app_routes.dart';
@@ -113,6 +115,16 @@ class PromptMasterApp extends StatelessWidget {
           return MaterialApp(
             title: 'IdeAI',
             debugShowCheckedModeBanner: false,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('it'),
+            ],
             theme: AppTheme.temaChiaro,
             darkTheme: AppTheme.temaScuro,
             themeMode: themeProvider.modalitaTema,
