@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
               Icons.person_outline,
               color: colorScheme.onSurfaceVariant,
             ),
-            tooltip: 'Il mio profilo',
+            tooltip: AppLocalizations.of(context)!.tooltipMyProfile,
             onPressed: () {
               Navigator.of(context).pushNamed(AppRoutes.profilo);
             },
@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                   : Icons.dark_mode_outlined,
               color: colorScheme.onSurfaceVariant,
             ),
-            tooltip: 'Cambia tema',
+            tooltip: AppLocalizations.of(context)!.tooltipChangeTheme,
             onPressed: () => themeProvider.cambiaTema(),
           ),
           // Impostazioni (API key)
@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
               Icons.settings_outlined,
               color: colorScheme.onSurfaceVariant,
             ),
-            tooltip: 'Impostazioni',
+            tooltip: AppLocalizations.of(context)!.tooltipSettings,
             onPressed: () {
               Navigator.of(context).pushNamed(AppRoutes.impostazioni);
             },

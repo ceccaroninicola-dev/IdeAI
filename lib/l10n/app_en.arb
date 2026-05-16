@@ -51,5 +51,103 @@
   "navHistory": "History",
   "@navHistory": {
     "description": "Bottom navigation label for History"
+  },
+  "tooltipMyProfile": "My profile",
+  "@tooltipMyProfile": {
+    "description": "Tooltip for profile icon button"
+  },
+  "tooltipChangeTheme": "Change theme",
+  "@tooltipChangeTheme": {
+    "description": "Tooltip for theme toggle button"
+  },
+  "tooltipSettings": "Settings",
+  "@tooltipSettings": {
+    "description": "Tooltip for settings icon button"
+  },
+  "tooltipBackToHome": "Back to Home",
+  "@tooltipBackToHome": {
+    "description": "Tooltip for home icon button in secondary screens"
+  },
+  "inputLiberoTitle": "New Prompt",
+  "@inputLiberoTitle": {
+    "description": "AppBar title of the free input screen"
+  },
+  "inputLiberoHeading": "What do you want to do?",
+  "@inputLiberoHeading": {
+    "description": "Main heading of the free input screen"
+  },
+  "inputLiberoDescription": "Describe in your own words what you'd like AI to do for you. The more detail, the better the prompt.",
+  "@inputLiberoDescription": {
+    "description": "Instruction text below the heading"
+  },
+  "inputLiberoHint": "E.g. 'Write a LinkedIn post to launch my new SaaS for small businesses'",
+  "@inputLiberoHint": {
+    "description": "Placeholder hint in the text field"
+  },
+  "inputLiberoQuickExamples": "Quick examples:",
+  "@inputLiberoQuickExamples": {
+    "description": "Label above the example chips"
+  },
+  "inputLiberoExampleEmail": "Write a professional email",
+  "@inputLiberoExampleEmail": {
+    "description": "Quick example chip for email"
+  },
+  "inputLiberoExampleCode": "Help me with Python code",
+  "@inputLiberoExampleCode": {
+    "description": "Quick example chip for coding"
+  },
+  "inputLiberoExampleImage": "Create an image for my brand",
+  "@inputLiberoExampleImage": {
+    "description": "Quick example chip for images"
+  },
+  "inputLiberoAnalyzeButton": "Analyze & continue",
+  "@inputLiberoAnalyzeButton": {
+    "description": "Label of the submit button"
+  },
+  "inputLiberoAnalyzing": "Analyzing your request...",
+  "@inputLiberoAnalyzing": {
+    "description": "Loading indicator text during AI analysis"
+  },
+  "inputLiberoOfflineMode": "Offline mode: {error}",
+  "@inputLiberoOfflineMode": {
+    "description": "Snackbar message when API call fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "libreriaTitle": "Template Library",
+  "@libreriaTitle": {
+    "description": "AppBar title of the library screen"
+  },
+  "libreriaSearchHint": "Search templates...",
+  "@libreriaSearchHint": {
+    "description": "Placeholder text in the search field"
+  },
+  "libreriaMostPopular": "Most popular",
+  "@libreriaMostPopular": {
+    "description": "Section title for popular templates"
+  },
+  "libreriaAllTemplates": "All templates",
+  "@libreriaAllTemplates": {
+    "description": "Section title for the full template list"
+  },
+  "libreriaUsesCount": "{count} uses",
+  "@libreriaUsesCount": {
+    "description": "Number of times a template has been used",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "libreriaNoResults": "No templates found",
+  "@libreriaNoResults": {
+    "description": "Title shown when no templates match the search"
+  },
+  "libreriaNoResultsHint": "Try changing the filters or search",
+  "@libreriaNoResultsHint": {
+    "description": "Hint shown below the no-results title"
   }
 }

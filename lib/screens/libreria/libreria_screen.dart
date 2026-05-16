@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/models/prompt_template.dart';
 import 'package:ideai/providers/libreria_provider.dart';
 
@@ -33,12 +34,12 @@ class _LibreriaScreenState extends State<LibreriaScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Libreria Template'),
+        title: Text(AppLocalizations.of(context)!.libreriaTitle),
         actions: [
           // Bottone Home
           IconButton(
             icon: const Icon(Icons.home_outlined),
-            tooltip: 'Torna alla Home',
+            tooltip: AppLocalizations.of(context)!.tooltipBackToHome,
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
               AppRoutes.home,
               (route) => false,
@@ -56,7 +57,7 @@ class _LibreriaScreenState extends State<LibreriaScreen> {
                 controller: _ricercaController,
                 onChanged: (testo) => provider.cercaTemplate(testo),
                 decoration: InputDecoration(
-                  hintText: 'Cerca template...',
+                  hintText: AppLocalizations.of(context)!.libreriaSearchHint,
                   prefixIcon: Icon(
                     Icons.search,
                     color: colorScheme.onSurfaceVariant,
@@ -96,7 +97,7 @@ class _LibreriaScreenState extends State<LibreriaScreen> {
                       children: [
                         // Sezione "Più popolari" (solo senza filtri)
                         if (mostraPopolare) ...[
-                          _buildTitoloSezione('Più popolari', Icons.star),
+                          _buildTitoloSezione(AppLocalizations.of(context)!.libreriaMostPopular, Icons.star),
                           const SizedBox(height: 10),
                           _buildGrigliaPopolare(
                             provider.piuPopolari,
@@ -104,7 +105,7 @@ class _LibreriaScreenState extends State<LibreriaScreen> {
                             isDark,
                           ),
                           const SizedBox(height: 24),
-                          _buildTitoloSezione('Tutti i template', Icons.apps),
+                          _buildTitoloSezione(AppLocalizations.of(context)!.libreriaAllTemplates, Icons.apps),
                           const SizedBox(height: 10),
                         ],
 
@@ -371,7 +372,7 @@ class _LibreriaScreenState extends State<LibreriaScreen> {
                     const Spacer(),
                     // Numero utilizzi
                     Text(
-                      '${_formatUtilizzi(template.utilizzi)} usi',
+                      AppLocalizations.of(context)!.libreriaUsesCount(_formatUtilizzi(template.utilizzi)),
                       style: TextStyle(
                         fontSize: 11,
                         color: colorScheme.onSurfaceVariant,
@@ -400,14 +401,14 @@ class _LibreriaScreenState extends State<LibreriaScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Nessun template trovato',
+            AppLocalizations.of(context)!.libreriaNoResults,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Prova a cambiare i filtri o la ricerca',
+            AppLocalizations.of(context)!.libreriaNoResultsHint,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                 ),
