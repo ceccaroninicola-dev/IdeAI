@@ -2,5 +2,15 @@
   "@@locale": "it",
   "appTitle": "IdeAI",
   "homeSubtitle": "Il tuo assistente per creare prompt perfetti",
-  "createNewPromptTitle": "Crea nuovo prompt"
+  "createNewPromptTitle": "Crea nuovo prompt",
+  "createNewPromptSubtitle": "Crea un prompt da zero con l'aiuto dell'AI",
+  "libraryTitle": "Libreria",
+  "librarySubtitle": "Template pronti all'uso per ogni esigenza",
+  "communityTitle": "Community",
+  "communitySubtitle": "Scopri e condividi prompt con altri utenti",
+  "historyTitle": "Cronologia",
+  "historySubtitle": "Rivedi i prompt usati di recente",
+  "navHome": "Home",
+  "navCreate": "Crea",
+  "navHistory": "Cronologia"
 }

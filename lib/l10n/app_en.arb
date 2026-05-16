@@ -11,5 +11,45 @@
   "createNewPromptTitle": "Create new prompt",
   "@createNewPromptTitle": {
     "description": "Title of the create new prompt card"
+  },
+  "createNewPromptSubtitle": "Build a prompt from scratch with AI guidance",
+  "@createNewPromptSubtitle": {
+    "description": "Subtitle of the create new prompt card"
+  },
+  "libraryTitle": "Library",
+  "@libraryTitle": {
+    "description": "Title of the library card"
+  },
+  "librarySubtitle": "Ready-to-use templates for every need",
+  "@librarySubtitle": {
+    "description": "Subtitle of the library card"
+  },
+  "communityTitle": "Community",
+  "@communityTitle": {
+    "description": "Title of the community card"
+  },
+  "communitySubtitle": "Discover and share prompts with other makers",
+  "@communitySubtitle": {
+    "description": "Subtitle of the community card"
+  },
+  "historyTitle": "History",
+  "@historyTitle": {
+    "description": "Title of the history card"
+  },
+  "historySubtitle": "Browse your recent prompts",
+  "@historySubtitle": {
+    "description": "Subtitle of the history card"
+  },
+  "navHome": "Home",
+  "@navHome": {
+    "description": "Bottom navigation label for Home"
+  },
+  "navCreate": "Create",
+  "@navCreate": {
+    "description": "Bottom navigation label for Create"
+  },
+  "navHistory": "History",
+  "@navHistory": {
+    "description": "Bottom navigation label for History"
   }
 }

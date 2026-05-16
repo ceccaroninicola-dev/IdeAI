@@ -108,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                   context: context,
                   icona: Icons.add_circle_outline,
                   etichetta: AppLocalizations.of(context)!.createNewPromptTitle,
-                  descrizione: 'Crea un prompt da zero con l\'aiuto dell\'AI',
+                  descrizione: AppLocalizations.of(context)!.createNewPromptSubtitle,
                   isDark: isDark,
                   colorScheme: colorScheme,
                   onPressed: () {
@@ -121,8 +121,8 @@ class HomeScreen extends StatelessWidget {
                 _buildCardAzione(
                   context: context,
                   icona: Icons.library_books_outlined,
-                  etichetta: 'Libreria',
-                  descrizione: 'Template pronti all\'uso per ogni esigenza',
+                  etichetta: AppLocalizations.of(context)!.libraryTitle,
+                  descrizione: AppLocalizations.of(context)!.librarySubtitle,
                   isDark: isDark,
                   colorScheme: colorScheme,
                   onPressed: () {
@@ -135,8 +135,8 @@ class HomeScreen extends StatelessWidget {
                 _buildCardAzione(
                   context: context,
                   icona: Icons.people_outline,
-                  etichetta: 'Community',
-                  descrizione: 'Scopri e condividi prompt con altri utenti',
+                  etichetta: AppLocalizations.of(context)!.communityTitle,
+                  descrizione: AppLocalizations.of(context)!.communitySubtitle,
                   isDark: isDark,
                   colorScheme: colorScheme,
                   onPressed: () {
@@ -149,8 +149,8 @@ class HomeScreen extends StatelessWidget {
                 _buildCardAzione(
                   context: context,
                   icona: Icons.history,
-                  etichetta: 'Cronologia',
-                  descrizione: 'Rivedi i prompt usati di recente',
+                  etichetta: AppLocalizations.of(context)!.historyTitle,
+                  descrizione: AppLocalizations.of(context)!.historySubtitle,
                   isDark: isDark,
                   colorScheme: colorScheme,
                   onPressed: () {

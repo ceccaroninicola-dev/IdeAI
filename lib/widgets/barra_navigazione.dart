@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ideai/config/app_routes.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 
 /// Barra di navigazione inferiore condivisa tra Home e Cronologia.
 /// Tre tab: Home, Crea (apre il flusso creazione), Cronologia.
@@ -27,21 +28,21 @@ class BarraNavigazione extends StatelessWidget {
           Navigator.of(context).pushReplacementNamed(AppRoutes.cronologia);
         }
       },
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: 'Home',
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: AppLocalizations.of(context)!.navHome,
         ),
         NavigationDestination(
-          icon: Icon(Icons.add_circle_outline),
-          selectedIcon: Icon(Icons.add_circle),
-          label: 'Crea',
+          icon: const Icon(Icons.add_circle_outline),
+          selectedIcon: const Icon(Icons.add_circle),
+          label: AppLocalizations.of(context)!.navCreate,
         ),
         NavigationDestination(
-          icon: Icon(Icons.history_outlined),
-          selectedIcon: Icon(Icons.history),
-          label: 'Cronologia',
+          icon: const Icon(Icons.history_outlined),
+          selectedIcon: const Icon(Icons.history),
+          label: AppLocalizations.of(context)!.navHistory,
         ),
       ],
     );
