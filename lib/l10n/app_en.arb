@@ -150,6 +150,46 @@
   "@libreriaNoResultsHint": {
     "description": "Hint shown below the no-results title"
   },
+  "categoryAll": "All",
+  "@categoryAll": {
+    "description": "Filter chip label for all categories"
+  },
+  "categoryMarketing": "Marketing",
+  "@categoryMarketing": {
+    "description": "Filter chip label for Marketing category"
+  },
+  "categoryCoding": "Coding",
+  "@categoryCoding": {
+    "description": "Filter chip label for Coding category"
+  },
+  "categoryImages": "Images",
+  "@categoryImages": {
+    "description": "Filter chip label for Images category"
+  },
+  "categoryEmail": "Email",
+  "@categoryEmail": {
+    "description": "Filter chip label for Email category"
+  },
+  "categorySocial": "Social Media",
+  "@categorySocial": {
+    "description": "Filter chip label for Social Media category"
+  },
+  "categoryAnalytics": "Analytics",
+  "@categoryAnalytics": {
+    "description": "Filter chip label for Analytics category"
+  },
+  "categoryStudy": "Study",
+  "@categoryStudy": {
+    "description": "Filter chip label for Study category"
+  },
+  "categoryWriting": "Writing",
+  "@categoryWriting": {
+    "description": "Filter chip label for Writing category"
+  },
+  "copiedToClipboard": "Copied to clipboard!",
+  "@copiedToClipboard": {
+    "description": "Snackbar message after copying prompt to clipboard"
+  },
   "communityAppBarTitle": "Community",
   "@communityAppBarTitle": {
     "description": "AppBar title of the community screen"

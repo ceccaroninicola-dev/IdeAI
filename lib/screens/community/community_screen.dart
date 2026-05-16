@@ -4,6 +4,7 @@ import 'package:ideai/config/app_routes.dart';
 import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/providers/community_provider.dart';
 import 'package:ideai/models/prompt_pubblico.dart';
+import 'package:ideai/utils/category_localizer.dart';
 
 /// Schermata Community / Esplora — mostra prompt trending, recenti, con ricerca e filtri.
 /// Design Apple-minimal con teal come accento.
@@ -82,7 +83,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: FilterChip(
-                      label: Text(cat),
+                      label: Text(localizeCategory(cat, context)),
                       selected: selezionata,
                       onSelected: (_) => community.filtraPerCategoria(cat),
                       selectedColor:

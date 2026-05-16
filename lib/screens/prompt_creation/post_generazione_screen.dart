@@ -11,6 +11,7 @@ import 'package:ideai/providers/confronto_ai_provider.dart';
 import 'package:ideai/providers/community_provider.dart';
 import 'package:ideai/models/prompt_pubblico.dart';
 import 'package:ideai/services/export_service.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 
 /// Schermata post-generazione — mostra il prompt generato con:
 /// - Anteprima in due viste (semplice/strutturata)
@@ -713,7 +714,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                       );
                       if (ctx.mounted) Navigator.of(ctx).pop();
                       if (mounted) {
-                        _mostraConferma(Icons.check_circle, 'Prompt copiato negli appunti!');
+                        _mostraConferma(Icons.check_circle, AppLocalizations.of(context)!.copiedToClipboard);
                       }
                     },
                     icon: const Icon(Icons.copy_rounded, size: 20),
@@ -817,7 +818,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
               if (mounted) {
                 _mostraConferma(
                   Icons.check_circle,
-                  'Prompt copiato negli appunti!',
+                  AppLocalizations.of(context)!.copiedToClipboard,
                 );
               }
             },
@@ -1161,7 +1162,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                   if (mounted) {
                     _mostraConferma(
                       Icons.check_circle,
-                      'Prompt copiato negli appunti!',
+                      AppLocalizations.of(context)!.copiedToClipboard,
                     );
                   }
                 } catch (e) {
@@ -1665,7 +1666,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                               if (mounted) {
                                 _mostraConferma(
                                   Icons.check_circle,
-                                  'Prompt copiato negli appunti!',
+                                  AppLocalizations.of(context)!.copiedToClipboard,
                                 );
                               }
                             } catch (e) {
@@ -1698,7 +1699,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                               if (mounted) {
                                 _mostraConferma(
                                   Icons.check_circle,
-                                  'Prompt copiato negli appunti!',
+                                  AppLocalizations.of(context)!.copiedToClipboard,
                                 );
                               }
                             } catch (e) {
