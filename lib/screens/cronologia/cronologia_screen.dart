@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
 import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/providers/cronologia_provider.dart';
+import 'package:ideai/utils/category_localizer.dart';
 import 'package:ideai/providers/prompt_generato_provider.dart';
 import 'package:ideai/services/export_service.dart';
 import 'package:ideai/widgets/barra_navigazione.dart';
@@ -131,7 +132,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
             final selezionato = _categoriaFiltro == categoria;
             return FilterChip(
               label: Text(
-                categoria,
+                localizeCategory(categoria, context),
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight:

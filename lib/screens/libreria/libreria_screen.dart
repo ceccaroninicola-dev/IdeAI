@@ -4,6 +4,7 @@ import 'package:ideai/config/app_routes.dart';
 import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/models/prompt_template.dart';
 import 'package:ideai/providers/libreria_provider.dart';
+import 'package:ideai/utils/category_localizer.dart';
 
 /// Schermata Libreria — raccolta di template pronti all'uso.
 /// Griglia di card con ricerca, filtri per categoria e sezione "Più popolari".
@@ -145,7 +146,7 @@ class _LibreriaScreenState extends State<LibreriaScreen> {
             avatar: selezionata
                 ? null
                 : Icon(icona, size: 16, color: colorScheme.onSurfaceVariant),
-            label: Text(categoria),
+            label: Text(localizeCategory(categoria, context)),
             selected: selezionata,
             showCheckmark: false,
             onSelected: (_) => provider.selezionaCategoria(categoria),
