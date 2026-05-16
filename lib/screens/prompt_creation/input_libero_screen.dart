@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/providers/sessione_provider.dart';
 
 /// Schermata di input libero — prima fase del flusso di creazione prompt.
@@ -88,7 +89,7 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
             children: [
               const Icon(Icons.info_outline, color: Colors.white, size: 18),
               const SizedBox(width: 8),
-              Expanded(child: Text('Modalità offline: ${provider.errore}')),
+              Expanded(child: Text(AppLocalizations.of(context)!.inputLiberoOfflineMode(provider.errore!))),
             ],
           ),
           duration: const Duration(seconds: 3),
@@ -118,12 +119,12 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
       // permettendo al campo di testo di rimanere visibile
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text('Nuovo Prompt'),
+        title: Text(AppLocalizations.of(context)!.inputLiberoTitle),
         actions: [
           // Bottone Home — torna alla Home cancellando lo stack
           IconButton(
             icon: const Icon(Icons.home_outlined),
-            tooltip: 'Torna alla Home',
+            tooltip: AppLocalizations.of(context)!.tooltipBackToHome,
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
               AppRoutes.home,
               (route) => false,
@@ -142,14 +143,13 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
             children: [
               // Titolo
               Text(
-                'Cosa vuoi ottenere?',
+                AppLocalizations.of(context)!.inputLiberoHeading,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 8),
               // Istruzioni
               Text(
-                'Descrivi con parole tue cosa vorresti che l\'AI facesse per te. '
-                'Più dettagli dai, migliore sarà il prompt generato.',
+                AppLocalizations.of(context)!.inputLiberoDescription,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -167,9 +167,7 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
                 textAlignVertical: TextAlignVertical.top,
                 enabled: !staAnalizzando,
                 decoration: InputDecoration(
-                  hintText:
-                      'Es. "Voglio scrivere un post LinkedIn per lanciare '
-                      'il mio nuovo prodotto SaaS per piccole imprese"',
+                  hintText: AppLocalizations.of(context)!.inputLiberoHint,
                   hintMaxLines: 3,
                   hintStyle: TextStyle(
                     color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
@@ -197,7 +195,7 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
               // Suggerimenti rapidi
               if (!staAnalizzando) ...[
                 Text(
-                  'Esempi rapidi:',
+                  AppLocalizations.of(context)!.inputLiberoQuickExamples,
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
                 const SizedBox(height: 8),
@@ -206,15 +204,15 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
                   runSpacing: 8,
                   children: [
                     _chipEsempio(
-                      'Scrivi un\'email professionale',
+                      AppLocalizations.of(context)!.inputLiberoExampleEmail,
                       Icons.email_outlined,
                     ),
                     _chipEsempio(
-                      'Aiutami con codice Python',
+                      AppLocalizations.of(context)!.inputLiberoExampleCode,
                       Icons.code,
                     ),
                     _chipEsempio(
-                      'Crea un\'immagine per il mio brand',
+                      AppLocalizations.of(context)!.inputLiberoExampleImage,
                       Icons.image_outlined,
                     ),
                   ],
@@ -231,7 +229,7 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
                     : ElevatedButton.icon(
                         onPressed: _testoValido ? _inviaFrase : null,
                         icon: const Icon(Icons.arrow_forward_rounded, size: 20),
-                        label: const Text('Analizza e prosegui'),
+                        label: Text(AppLocalizations.of(context)!.inputLiberoAnalyzeButton),
                       ),
               ),
             ],
@@ -284,7 +282,7 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
           ),
           const SizedBox(width: 12),
           Text(
-            'Analizzo la tua richiesta...',
+            AppLocalizations.of(context)!.inputLiberoAnalyzing,
             style: TextStyle(
               color: colorScheme.primary,
               fontWeight: FontWeight.w600,
