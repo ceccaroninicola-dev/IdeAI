@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/models/confronto_ai.dart';
 import 'package:ideai/providers/confronto_ai_provider.dart';
 import 'package:ideai/providers/cronologia_provider.dart';
@@ -42,13 +43,15 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final provider = context.watch<ConfrontoAIProvider>();
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Confronto AI'),
+        title: Text(l10n.aiComparisonAppBar),
         actions: [
           IconButton(
             icon: const Icon(Icons.home_outlined),
-            tooltip: 'Torna alla Home',
+            tooltip: l10n.tooltipBackToHome,
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
               AppRoutes.home,
               (route) => false,
@@ -101,7 +104,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
           const SizedBox(height: 20),
 
           Text(
-            'Invio del prompt a ${aiSelezionate.length} AI...',
+            AppLocalizations.of(context)!.aiComparisonSendingPrompt(aiSelezionate.length.toString()),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -110,7 +113,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Confronto delle risposte in corso',
+            AppLocalizations.of(context)!.aiComparisonComparing,
             style: TextStyle(
               fontSize: 14,
               color: colorScheme.onSurfaceVariant,
@@ -175,7 +178,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
               Icon(Icons.compare_arrows, color: colorScheme.primary, size: 22),
               const SizedBox(width: 8),
               Text(
-                '$totaleCard risposte confrontate',
+                AppLocalizations.of(context)!.aiComparisonResponsesCompared(totaleCard.toString()),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -401,14 +404,14 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
                   ),
                 ],
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.emoji_events, size: 16, color: Colors.white),
-                  SizedBox(width: 4),
+                  const Icon(Icons.emoji_events, size: 16, color: Colors.white),
+                  const SizedBox(width: 4),
                   Text(
-                    'Migliore',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.aiComparisonBest,
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -584,7 +587,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
             child: ElevatedButton.icon(
               onPressed: () => _copiaRisposta(rispostaCorrente),
               icon: const Icon(Icons.copy_rounded, size: 18),
-              label: const Text('Copia'),
+              label: Text(AppLocalizations.of(context)!.aiComparisonCopy),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
@@ -597,7 +600,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
             child: OutlinedButton.icon(
               onPressed: () => _apriNellApp(rispostaCorrente),
               icon: const Icon(Icons.open_in_new, size: 18),
-              label: const Text('Apri app'),
+              label: Text(AppLocalizations.of(context)!.aiComparisonOpenInApp),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
@@ -613,7 +616,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
             child: OutlinedButton.icon(
               onPressed: () => _salvaConfronto(confronto),
               icon: const Icon(Icons.bookmark_outline, size: 18),
-              label: const Text('Salva'),
+              label: Text(AppLocalizations.of(context)!.aiComparisonSave),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
@@ -631,7 +634,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
   Widget _buildStatoVuoto(ColorScheme colorScheme) {
     return Center(
       child: Text(
-        'Nessun confronto in corso',
+        AppLocalizations.of(context)!.aiComparisonNoActive,
         style: TextStyle(color: colorScheme.onSurfaceVariant),
       ),
     );
@@ -648,7 +651,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
           children: [
             const Icon(Icons.check_circle, color: Colors.white, size: 18),
             const SizedBox(width: 8),
-            Text('Risposta di ${risposta.ai.nome} copiata!'),
+            Text(AppLocalizations.of(context)!.aiComparisonResponseCopied),
           ],
         ),
         duration: const Duration(seconds: 2),
@@ -668,7 +671,7 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
           children: [
             Icon(risposta.ai.icona, color: Colors.white, size: 18),
             const SizedBox(width: 8),
-            Text('Apertura di ${risposta.ai.nome}...'),
+            Text(AppLocalizations.of(context)!.aiComparisonOpeningApp),
           ],
         ),
         duration: const Duration(seconds: 2),
@@ -696,11 +699,11 @@ class _ConfrontoAIScreenState extends State<ConfrontoAIScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
+        content: Row(
           children: [
-            Icon(Icons.bookmark_added, color: Colors.white, size: 18),
-            SizedBox(width: 8),
-            Text('Confronto salvato nella cronologia!'),
+            const Icon(Icons.bookmark_added, color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.aiComparisonSaved),
           ],
         ),
         duration: const Duration(seconds: 2),

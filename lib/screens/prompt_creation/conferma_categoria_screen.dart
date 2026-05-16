@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/providers/sessione_provider.dart';
 
 /// Schermata di conferma categoria — seconda fase del flusso.
@@ -47,12 +48,12 @@ class _ConfermaCategoriaScreenState extends State<ConfermaCategoriaScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Conferma categoria'),
+        title: Text(AppLocalizations.of(context)!.confirmCategoryAppBar),
         actions: [
           // Bottone Home — torna alla Home cancellando lo stack
           IconButton(
             icon: const Icon(Icons.home_outlined),
-            tooltip: 'Torna alla Home',
+            tooltip: AppLocalizations.of(context)!.tooltipBackToHome,
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
               AppRoutes.home,
               (route) => false,
@@ -144,7 +145,7 @@ class _ConfermaCategoriaScreenState extends State<ConfermaCategoriaScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Ecco cosa ho capito',
+                                  AppLocalizations.of(context)!.confirmCategoryUnderstoodTitle,
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -178,7 +179,7 @@ class _ConfermaCategoriaScreenState extends State<ConfermaCategoriaScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'La tua richiesta:',
+                                    AppLocalizations.of(context)!.confirmCategoryYourRequest,
                                     style: Theme.of(context).textTheme.labelSmall,
                                   ),
                                   const SizedBox(height: 4),
@@ -202,7 +203,7 @@ class _ConfermaCategoriaScreenState extends State<ConfermaCategoriaScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'Parole chiave rilevate:',
+                            AppLocalizations.of(context)!.confirmCategoryDetectedKeywords,
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ),
@@ -256,7 +257,7 @@ class _ConfermaCategoriaScreenState extends State<ConfermaCategoriaScreen> {
                         }
                       },
                       icon: const Icon(Icons.edit_outlined, size: 18),
-                      label: const Text('Riformula'),
+                      label: Text(AppLocalizations.of(context)!.confirmCategoryRephrase),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
@@ -273,7 +274,7 @@ class _ConfermaCategoriaScreenState extends State<ConfermaCategoriaScreen> {
                         Navigator.of(context).pushNamed(AppRoutes.domande);
                       },
                       icon: const Icon(Icons.arrow_forward_rounded, size: 20),
-                      label: const Text('Prosegui'),
+                      label: Text(AppLocalizations.of(context)!.confirmCategoryContinue),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),

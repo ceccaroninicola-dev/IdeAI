@@ -293,5 +293,221 @@
   "historyDatePrefixYesterday": "Yesterday",
   "@historyDatePrefixYesterday": {
     "description": "Date prefix for prompts saved yesterday"
+  },
+
+  "confirmCategoryAppBar": "Confirm category",
+  "@confirmCategoryAppBar": {
+    "description": "AppBar title of the confirm category screen"
+  },
+  "confirmCategoryUnderstoodTitle": "Here's what I understood",
+  "@confirmCategoryUnderstoodTitle": {
+    "description": "Header of the summary card in confirm category screen"
+  },
+  "confirmCategoryYourRequest": "Your request:",
+  "@confirmCategoryYourRequest": {
+    "description": "Label above the user's original phrase"
+  },
+  "confirmCategoryDetectedKeywords": "Detected keywords:",
+  "@confirmCategoryDetectedKeywords": {
+    "description": "Label above the keyword chips"
+  },
+  "confirmCategoryRephrase": "Rephrase",
+  "@confirmCategoryRephrase": {
+    "description": "Button label to go back and rephrase the request"
+  },
+  "confirmCategoryContinue": "Continue",
+  "@confirmCategoryContinue": {
+    "description": "Button label to confirm and proceed"
+  },
+
+  "questioningLevelProgress": "Level {level}/3",
+  "@questioningLevelProgress": {
+    "description": "Badge showing the current questioning level",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "questioningAnswersCollected": "{count} answers collected at this level",
+  "@questioningAnswersCollected": {
+    "description": "Counter showing how many answers were collected",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "questioningLevelOverviewTitle": "Overview completed",
+  "@questioningLevelOverviewTitle": {
+    "description": "Title when level 1 is completed"
+  },
+  "questioningLevelOverviewDesc": "I've collected general information about your request. You can generate the prompt now or go deeper for a more detailed result.",
+  "@questioningLevelOverviewDesc": {
+    "description": "Description when level 1 is completed"
+  },
+  "questioningLevelDeepDiveTitle": "Deep dive completed",
+  "@questioningLevelDeepDiveTitle": {
+    "description": "Title when level 2 is completed"
+  },
+  "questioningLevelDeepDiveDesc": "I've explored the details of your request. You can generate the prompt or add the last specific details.",
+  "@questioningLevelDeepDiveDesc": {
+    "description": "Description when level 2 is completed"
+  },
+  "questioningLevelDetailsTitle": "Details completed",
+  "@questioningLevelDetailsTitle": {
+    "description": "Title when level 3 is completed"
+  },
+  "questioningLevelDetailsDesc": "I've collected all possible details. The prompt will be as complete as possible.",
+  "@questioningLevelDetailsDesc": {
+    "description": "Description when level 3 is completed"
+  },
+  "questioningCancelTitle": "Cancel the session?",
+  "@questioningCancelTitle": {
+    "description": "Title of the cancel session dialog"
+  },
+  "questioningCancelContent": "The answers provided so far will be lost.",
+  "@questioningCancelContent": {
+    "description": "Content of the cancel session dialog"
+  },
+  "questioningCancelContinue": "Keep going",
+  "@questioningCancelContinue": {
+    "description": "Button to dismiss the cancel dialog and continue"
+  },
+  "questioningCancelConfirm": "Cancel session",
+  "@questioningCancelConfirm": {
+    "description": "Button to confirm cancellation"
+  },
+  "questioningLabelGeneral": "General questions",
+  "@questioningLabelGeneral": {
+    "description": "Level 1 label in the level indicator"
+  },
+  "questioningLabelDeepDive": "Deep dive",
+  "@questioningLabelDeepDive": {
+    "description": "Level 2 label in the level indicator"
+  },
+  "questioningLabelFinalDetails": "Final details",
+  "@questioningLabelFinalDetails": {
+    "description": "Level 3 label in the level indicator"
+  },
+  "questioningInputPlaceholder": "Write your answer...",
+  "@questioningInputPlaceholder": {
+    "description": "Fallback placeholder for the free text input field"
+  },
+  "questioningSuggested": "Suggested",
+  "@questioningSuggested": {
+    "description": "Badge label for the default/suggested option"
+  },
+  "questioningChipInstruction": "Select one or more items:",
+  "@questioningChipInstruction": {
+    "description": "Instruction text above the chip multi-select"
+  },
+  "questioningSelectedItems": "Selected: {items}",
+  "@questioningSelectedItems": {
+    "description": "Summary of selected chip items",
+    "placeholders": {
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "questioningPreviousTooltip": "Previous question",
+  "@questioningPreviousTooltip": {
+    "description": "Tooltip for the go-back button"
+  },
+  "questioningComplete": "Complete",
+  "@questioningComplete": {
+    "description": "Button label for the last question"
+  },
+  "questioningNext": "Next",
+  "@questioningNext": {
+    "description": "Button label for intermediate questions"
+  },
+  "questioningGenerateNow": "Generate now with collected info",
+  "@questioningGenerateNow": {
+    "description": "Text button to generate the prompt immediately"
+  },
+  "questioningPreparingQuestions": "Preparing follow-up questions...",
+  "@questioningPreparingQuestions": {
+    "description": "Loading text while generating deeper questions"
+  },
+  "questioningDeepen": "Deepen the answers",
+  "@questioningDeepen": {
+    "description": "Button label to go to level 2 (deeper questions)"
+  },
+  "questioningLastDetails": "Last details",
+  "@questioningLastDetails": {
+    "description": "Button label to go to level 3 (final details)"
+  },
+  "questioningGenerateNowButton": "Generate now",
+  "@questioningGenerateNowButton": {
+    "description": "Primary button to generate the prompt from level completion screen"
+  },
+  "questioningFallbackTitle": "Questions",
+  "@questioningFallbackTitle": {
+    "description": "Fallback AppBar title when category name is not available"
+  },
+  "questioningCancelTooltip": "Cancel session",
+  "@questioningCancelTooltip": {
+    "description": "Tooltip for the cancel session icon button"
+  },
+
+  "aiComparisonAppBar": "AI Comparison",
+  "@aiComparisonAppBar": {
+    "description": "AppBar title of the AI comparison screen"
+  },
+  "aiComparisonSendingPrompt": "Sending prompt to {count} AIs...",
+  "@aiComparisonSendingPrompt": {
+    "description": "Loading text while sending the prompt to multiple AIs",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aiComparisonComparing": "Comparing responses",
+  "@aiComparisonComparing": {
+    "description": "Subtitle during loading"
+  },
+  "aiComparisonResponsesCompared": "{count} responses compared",
+  "@aiComparisonResponsesCompared": {
+    "description": "Header showing total responses compared",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aiComparisonBest": "Best",
+  "@aiComparisonBest": {
+    "description": "Badge label for the best AI response"
+  },
+  "aiComparisonCopy": "Copy",
+  "@aiComparisonCopy": {
+    "description": "Button label to copy the AI response"
+  },
+  "aiComparisonOpenInApp": "Open app",
+  "@aiComparisonOpenInApp": {
+    "description": "Button label to open the corresponding AI app"
+  },
+  "aiComparisonSave": "Save",
+  "@aiComparisonSave": {
+    "description": "Button label to save the comparison"
+  },
+  "aiComparisonNoActive": "No comparison in progress",
+  "@aiComparisonNoActive": {
+    "description": "Empty state text when no comparison is active"
+  },
+  "aiComparisonResponseCopied": "Response copied!",
+  "@aiComparisonResponseCopied": {
+    "description": "Snackbar after copying an AI response"
+  },
+  "aiComparisonOpeningApp": "Opening app...",
+  "@aiComparisonOpeningApp": {
+    "description": "Snackbar while opening the external AI app"
+  },
+  "aiComparisonSaved": "Comparison saved to history!",
+  "@aiComparisonSaved": {
+    "description": "Snackbar after saving the comparison"
   }
 }
