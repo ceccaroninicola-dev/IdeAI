@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/providers/cronologia_provider.dart';
 import 'package:ideai/providers/prompt_generato_provider.dart';
 import 'package:ideai/services/export_service.dart';
@@ -45,7 +46,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cronologia'),
+        title: Text(AppLocalizations.of(context)!.historyAppBarTitle),
         automaticallyImplyLeading: false,
       ),
       // Barra di navigazione inferiore
@@ -80,7 +81,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
         controller: _cercaController,
         onChanged: (_) => setState(() {}),
         decoration: InputDecoration(
-          hintText: 'Cerca nei prompt salvati...',
+          hintText: AppLocalizations.of(context)!.historySearchHint,
           prefixIcon: Icon(
             Icons.search,
             color: colorScheme.onSurfaceVariant,
@@ -191,8 +192,8 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
             const SizedBox(height: 20),
             Text(
               messaggioVuoto
-                  ? 'Nessun prompt salvato ancora'
-                  : 'Nessun risultato trovato',
+                  ? AppLocalizations.of(context)!.historyEmptyTitle
+                  : AppLocalizations.of(context)!.historyNoResultsTitle,
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
@@ -202,8 +203,8 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
             const SizedBox(height: 8),
             Text(
               messaggioVuoto
-                  ? 'I prompt che salvi appariranno qui'
-                  : 'Prova a cambiare i termini di ricerca o il filtro',
+                  ? AppLocalizations.of(context)!.historyEmptyDescription
+                  : AppLocalizations.of(context)!.historyNoResultsDescription,
               style: TextStyle(
                 fontSize: 14,
                 color: colorScheme.onSurfaceVariant,
@@ -263,7 +264,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
       confirmDismiss: (_) => _confermaEliminazione(elemento, colorScheme),
       onDismissed: (_) {
         context.read<CronologiaProvider>().rimuoviPrompt(elemento.id);
-        _mostraSnackbar(Icons.delete_outline, 'Prompt eliminato');
+        _mostraSnackbar(Icons.delete_outline, AppLocalizations.of(context)!.historyPromptDeleted);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -443,23 +444,23 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
         ),
         onSelected: (azione) => _eseguiAzione(azione, elemento),
         itemBuilder: (context) => [
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'duplica',
             child: Row(
               children: [
-                Icon(Icons.copy_rounded, size: 18),
-                SizedBox(width: 10),
-                Text('Duplica'),
+                const Icon(Icons.copy_rounded, size: 18),
+                const SizedBox(width: 10),
+                Text(AppLocalizations.of(context)!.historyMenuDuplicate),
               ],
             ),
           ),
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'esporta',
             child: Row(
               children: [
-                Icon(Icons.ios_share_rounded, size: 18),
-                SizedBox(width: 10),
-                Text('Esporta'),
+                const Icon(Icons.ios_share_rounded, size: 18),
+                const SizedBox(width: 10),
+                Text(AppLocalizations.of(context)!.historyMenuExport),
               ],
             ),
           ),
@@ -469,7 +470,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
               children: [
                 Icon(Icons.delete_outline, size: 18, color: Colors.red.shade400),
                 const SizedBox(width: 10),
-                Text('Elimina', style: TextStyle(color: Colors.red.shade400)),
+                Text(AppLocalizations.of(context)!.historyMenuDelete, style: TextStyle(color: Colors.red.shade400)),
               ],
             ),
           ),
@@ -485,7 +486,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
     switch (azione) {
       case 'duplica':
         context.read<CronologiaProvider>().duplicaPrompt(elemento.id);
-        _mostraSnackbar(Icons.copy_rounded, 'Prompt duplicato');
+        _mostraSnackbar(Icons.copy_rounded, AppLocalizations.of(context)!.historyPromptDuplicated);
         break;
       case 'esporta':
         _esportaPrompt(elemento);
@@ -496,7 +497,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
             .then((confermato) {
           if (confermato == true && mounted) {
             context.read<CronologiaProvider>().rimuoviPrompt(elemento.id);
-            _mostraSnackbar(Icons.delete_outline, 'Prompt eliminato');
+            _mostraSnackbar(Icons.delete_outline, AppLocalizations.of(context)!.historyPromptDeleted);
           }
         });
         break;
@@ -515,11 +516,11 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
     try {
       await ExportService.copiaTestoNegliAppunti(elemento.prompt);
       if (mounted) {
-        _mostraSnackbar(Icons.check_circle, 'Prompt copiato negli appunti!');
+        _mostraSnackbar(Icons.check_circle, AppLocalizations.of(context)!.historyCopiedToClipboard);
       }
     } catch (e) {
       if (mounted) {
-        _mostraSnackbar(Icons.error_outline, 'Errore durante l\'esportazione');
+        _mostraSnackbar(Icons.error_outline, AppLocalizations.of(context)!.historyExportError);
       }
     }
   }
@@ -535,20 +536,19 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        title: const Text('Elimina prompt'),
-        content: const Text(
-          'Sei sicuro di voler eliminare questo prompt? '
-          'L\'azione non può essere annullata.',
+        title: Text(AppLocalizations.of(context)!.historyDeleteDialogTitle),
+        content: Text(
+          AppLocalizations.of(context)!.historyDeleteDialogMessage,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Annulla'),
+            child: Text(AppLocalizations.of(context)!.historyDialogCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Elimina'),
+            child: Text(AppLocalizations.of(context)!.historyDialogConfirmDelete),
           ),
         ],
       ),
@@ -579,9 +579,9 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
 
   /// Genera l'anteprima dalle prime 2 righe del prompt
   String _generaAnteprima(String testo) {
-    if (testo.isEmpty) return 'Prompt vuoto';
+    if (testo.isEmpty) return AppLocalizations.of(context)!.historyEmptyPrompt;
     final righe = testo.split('\n').where((r) => r.trim().isNotEmpty).toList();
-    if (righe.isEmpty) return 'Prompt vuoto';
+    if (righe.isEmpty) return AppLocalizations.of(context)!.historyEmptyPrompt;
     if (righe.length == 1) return righe[0];
     return '${righe[0]}\n${righe[1]}';
   }
@@ -596,7 +596,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
     if (data.year == oggi.year &&
         data.month == oggi.month &&
         data.day == oggi.day) {
-      return 'Oggi $ora:$minuti';
+      return '${AppLocalizations.of(context)!.historyDatePrefixToday} $ora:$minuti';
     }
 
     // Se è ieri
@@ -604,7 +604,7 @@ class _CronologiaScreenState extends State<CronologiaScreen> {
     if (data.year == ieri.year &&
         data.month == ieri.month &&
         data.day == ieri.day) {
-      return 'Ieri $ora:$minuti';
+      return '${AppLocalizations.of(context)!.historyDatePrefixYesterday} $ora:$minuti';
     }
 
     // Altrimenti data completa

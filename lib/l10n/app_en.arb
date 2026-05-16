@@ -149,5 +149,109 @@
   "libreriaNoResultsHint": "Try changing the filters or search",
   "@libreriaNoResultsHint": {
     "description": "Hint shown below the no-results title"
+  },
+  "communityAppBarTitle": "Community",
+  "@communityAppBarTitle": {
+    "description": "AppBar title of the community screen"
+  },
+  "communitySearchHint": "Search prompts, authors, tags...",
+  "@communitySearchHint": {
+    "description": "Placeholder text in the community search field"
+  },
+  "communityResultsTitle": "Results",
+  "@communityResultsTitle": {
+    "description": "Section title for filtered search results"
+  },
+  "communityTrending": "Trending",
+  "@communityTrending": {
+    "description": "Section title for trending prompts"
+  },
+  "communityLatest": "Latest",
+  "@communityLatest": {
+    "description": "Section title for latest prompts"
+  },
+  "communityNoResults": "No results found",
+  "@communityNoResults": {
+    "description": "Message shown when no community results match"
+  },
+  "historyAppBarTitle": "History",
+  "@historyAppBarTitle": {
+    "description": "AppBar title of the history screen"
+  },
+  "historySearchHint": "Search saved prompts...",
+  "@historySearchHint": {
+    "description": "Placeholder text in the history search field"
+  },
+  "historyEmptyTitle": "No saved prompts yet",
+  "@historyEmptyTitle": {
+    "description": "Title shown when history is empty"
+  },
+  "historyNoResultsTitle": "No results found",
+  "@historyNoResultsTitle": {
+    "description": "Title shown when history search has no results"
+  },
+  "historyEmptyDescription": "Your saved prompts will appear here",
+  "@historyEmptyDescription": {
+    "description": "Description shown when history is empty"
+  },
+  "historyNoResultsDescription": "Try different search terms or filters",
+  "@historyNoResultsDescription": {
+    "description": "Description shown when history search has no results"
+  },
+  "historyMenuDuplicate": "Duplicate",
+  "@historyMenuDuplicate": {
+    "description": "Popup menu item to duplicate a prompt"
+  },
+  "historyMenuExport": "Export",
+  "@historyMenuExport": {
+    "description": "Popup menu item to export a prompt"
+  },
+  "historyMenuDelete": "Delete",
+  "@historyMenuDelete": {
+    "description": "Popup menu item to delete a prompt"
+  },
+  "historyPromptDuplicated": "Prompt duplicated",
+  "@historyPromptDuplicated": {
+    "description": "Snackbar message after duplicating a prompt"
+  },
+  "historyPromptDeleted": "Prompt deleted",
+  "@historyPromptDeleted": {
+    "description": "Snackbar message after deleting a prompt"
+  },
+  "historyCopiedToClipboard": "Copied to clipboard!",
+  "@historyCopiedToClipboard": {
+    "description": "Snackbar message after copying prompt to clipboard"
+  },
+  "historyExportError": "Export failed",
+  "@historyExportError": {
+    "description": "Snackbar message when export fails"
+  },
+  "historyDeleteDialogTitle": "Delete prompt?",
+  "@historyDeleteDialogTitle": {
+    "description": "Title of the delete confirmation dialog"
+  },
+  "historyDeleteDialogMessage": "This will permanently delete this prompt. This action cannot be undone.",
+  "@historyDeleteDialogMessage": {
+    "description": "Message in the delete confirmation dialog"
+  },
+  "historyDialogCancel": "Cancel",
+  "@historyDialogCancel": {
+    "description": "Cancel button in confirmation dialogs"
+  },
+  "historyDialogConfirmDelete": "Delete",
+  "@historyDialogConfirmDelete": {
+    "description": "Confirm delete button in the delete dialog"
+  },
+  "historyEmptyPrompt": "Empty prompt",
+  "@historyEmptyPrompt": {
+    "description": "Placeholder text for empty prompt preview"
+  },
+  "historyDatePrefixToday": "Today",
+  "@historyDatePrefixToday": {
+    "description": "Date prefix for prompts saved today"
+  },
+  "historyDatePrefixYesterday": "Yesterday",
+  "@historyDatePrefixYesterday": {
+    "description": "Date prefix for prompts saved yesterday"
   }
 }
