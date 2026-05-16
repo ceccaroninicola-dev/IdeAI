@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/models/domanda.dart';
 import 'package:ideai/providers/sessione_provider.dart';
 import 'package:ideai/providers/prompt_generato_provider.dart';
@@ -175,39 +176,35 @@ class _DomandeScreenState extends State<DomandeScreen> {
     final livello = sessione.livello as int;
     final puoApprofondire = provider.puoApprofondire;
 
+    final l10n = AppLocalizations.of(context)!;
+
     // Titoli e descrizioni per ogni livello
     String titoloLivello;
     String descrizione;
     IconData icona;
     switch (livello) {
       case 1:
-        titoloLivello = 'Panoramica completata';
-        descrizione =
-            'Ho raccolto le informazioni generali sulla tua richiesta. '
-            'Puoi generare il prompt ora o approfondire per un risultato più dettagliato.';
+        titoloLivello = l10n.questioningLevelOverviewTitle;
+        descrizione = l10n.questioningLevelOverviewDesc;
         icona = Icons.check_circle_outline;
         break;
       case 2:
-        titoloLivello = 'Approfondimento completato';
-        descrizione =
-            'Ho approfondito i dettagli della tua richiesta. '
-            'Puoi generare il prompt o aggiungere gli ultimi dettagli specifici.';
+        titoloLivello = l10n.questioningLevelDeepDiveTitle;
+        descrizione = l10n.questioningLevelDeepDiveDesc;
         icona = Icons.zoom_in;
         break;
       default:
-        titoloLivello = 'Dettagli completati';
-        descrizione =
-            'Ho raccolto tutti i dettagli possibili. '
-            'Il prompt sarà il più completo possibile.';
+        titoloLivello = l10n.questioningLevelDetailsTitle;
+        descrizione = l10n.questioningLevelDetailsDesc;
         icona = Icons.done_all;
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(sessione.categoria?.nome ?? 'Domande'),
+        title: Text(sessione.categoria?.nome ?? l10n.questioningFallbackTitle),
         leading: IconButton(
           icon: const Icon(Icons.close),
-          tooltip: 'Annulla sessione',
+          tooltip: l10n.questioningCancelTooltip,
           onPressed: () {
             context.read<SessioneProvider>().resetSessione();
             Navigator.of(context).pushNamedAndRemoveUntil(
@@ -219,7 +216,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.home_outlined),
-            tooltip: 'Torna alla Home',
+            tooltip: l10n.tooltipBackToHome,
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
               AppRoutes.home,
               (route) => false,
@@ -250,7 +247,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  'Livello $livello/3',
+                  l10n.questioningLevelProgress(livello.toString()),
                   style: TextStyle(
                     color: colorScheme.primary,
                     fontSize: 13,
@@ -314,7 +311,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
                         ],
                       ),
                       child: Text(
-                        '${sessione.risposte.length} risposte raccolte in questo livello',
+                        l10n.questioningAnswersCollected(sessione.risposte.length.toString()),
                         style: TextStyle(
                           color: colorScheme.onSurfaceVariant,
                           fontSize: 13,
@@ -334,7 +331,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () => _navigaAPostGenerazione(),
                       icon: const Icon(Icons.auto_awesome, size: 20),
-                      label: const Text('Genera ora'),
+                      label: Text(l10n.questioningGenerateNowButton),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
@@ -350,8 +347,8 @@ class _DomandeScreenState extends State<DomandeScreen> {
                         icon: const Icon(Icons.search_rounded, size: 20),
                         label: Text(
                           livello == 1
-                              ? 'Approfondisci le risposte'
-                              : 'Ultimi dettagli',
+                              ? l10n.questioningDeepen
+                              : l10n.questioningLastDetails,
                         ),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -377,11 +374,13 @@ class _DomandeScreenState extends State<DomandeScreen> {
     final provider = context.watch<SessioneProvider>();
     final sessione = provider.sessione;
 
+    final l10n = AppLocalizations.of(context)!;
+
     // Se sta caricando domande di approfondimento
     if (provider.staApprofondendo) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(sessione.categoria?.nome ?? 'Domande'),
+          title: Text(sessione.categoria?.nome ?? l10n.questioningFallbackTitle),
         ),
         body: Center(
           child: Column(
@@ -390,7 +389,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
               CircularProgressIndicator(color: colorScheme.primary),
               const SizedBox(height: 20),
               Text(
-                'Preparo le domande di approfondimento...',
+                l10n.questioningPreparingQuestions,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -453,22 +452,22 @@ class _DomandeScreenState extends State<DomandeScreen> {
       // così il campo di testo libero resta visibile sopra di essa
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text(sessione.categoria?.nome ?? 'Domande'),
+        title: Text(sessione.categoria?.nome ?? l10n.questioningFallbackTitle),
         leading: IconButton(
           icon: const Icon(Icons.close),
-          tooltip: 'Annulla sessione',
+          tooltip: l10n.questioningCancelTooltip,
           onPressed: () {
             showDialog(
               context: context,
               builder: (ctx) => AlertDialog(
-                title: const Text('Annullare la sessione?'),
-                content: const Text(
-                  'Le risposte fornite finora andranno perse.',
+                title: Text(l10n.questioningCancelTitle),
+                content: Text(
+                  l10n.questioningCancelContent,
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(),
-                    child: const Text('Continua'),
+                    child: Text(l10n.questioningCancelContinue),
                   ),
                   TextButton(
                     onPressed: () {
@@ -479,7 +478,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
                         (route) => false,
                       );
                     },
-                    child: const Text('Annulla sessione'),
+                    child: Text(l10n.questioningCancelConfirm),
                   ),
                 ],
               ),
@@ -490,7 +489,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
           // Bottone Home — torna alla Home cancellando lo stack
           IconButton(
             icon: const Icon(Icons.home_outlined),
-            tooltip: 'Torna alla Home',
+            tooltip: l10n.tooltipBackToHome,
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
               AppRoutes.home,
               (route) => false,
@@ -637,6 +636,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       children: [
@@ -671,7 +671,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'Livello ${widget.sessione.livello}/3',
+                  l10n.questioningLevelProgress((widget.sessione.livello as int).toString()),
                   style: TextStyle(
                     color: widget.colorScheme.primary,
                     fontSize: 12,
@@ -681,7 +681,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
               ),
               const SizedBox(width: 8),
               Text(
-                _etichettaLivello(widget.sessione.livello as int),
+                _etichettaLivello(widget.sessione.livello as int, l10n),
                 style: TextStyle(
                   color: widget.colorScheme.onSurfaceVariant,
                   fontSize: 12,
@@ -758,7 +758,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
       maxLines: 5,
       onChanged: (_) => widget.onTestoChanged(),
       decoration: InputDecoration(
-        hintText: widget.domanda.placeholder ?? 'Scrivi la tua risposta...',
+        hintText: widget.domanda.placeholder ?? AppLocalizations.of(context)!.questioningInputPlaceholder,
         hintMaxLines: 2,
         hintStyle: TextStyle(
           color: widget.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
@@ -879,7 +879,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            'Suggerito',
+                            AppLocalizations.of(context)!.questioningSuggested,
                             style: TextStyle(
                               color: widget.colorScheme.primary,
                               fontSize: 12,
@@ -904,7 +904,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Seleziona uno o più elementi:',
+          AppLocalizations.of(context)!.questioningChipInstruction,
           style: Theme.of(context).textTheme.bodySmall,
         ),
         const SizedBox(height: 12),
@@ -947,7 +947,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
         if (widget.chipSelezionati.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
-            'Selezionati: ${widget.chipSelezionati.join(", ")}',
+            AppLocalizations.of(context)!.questioningSelectedItems(widget.chipSelezionati.join(", ")),
             style: TextStyle(
               color: widget.colorScheme.primary,
               fontWeight: FontWeight.w500,
@@ -991,7 +991,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
                   child: IconButton(
                     onPressed: () => widget.provider.domandaPrecedente(),
                     icon: const Icon(Icons.arrow_back_rounded, size: 20),
-                    tooltip: 'Domanda precedente',
+                    tooltip: AppLocalizations.of(context)!.questioningPreviousTooltip,
                     color: widget.colorScheme.onSurface,
                   ),
                 ),
@@ -1008,8 +1008,8 @@ class _DomandeBodyState extends State<_DomandeBody> {
                   ),
                   child: Text(
                     widget.provider.isUltimaDomanda
-                        ? 'Completa'
-                        : 'Avanti',
+                        ? AppLocalizations.of(context)!.questioningComplete
+                        : AppLocalizations.of(context)!.questioningNext,
                   ),
                 ),
               ),
@@ -1025,7 +1025,7 @@ class _DomandeBodyState extends State<_DomandeBody> {
               icon: Icon(Icons.bolt, size: 18,
                   color: widget.colorScheme.primary),
               label: Text(
-                'Genera ora con le info raccolte',
+                AppLocalizations.of(context)!.questioningGenerateNow,
                 style: TextStyle(color: widget.colorScheme.primary),
               ),
             ),
@@ -1036,14 +1036,14 @@ class _DomandeBodyState extends State<_DomandeBody> {
   }
 
   /// Restituisce l'etichetta descrittiva per il livello corrente
-  String _etichettaLivello(int livello) {
+  String _etichettaLivello(int livello, AppLocalizations l10n) {
     switch (livello) {
       case 1:
-        return 'Domande generali';
+        return l10n.questioningLabelGeneral;
       case 2:
-        return 'Approfondimento';
+        return l10n.questioningLabelDeepDive;
       case 3:
-        return 'Dettagli finali';
+        return l10n.questioningLabelFinalDetails;
       default:
         return '';
     }
