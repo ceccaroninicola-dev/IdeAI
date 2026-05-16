@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/providers/community_provider.dart';
 import 'package:ideai/models/prompt_pubblico.dart';
 
@@ -30,7 +31,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Community'),
+        title: Text(AppLocalizations.of(context)!.communityAppBarTitle),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -45,7 +46,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 controller: _searchController,
                 onChanged: (value) => community.cercaPrompt(value),
                 decoration: InputDecoration(
-                  hintText: 'Cerca prompt, autori, tag...',
+                  hintText: AppLocalizations.of(context)!.communitySearchHint,
                   prefixIcon: const Icon(Icons.search),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
@@ -111,7 +112,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             // Se c'è ricerca attiva, mostra risultati filtrati
             if (community.testoRicerca.isNotEmpty ||
                 community.categoriaFiltro != 'Tutti') ...[
-              _buildSezioneHeader(context, 'Risultati', colorScheme),
+              _buildSezioneHeader(context, AppLocalizations.of(context)!.communityResultsTitle, colorScheme),
               const SizedBox(height: 12),
               if (community.promptFiltrati.isEmpty)
                 _buildEmptyState(context, colorScheme)
@@ -132,7 +133,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 ),
             ] else ...[
               // === TRENDING ===
-              _buildSezioneHeader(context, 'Trending', colorScheme,
+              _buildSezioneHeader(context, AppLocalizations.of(context)!.communityTrending, colorScheme,
                   icona: Icons.local_fire_department, coloreIcona: Colors.orange),
               const SizedBox(height: 12),
               SizedBox(
@@ -155,7 +156,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
               const SizedBox(height: 28),
 
               // === PIÙ RECENTI ===
-              _buildSezioneHeader(context, 'Più recenti', colorScheme,
+              _buildSezioneHeader(context, AppLocalizations.of(context)!.communityLatest, colorScheme,
                   icona: Icons.schedule),
               const SizedBox(height: 12),
               ListView.builder(
@@ -505,7 +506,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Nessun risultato trovato',
+              AppLocalizations.of(context)!.communityNoResults,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
