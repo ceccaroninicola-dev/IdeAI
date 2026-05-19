@@ -120,5 +120,8 @@
   "aiComparisonNoActive": "Nessun confronto in corso",
   "aiComparisonResponseCopied": "Risposta copiata!",
   "aiComparisonOpeningApp": "Apertura in corso...",
-  "aiComparisonSaved": "Confronto salvato nella cronologia!"
+  "aiComparisonSaved": "Confronto salvato nella cronologia!",
+
+  "progressQuestionOf": "Domanda {current} di {total}",
+  "progressAnalysing": "Analisi in corso..."
 }

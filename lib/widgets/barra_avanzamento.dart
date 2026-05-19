@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ideai/l10n/app_localizations.dart';
 
 /// Widget che mostra una barra di avanzamento adattiva.
 /// Stile Apple minimal: teal come colore primario, animazioni fluide.
@@ -26,6 +27,7 @@ class BarraAvanzamento extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,8 +41,11 @@ class BarraAvanzamento extends StatelessWidget {
               // Indicatore domanda corrente
               Text(
                 totaleDomande > 0
-                    ? 'Domanda ${domandaCorrente + 1} di $totaleDomande'
-                    : 'Analisi in corso...',
+                    ? l10n.progressQuestionOf(
+                        (domandaCorrente + 1).toString(),
+                        totaleDomande.toString(),
+                      )
+                    : l10n.progressAnalysing,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               // Percentuale di completamento — teal

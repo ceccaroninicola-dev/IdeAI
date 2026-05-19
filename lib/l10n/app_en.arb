@@ -509,5 +509,22 @@
   "aiComparisonSaved": "Comparison saved to history!",
   "@aiComparisonSaved": {
     "description": "Snackbar after saving the comparison"
+  },
+
+  "progressQuestionOf": "Question {current} of {total}",
+  "@progressQuestionOf": {
+    "description": "Progress bar text showing current question number",
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "progressAnalysing": "Analysing...",
+  "@progressAnalysing": {
+    "description": "Progress bar text while analysis is running"
   }
 }
