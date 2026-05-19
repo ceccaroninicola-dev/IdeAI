@@ -5,6 +5,7 @@ import 'package:ideai/config/app_routes.dart';
 import 'package:ideai/l10n/app_localizations.dart';
 import 'package:ideai/models/domanda.dart';
 import 'package:ideai/providers/sessione_provider.dart';
+import 'package:ideai/utils/category_localizer.dart';
 import 'package:ideai/providers/prompt_generato_provider.dart';
 import 'package:ideai/widgets/barra_avanzamento.dart';
 import 'package:ideai/widgets/banner_ad_widget.dart';
@@ -201,7 +202,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(sessione.categoria?.nome ?? l10n.questioningFallbackTitle),
+        title: Text(sessione.categoria != null ? localizeCategory(sessione.categoria!.nome, context) : l10n.questioningFallbackTitle),
         leading: IconButton(
           icon: const Icon(Icons.close),
           tooltip: l10n.questioningCancelTooltip,
@@ -380,7 +381,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
     if (provider.staApprofondendo) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(sessione.categoria?.nome ?? l10n.questioningFallbackTitle),
+          title: Text(sessione.categoria != null ? localizeCategory(sessione.categoria!.nome, context) : l10n.questioningFallbackTitle),
         ),
         body: Center(
           child: Column(
@@ -452,7 +453,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
       // così il campo di testo libero resta visibile sopra di essa
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text(sessione.categoria?.nome ?? l10n.questioningFallbackTitle),
+        title: Text(sessione.categoria != null ? localizeCategory(sessione.categoria!.nome, context) : l10n.questioningFallbackTitle),
         leading: IconButton(
           icon: const Icon(Icons.close),
           tooltip: l10n.questioningCancelTooltip,
