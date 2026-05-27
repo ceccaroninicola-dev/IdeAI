@@ -12,6 +12,7 @@ import 'package:ideai/providers/community_provider.dart';
 import 'package:ideai/models/prompt_pubblico.dart';
 import 'package:ideai/services/export_service.dart';
 import 'package:ideai/l10n/app_localizations.dart';
+import 'package:ideai/utils/category_localizer.dart';
 
 /// Schermata post-generazione — mostra il prompt generato con:
 /// - Anteprima in due viste (semplice/strutturata)
@@ -104,7 +105,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
     // Schermata di caricamento durante la generazione
     if (provider.staGenerando || prompt == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Generazione...')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.postGenGenerating)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -112,7 +113,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
               CircularProgressIndicator(color: colorScheme.primary),
               const SizedBox(height: 20),
               Text(
-                'Genero il tuo prompt...',
+                AppLocalizations.of(context)!.postGenLoadingSubtitle,
                 style: TextStyle(
                   color: colorScheme.onSurfaceVariant,
                   fontSize: 15,
@@ -138,13 +139,13 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
       },
       child: Scaffold(
       appBar: AppBar(
-        title: const Text('Il tuo prompt'),
+        title: Text(AppLocalizations.of(context)!.postGenAppBarTitle),
         automaticallyImplyLeading: false,
         leading: TextButton.icon(
           icon: const Icon(Icons.home, size: 20),
-          label: const Text(
-            'Home',
-            style: TextStyle(fontSize: 14),
+          label: Text(
+            AppLocalizations.of(context)!.postGenHomeButton,
+            style: const TextStyle(fontSize: 14),
           ),
           onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
             AppRoutes.home,
@@ -180,7 +181,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                     // --- Suggerimenti di miglioramento ---
                     if (prompt.suggerimenti.isNotEmpty) ...[
                       Text(
-                        'Migliora il tuo prompt',
+                        AppLocalizations.of(context)!.postGenSectionImproveTitle,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 12),
@@ -314,7 +315,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
       child: Row(
         children: [
           _buildToggleOpzione(
-            etichetta: 'Semplice',
+            etichetta: AppLocalizations.of(context)!.postGenViewSimple,
             icona: Icons.subject_rounded,
             selezionato: !_vistaStrutturata,
             colorScheme: colorScheme,
@@ -324,7 +325,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
             }),
           ),
           _buildToggleOpzione(
-            etichetta: 'Strutturata',
+            etichetta: AppLocalizations.of(context)!.postGenViewStructured,
             icona: Icons.view_agenda_outlined,
             selezionato: _vistaStrutturata,
             colorScheme: colorScheme,
@@ -414,16 +415,16 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
     if (punteggio >= 4.0) return null;
     final c = sezione.contenuto;
     final titolo = sezione.titolo.toLowerCase();
-    if (c.length < 30) return 'Troppo breve — aggiungi più dettagli specifici';
+    if (c.length < 30) return AppLocalizations.of(context)!.postGenHintTooShort;
     if (!RegExp(r'\d').hasMatch(c) && (titolo.contains('vincol') || titolo.contains('formato'))) {
-      return 'Aggiungi numeri concreti (limiti, quantità, dimensioni)';
+      return AppLocalizations.of(context)!.postGenHintAddNumbers;
     }
     if (!c.contains('\n') && c.length > 100) {
-      return 'Suddividi in punti o paragrafi per maggiore chiarezza';
+      return AppLocalizations.of(context)!.postGenHintBreakIntoBullets;
     }
-    if (c.split(' ').length < 15) return 'Espandi con dettagli più specifici e contestuali';
-    if (punteggio < 3.0) return 'Sezione debole — usa "Migliora" per riscriverla con AI';
-    return 'Potrebbe essere più specifica — prova ad aggiungere esempi concreti';
+    if (c.split(' ').length < 15) return AppLocalizations.of(context)!.postGenHintExpandDetails;
+    if (punteggio < 3.0) return AppLocalizations.of(context)!.postGenHintWeakSection;
+    return AppLocalizations.of(context)!.postGenHintBeMoreSpecific;
   }
 
   /// Avvia il miglioramento AI di una sezione e mostra l'anteprima prima/dopo
@@ -436,7 +437,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
     if (risultato != null) {
       _mostraAnteprimaMiglioramento(indice, risultato);
     } else {
-      _mostraConferma(Icons.error_outline, 'Impossibile migliorare la sezione');
+      _mostraConferma(Icons.error_outline, AppLocalizations.of(context)!.postGenErrorImproveSection);
     }
   }
 
@@ -471,7 +472,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                     Icon(Icons.auto_awesome, color: colorScheme.primary, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Miglioramento: ${sezione.titolo}',
+                      AppLocalizations.of(context)!.postGenImprovementTitle(sezione.titolo),
                       style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -484,11 +485,11 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildEtichettaPrimaDopo('Prima', Colors.orange),
+                      _buildEtichettaPrimaDopo(AppLocalizations.of(context)!.postGenBefore, Colors.orange),
                       const SizedBox(height: 8),
                       _buildBoxTesto(sezione.contenuto, colorScheme, isDark),
                       const SizedBox(height: 16),
-                      _buildEtichettaPrimaDopo('Dopo (migliorato)', colorScheme.primary),
+                      _buildEtichettaPrimaDopo(AppLocalizations.of(context)!.postGenAfterImproved, colorScheme.primary),
                       const SizedBox(height: 8),
                       _buildBoxTesto(testoMigliorato, colorScheme, isDark),
                       const SizedBox(height: 16),
@@ -506,7 +507,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        child: const Text('Scarta'),
+                        child: Text(AppLocalizations.of(context)!.postGenButtonDiscard),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -516,10 +517,10 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         onPressed: () {
                           provider.aggiornaSezione(indice, testoMigliorato);
                           Navigator.of(ctx).pop();
-                          _mostraConferma(Icons.check_circle, 'Sezione migliorata!');
+                          _mostraConferma(Icons.check_circle, AppLocalizations.of(context)!.postGenSuccessSectionImproved);
                         },
                         icon: const Icon(Icons.check_rounded, size: 20),
-                        label: const Text('Applica'),
+                        label: Text(AppLocalizations.of(context)!.postGenButtonApply),
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
@@ -543,7 +544,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
     final sezione = provider.prompt!.sezioni[indice];
     final template = _templatePerSezione[sezione.titolo];
     if (template == null) {
-      _mostraConferma(Icons.info_outline, 'Nessun template disponibile per questa sezione');
+      _mostraConferma(Icons.info_outline, AppLocalizations.of(context)!.postGenInfoNoTemplate);
       return;
     }
 
@@ -572,7 +573,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         color: colorScheme.primary, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Template: ${sezione.titolo}',
+                      AppLocalizations.of(context)!.postGenTemplateTitle(sezione.titolo),
                       style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -581,7 +582,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
                 child: Text(
-                  'Usa questo template come base e personalizza i campi tra [parentesi]',
+                  AppLocalizations.of(context)!.postGenTemplateInstruction,
                   style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
                 ),
               ),
@@ -592,11 +593,11 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildEtichettaPrimaDopo('Attuale', Colors.orange),
+                      _buildEtichettaPrimaDopo(AppLocalizations.of(context)!.postGenCurrent, Colors.orange),
                       const SizedBox(height: 8),
                       _buildBoxTesto(sezione.contenuto, colorScheme, isDark),
                       const SizedBox(height: 16),
-                      _buildEtichettaPrimaDopo('Template', colorScheme.primary),
+                      _buildEtichettaPrimaDopo(AppLocalizations.of(context)!.postGenTemplateLabelAfter, colorScheme.primary),
                       const SizedBox(height: 8),
                       _buildBoxTesto(template, colorScheme, isDark),
                       const SizedBox(height: 16),
@@ -614,7 +615,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        child: const Text('Chiudi'),
+                        child: Text(AppLocalizations.of(context)!.postGenButtonClose),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -624,10 +625,10 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         onPressed: () {
                           provider.aggiornaSezione(indice, template);
                           Navigator.of(ctx).pop();
-                          _mostraConferma(Icons.check_circle, 'Template applicato! Personalizza i campi tra [parentesi]');
+                          _mostraConferma(Icons.check_circle, AppLocalizations.of(context)!.postGenSuccessTemplateApplied);
                         },
                         icon: const Icon(Icons.content_paste_rounded, size: 20),
-                        label: const Text('Usa template'),
+                        label: Text(AppLocalizations.of(context)!.postGenButtonUseTemplate),
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
@@ -671,9 +672,9 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                   children: [
                     Icon(Icons.preview_rounded, color: colorScheme.primary, size: 20),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Anteprima prompt completo',
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    Text(
+                      AppLocalizations.of(context)!.postGenFullPromptPreview,
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -718,7 +719,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                       }
                     },
                     icon: const Icon(Icons.copy_rounded, size: 20),
-                    label: const Text('Copia prompt completo'),
+                    label: Text(AppLocalizations.of(context)!.postGenCopyFullPrompt),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
@@ -756,7 +757,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
             ),
             const SizedBox(width: 6),
             Text(
-              'Solo lettura — pronto da copiare',
+              AppLocalizations.of(context)!.postGenReadOnly,
               style: TextStyle(
                 fontSize: 12,
                 color: colorScheme.onSurfaceVariant,
@@ -801,9 +802,9 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
           width: double.infinity,
           child: FilledButton.icon(
             icon: const Icon(Icons.copy_rounded, size: 22),
-            label: const Text(
-              'Copia prompt',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            label: Text(
+              AppLocalizations.of(context)!.postGenButtonCopyPrompt,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 18),
@@ -884,7 +885,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Prompt migliorato del $percentualeMiglioramento% rispetto all\'originale',
+                    AppLocalizations.of(context)!.postGenImprovementBanner(percentualeMiglioramento.toString()),
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -905,7 +906,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                '${sezioniConIndice.length} sezioni — migliora, modifica o usa template',
+                AppLocalizations.of(context)!.postGenSectionsLabel(sezioniConIndice.length.toString()),
                 style: TextStyle(
                   fontSize: 12,
                   color: colorScheme.primary,
@@ -974,9 +975,9 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
           width: double.infinity,
           child: FilledButton.icon(
             icon: const Icon(Icons.content_copy_rounded, size: 20),
-            label: const Text(
-              'Ricomponi e copia',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            label: Text(
+              AppLocalizations.of(context)!.postGenButtonRecomposeAndCopy,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -1087,11 +1088,11 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildEtichettaPrimaDopo('Prima', Colors.orange),
+                      _buildEtichettaPrimaDopo(AppLocalizations.of(context)!.postGenBefore, Colors.orange),
                       const SizedBox(height: 8),
                       _buildBoxTesto(suggerimento.testoPrima, colorScheme, isDark),
                       const SizedBox(height: 16),
-                      _buildEtichettaPrimaDopo('Dopo', colorScheme.primary),
+                      _buildEtichettaPrimaDopo(AppLocalizations.of(context)!.postGenAfter, colorScheme.primary),
                       const SizedBox(height: 8),
                       _buildBoxTesto(suggerimento.testoDopo, colorScheme, isDark),
                       const SizedBox(height: 16),
@@ -1111,7 +1112,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                       Navigator.of(ctx).pop();
                     },
                     icon: const Icon(Icons.check_rounded, size: 20),
-                    label: const Text('Applica miglioramento'),
+                    label: Text(AppLocalizations.of(context)!.postGenButtonApplyImprovement),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
@@ -1153,7 +1154,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
           Expanded(
             child: _buildBottoneAzione(
               icona: Icons.copy_rounded,
-              etichetta: 'Copia',
+              etichetta: AppLocalizations.of(context)!.postGenButtonCopy,
               colorScheme: colorScheme,
               isPrimario: true,
               onPressed: () async {
@@ -1169,7 +1170,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                   if (mounted) {
                     _mostraConferma(
                       Icons.error_outline,
-                      'Impossibile copiare il prompt',
+                      AppLocalizations.of(context)!.postGenErrorCopy,
                     );
                   }
                 }
@@ -1181,7 +1182,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
           Expanded(
             child: _buildBottoneAzione(
               icona: Icons.ios_share_rounded,
-              etichetta: 'Esporta',
+              etichetta: AppLocalizations.of(context)!.postGenButtonExport,
               colorScheme: colorScheme,
               isPrimario: false,
               onPressed: () => _mostraExportSheet(prompt, colorScheme),
@@ -1192,7 +1193,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
           Expanded(
             child: _buildBottoneAzione(
               icona: Icons.public_outlined,
-              etichetta: 'Pubblica',
+              etichetta: AppLocalizations.of(context)!.postGenButtonPublish,
               colorScheme: colorScheme,
               isPrimario: false,
               onPressed: () => _mostraPubblicaSheet(prompt, colorScheme),
@@ -1205,7 +1206,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
               icona: giaSalvato
                   ? Icons.bookmark_rounded
                   : Icons.bookmark_outline_rounded,
-              etichetta: giaSalvato ? 'Salvato' : 'Salva',
+              etichetta: giaSalvato ? AppLocalizations.of(context)!.postGenButtonSaved : AppLocalizations.of(context)!.postGenButtonSave,
               colorScheme: colorScheme,
               isPrimario: false,
               onPressed: giaSalvato
@@ -1230,11 +1231,11 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
+        content: Row(
           children: [
-            Icon(Icons.bookmark_added, color: Colors.white, size: 18),
-            SizedBox(width: 8),
-            Text('Prompt salvato!'),
+            const Icon(Icons.bookmark_added, color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.postGenSuccessPromptSaved),
           ],
         ),
         duration: const Duration(seconds: 2),
@@ -1256,7 +1257,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
 
     // Pre-compila titolo dalla sessione
     final sessione = context.read<SessioneProvider>().sessione;
-    titoloController.text = sessione.categoria?.nome ?? 'Il mio prompt';
+    titoloController.text = sessione.categoria?.nome ?? AppLocalizations.of(context)!.postGenMyPromptDefault;
     descrizioneController.text = sessione.fraseIniziale;
 
     showModalBottomSheet(
@@ -1294,7 +1295,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
 
                     // Titolo
                     Text(
-                      'Pubblica nella community',
+                      AppLocalizations.of(context)!.postGenPublishSheetTitle,
                       style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -1305,7 +1306,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                     TextField(
                       controller: titoloController,
                       decoration: InputDecoration(
-                        labelText: 'Titolo del prompt',
+                        labelText: AppLocalizations.of(context)!.postGenPromptTitleLabel,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1320,7 +1321,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                       controller: descrizioneController,
                       maxLines: 2,
                       decoration: InputDecoration(
-                        labelText: 'Descrizione breve',
+                        labelText: AppLocalizations.of(context)!.postGenShortDescriptionLabel,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1332,7 +1333,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
 
                     // Visibilità
                     Text(
-                      'Visibilità',
+                      AppLocalizations.of(context)!.postGenVisibilityLabel,
                       style: Theme.of(ctx).textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -1343,8 +1344,8 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                     _buildOpzioneVisibilita(
                       ctx,
                       icona: Icons.lock_outline,
-                      titolo: 'Privato',
-                      descrizione: 'Visibile solo a te',
+                      titolo: AppLocalizations.of(context)!.postGenVisibilityPrivate,
+                      descrizione: AppLocalizations.of(context)!.postGenVisibilityPrivateDesc,
                       visibilita: Visibilita.privato,
                       selezionata: visibilitaSelezionata,
                       colorScheme: colorScheme,
@@ -1355,8 +1356,8 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                     _buildOpzioneVisibilita(
                       ctx,
                       icona: Icons.link,
-                      titolo: 'Solo link',
-                      descrizione: 'Accessibile solo con il link diretto',
+                      titolo: AppLocalizations.of(context)!.postGenVisibilityLinkOnly,
+                      descrizione: AppLocalizations.of(context)!.postGenVisibilityLinkOnlyDesc,
                       visibilita: Visibilita.soloLink,
                       selezionata: visibilitaSelezionata,
                       colorScheme: colorScheme,
@@ -1367,9 +1368,9 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                     _buildOpzioneVisibilita(
                       ctx,
                       icona: Icons.public,
-                      titolo: 'Pubblico',
+                      titolo: AppLocalizations.of(context)!.postGenVisibilityPublic,
                       descrizione:
-                          'Visibile a tutti nella community',
+                          AppLocalizations.of(context)!.postGenVisibilityPublicDesc,
                       visibilita: Visibilita.pubblico,
                       selezionata: visibilitaSelezionata,
                       colorScheme: colorScheme,
@@ -1404,8 +1405,8 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                                   const SizedBox(width: 8),
                                   Text(visibilitaSelezionata ==
                                           Visibilita.pubblico
-                                      ? 'Prompt pubblicato nella community!'
-                                      : 'Prompt salvato!'),
+                                      ? AppLocalizations.of(context)!.postGenSuccessPromptPublished
+                                      : AppLocalizations.of(context)!.postGenSuccessPromptSaved),
                                 ],
                               ),
                               duration: const Duration(seconds: 2),
@@ -1417,7 +1418,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                           );
                         },
                         icon: const Icon(Icons.publish),
-                        label: const Text('Pubblica'),
+                        label: Text(AppLocalizations.of(context)!.postGenPublishButton),
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
@@ -1549,9 +1550,9 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                           size: 22,
                         ),
                         const SizedBox(width: 8),
-                        const Text(
-                          'Esporta prompt',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.postGenExportSheetTitle,
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1568,7 +1569,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Ottimizza per AI',
+                          AppLocalizations.of(context)!.postGenOptimizeForAI,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -1608,7 +1609,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Prompt ottimizzato per $_aiSelezionata',
+                              AppLocalizations.of(context)!.postGenOptimizedFor(localizeAIOption(_aiSelezionata!, context)),
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -1629,7 +1630,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Metodo di esportazione',
+                          AppLocalizations.of(context)!.postGenExportMethodLabel,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -1641,8 +1642,8 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         // Confronta risposte AI — funzionalità killer
                         _buildOpzioneExport(
                           icona: Icons.compare_arrows_rounded,
-                          etichetta: 'Confronta risposte AI',
-                          descrizione: 'Invia a più AI e confronta le risposte',
+                          etichetta: AppLocalizations.of(context)!.postGenExportCompareAI,
+                          descrizione: AppLocalizations.of(context)!.postGenExportCompareAIDesc,
                           colorScheme: colorScheme,
                           isDark: isDark,
                           onTap: () {
@@ -1655,8 +1656,8 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         // Copia negli appunti
                         _buildOpzioneExport(
                           icona: Icons.copy_rounded,
-                          etichetta: 'Copia negli appunti',
-                          descrizione: 'Copia il prompt come testo',
+                          etichetta: AppLocalizations.of(context)!.postGenExportCopyClipboard,
+                          descrizione: AppLocalizations.of(context)!.postGenExportCopyClipboardDesc,
                           colorScheme: colorScheme,
                           isDark: isDark,
                           onTap: () async {
@@ -1673,7 +1674,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                               if (mounted) {
                                 _mostraConferma(
                                   Icons.error_outline,
-                                  'Impossibile copiare il prompt',
+                                  AppLocalizations.of(context)!.postGenErrorCopy,
                                 );
                               }
                             }
@@ -1685,11 +1686,11 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         _buildOpzioneExport(
                           icona: Icons.share_rounded,
                           etichetta: kIsWeb
-                              ? 'Copia testo completo'
-                              : 'Condividi come testo',
+                              ? AppLocalizations.of(context)!.postGenExportCopyFullTextWeb
+                              : AppLocalizations.of(context)!.postGenExportShareAsTextMobile,
                           descrizione: kIsWeb
-                              ? 'Copia il prompt negli appunti'
-                              : 'WhatsApp, Telegram, Email...',
+                              ? AppLocalizations.of(context)!.postGenExportCopyClipboardWebDesc
+                              : AppLocalizations.of(context)!.postGenExportShareAppsList,
                           colorScheme: colorScheme,
                           isDark: isDark,
                           onTap: () async {
@@ -1706,7 +1707,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                               if (mounted) {
                                 _mostraConferma(
                                   Icons.error_outline,
-                                  'Impossibile condividere il prompt',
+                                  AppLocalizations.of(context)!.postGenErrorShare,
                                 );
                               }
                             }
@@ -1718,11 +1719,11 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         _buildOpzioneExport(
                           icona: Icons.picture_as_pdf_rounded,
                           etichetta: kIsWeb
-                              ? 'Scarica PDF'
-                              : 'Esporta come PDF',
+                              ? AppLocalizations.of(context)!.postGenExportDownloadPDFWeb
+                              : AppLocalizations.of(context)!.postGenExportPDFMobile,
                           descrizione: kIsWeb
-                              ? 'Download diretto nel browser'
-                              : 'Salva il prompt in formato PDF',
+                              ? AppLocalizations.of(context)!.postGenExportPDFWebDesc
+                              : AppLocalizations.of(context)!.postGenExportPDFMobileDesc,
                           colorScheme: colorScheme,
                           isDark: isDark,
                           onTap: () async {
@@ -1733,7 +1734,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                                 nomeAiDestinazione: _aiSelezionata,
                               ),
                               messaggioSuccesso: kIsWeb
-                                  ? 'PDF scaricato!'
+                                  ? AppLocalizations.of(context)!.postGenSuccessPDFDownloaded
                                   : null,
                             );
                           },
@@ -1744,11 +1745,11 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         _buildOpzioneExport(
                           icona: Icons.description_outlined,
                           etichetta: kIsWeb
-                              ? 'Scarica TXT'
-                              : 'Esporta come TXT',
+                              ? AppLocalizations.of(context)!.postGenExportDownloadTXTWeb
+                              : AppLocalizations.of(context)!.postGenExportTXTMobile,
                           descrizione: kIsWeb
-                              ? 'Download diretto nel browser'
-                              : 'Salva il prompt come file di testo',
+                              ? AppLocalizations.of(context)!.postGenExportTXTWebDesc
+                              : AppLocalizations.of(context)!.postGenExportTXTMobileDesc,
                           colorScheme: colorScheme,
                           isDark: isDark,
                           onTap: () async {
@@ -1759,7 +1760,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                                 nomeAiDestinazione: _aiSelezionata,
                               ),
                               messaggioSuccesso: kIsWeb
-                                  ? 'File TXT scaricato!'
+                                  ? AppLocalizations.of(context)!.postGenSuccessTXTDownloaded
                                   : null,
                             );
                           },
@@ -1825,9 +1826,9 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                           size: 22,
                         ),
                         const SizedBox(width: 8),
-                        const Text(
-                          'Confronta risposte AI',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.postGenAICompareSheetTitle,
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1841,7 +1842,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Seleziona le AI a cui inviare il prompt (min. 2)',
+                      AppLocalizations.of(context)!.postGenAICompareSubtitle,
                       style: TextStyle(
                         fontSize: 14,
                         color: colorScheme.onSurfaceVariant,
@@ -1859,7 +1860,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                             size: 16, color: colorScheme.primary),
                         const SizedBox(width: 6),
                         Text(
-                          'Suggerite per $categoria',
+                          AppLocalizations.of(context)!.postGenSuggestedForCategory(categoria),
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -1928,7 +1929,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
-                                    'Suggerita',
+                                    AppLocalizations.of(context)!.postGenSuggestedBadge,
                                     style: TextStyle(
                                       fontSize: 11,
                                       color: colorScheme.primary,
@@ -1940,7 +1941,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                             ],
                           ),
                           subtitle: Text(
-                            'Forte in: ${ai.categorieForti.join(", ")}',
+                            AppLocalizations.of(context)!.postGenStrongIn(ai.categorieForti.join(", ")),
                             style: TextStyle(
                               fontSize: 12,
                               color: colorScheme.onSurfaceVariant,
@@ -1972,8 +1973,8 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         icon: const Icon(Icons.compare_arrows, size: 20),
                         label: Text(
                           aiSelezionate.length >= 2
-                              ? 'Confronta ${aiSelezionate.length} AI'
-                              : 'Seleziona almeno 2 AI',
+                              ? AppLocalizations.of(context)!.postGenCompareCount(aiSelezionate.length.toString())
+                              : AppLocalizations.of(context)!.postGenSelectAtLeast2,
                         ),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -2054,7 +2055,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    ai.nome,
+                    localizeAIOption(ai.nome, context),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight:
@@ -2163,7 +2164,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
       }
     } catch (e) {
       if (mounted) {
-        _mostraConferma(Icons.error_outline, 'Errore durante l\'esportazione');
+        _mostraConferma(Icons.error_outline, AppLocalizations.of(context)!.postGenErrorExport);
       }
     }
   }
@@ -2235,7 +2236,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
         border: Border.all(color: colorScheme.outlineVariant, width: 0.5),
       ),
       child: Text(
-        testo.isEmpty ? '(vuoto)' : testo,
+        testo.isEmpty ? AppLocalizations.of(context)!.postGenEmptyPlaceholder : testo,
         style: TextStyle(
           fontSize: 14,
           height: 1.5,
@@ -2524,7 +2525,7 @@ class _CardSezioneState extends State<_CardSezione> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Miglioro con AI...',
+                          AppLocalizations.of(context)!.postGenImprovingWithAI,
                           style: TextStyle(
                             fontSize: 13,
                             color: widget.colorScheme.primary,
@@ -2544,7 +2545,7 @@ class _CardSezioneState extends State<_CardSezione> {
                         Expanded(
                           child: _buildBottoneAzioneCard(
                             icona: Icons.auto_awesome,
-                            etichetta: 'Migliora',
+                            etichetta: AppLocalizations.of(context)!.postGenButtonImprove,
                             colore: widget.colorScheme.primary,
                             onTap: widget.onMigliora,
                           ),
@@ -2555,7 +2556,7 @@ class _CardSezioneState extends State<_CardSezione> {
                           Expanded(
                             child: _buildBottoneAzioneCard(
                               icona: Icons.dashboard_customize_outlined,
-                              etichetta: 'Template',
+                              etichetta: AppLocalizations.of(context)!.postGenButtonTemplate,
                               colore: widget.colorScheme.onSurfaceVariant,
                               onTap: widget.onTemplate!,
                             ),
@@ -2566,7 +2567,7 @@ class _CardSezioneState extends State<_CardSezione> {
                         Expanded(
                           child: _buildBottoneAzioneCard(
                             icona: Icons.edit_outlined,
-                            etichetta: 'Modifica',
+                            etichetta: AppLocalizations.of(context)!.postGenButtonEdit,
                             colore: widget.colorScheme.onSurfaceVariant,
                             onTap: widget.onTapModifica,
                           ),
@@ -2662,7 +2663,7 @@ class _CardSezioneState extends State<_CardSezione> {
             TextButton(
               onPressed: widget.onAnnulla,
               child: Text(
-                'Annulla',
+                AppLocalizations.of(context)!.postGenButtonCancel,
                 style: TextStyle(
                   fontSize: 14,
                   color: widget.colorScheme.onSurfaceVariant,
@@ -2678,7 +2679,7 @@ class _CardSezioneState extends State<_CardSezione> {
                   vertical: 10,
                 ),
               ),
-              child: const Text('Salva', style: TextStyle(fontSize: 14)),
+              child: Text(AppLocalizations.of(context)!.postGenButtonSave, style: const TextStyle(fontSize: 14)),
             ),
           ],
         ),

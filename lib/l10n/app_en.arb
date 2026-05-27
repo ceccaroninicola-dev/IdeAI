@@ -526,5 +526,437 @@
   "progressAnalysing": "Analysing...",
   "@progressAnalysing": {
     "description": "Progress bar text while analysis is running"
+  },
+
+  "postGenGenerating": "Generating...",
+  "@postGenGenerating": {
+    "description": "AppBar title during prompt generation"
+  },
+  "postGenLoadingSubtitle": "Generating your prompt...",
+  "@postGenLoadingSubtitle": {
+    "description": "Loading subtitle during prompt generation"
+  },
+  "postGenAppBarTitle": "Your prompt",
+  "@postGenAppBarTitle": {
+    "description": "AppBar title of the post-generation screen"
+  },
+  "postGenHomeButton": "Home",
+  "@postGenHomeButton": {
+    "description": "Home button label in AppBar"
+  },
+  "postGenViewSimple": "Simple",
+  "@postGenViewSimple": {
+    "description": "Toggle label for simple view"
+  },
+  "postGenViewStructured": "Structured",
+  "@postGenViewStructured": {
+    "description": "Toggle label for structured view"
+  },
+  "postGenSectionImproveTitle": "Improve your prompt",
+  "@postGenSectionImproveTitle": {
+    "description": "Section title above suggestion chips"
+  },
+
+  "postGenReadOnly": "Read-only — ready to copy",
+  "@postGenReadOnly": {
+    "description": "Label in simple view indicating read-only"
+  },
+  "postGenImprovementBanner": "Prompt improved by {percent}% from original",
+  "@postGenImprovementBanner": {
+    "description": "Banner showing improvement percentage",
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "postGenSectionsLabel": "{count} sections — improve, edit, or use templates",
+  "@postGenSectionsLabel": {
+    "description": "Label in structured view showing section count",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "postGenEmptyPlaceholder": "(empty)",
+  "@postGenEmptyPlaceholder": {
+    "description": "Placeholder for empty text box"
+  },
+  "postGenImprovingWithAI": "Improving with AI...",
+  "@postGenImprovingWithAI": {
+    "description": "Loading text during AI section improvement"
+  },
+
+  "postGenButtonCopyPrompt": "Copy prompt",
+  "@postGenButtonCopyPrompt": {
+    "description": "Big copy button in simple view"
+  },
+  "postGenButtonRecomposeAndCopy": "Recompose & copy",
+  "@postGenButtonRecomposeAndCopy": {
+    "description": "Button in structured view"
+  },
+  "postGenButtonCopy": "Copy",
+  "@postGenButtonCopy": {
+    "description": "Action bar copy button"
+  },
+  "postGenButtonExport": "Export",
+  "@postGenButtonExport": {
+    "description": "Action bar export button"
+  },
+  "postGenButtonPublish": "Publish",
+  "@postGenButtonPublish": {
+    "description": "Action bar publish button"
+  },
+  "postGenButtonSaved": "Saved",
+  "@postGenButtonSaved": {
+    "description": "Action bar button when already saved"
+  },
+  "postGenButtonSave": "Save",
+  "@postGenButtonSave": {
+    "description": "Action bar save button and section edit save"
+  },
+  "postGenButtonImprove": "Improve",
+  "@postGenButtonImprove": {
+    "description": "Section card AI improve button"
+  },
+  "postGenButtonTemplate": "Template",
+  "@postGenButtonTemplate": {
+    "description": "Section card template button"
+  },
+  "postGenButtonEdit": "Edit",
+  "@postGenButtonEdit": {
+    "description": "Section card edit button"
+  },
+  "postGenButtonCancel": "Cancel",
+  "@postGenButtonCancel": {
+    "description": "Cancel edit button in section card"
+  },
+  "postGenButtonDiscard": "Discard",
+  "@postGenButtonDiscard": {
+    "description": "Discard button in improvement preview"
+  },
+  "postGenButtonApply": "Apply",
+  "@postGenButtonApply": {
+    "description": "Apply button in improvement preview"
+  },
+  "postGenButtonApplyImprovement": "Apply improvement",
+  "@postGenButtonApplyImprovement": {
+    "description": "Apply button in suggestion preview"
+  },
+  "postGenButtonClose": "Close",
+  "@postGenButtonClose": {
+    "description": "Close button in template preview"
+  },
+  "postGenButtonUseTemplate": "Use template",
+  "@postGenButtonUseTemplate": {
+    "description": "Apply template button"
+  },
+
+  "postGenImprovementTitle": "Improvement: {section}",
+  "@postGenImprovementTitle": {
+    "description": "Title of the improvement preview sheet",
+    "placeholders": {
+      "section": {
+        "type": "String"
+      }
+    }
+  },
+  "postGenBefore": "Before",
+  "@postGenBefore": {
+    "description": "Before label in before/after preview"
+  },
+  "postGenAfterImproved": "After (improved)",
+  "@postGenAfterImproved": {
+    "description": "After label in improvement preview"
+  },
+  "postGenAfter": "After",
+  "@postGenAfter": {
+    "description": "After label in suggestion preview"
+  },
+
+  "postGenTemplateTitle": "Template: {section}",
+  "@postGenTemplateTitle": {
+    "description": "Title of the template preview sheet",
+    "placeholders": {
+      "section": {
+        "type": "String"
+      }
+    }
+  },
+  "postGenTemplateInstruction": "Use this template as a starting point and customize the fields in [brackets]",
+  "@postGenTemplateInstruction": {
+    "description": "Instruction text in template preview"
+  },
+  "postGenCurrent": "Current",
+  "@postGenCurrent": {
+    "description": "Current label in template before/after"
+  },
+  "postGenTemplateLabelAfter": "Template",
+  "@postGenTemplateLabelAfter": {
+    "description": "Template label in template before/after"
+  },
+
+  "postGenFullPromptPreview": "Full prompt preview",
+  "@postGenFullPromptPreview": {
+    "description": "Title of the full prompt preview sheet"
+  },
+  "postGenCopyFullPrompt": "Copy full prompt",
+  "@postGenCopyFullPrompt": {
+    "description": "Button in full prompt preview sheet"
+  },
+
+  "postGenPublishSheetTitle": "Share with the community",
+  "@postGenPublishSheetTitle": {
+    "description": "Title of the publish bottom sheet"
+  },
+  "postGenPromptTitleLabel": "Prompt title",
+  "@postGenPromptTitleLabel": {
+    "description": "Label for prompt title field"
+  },
+  "postGenShortDescriptionLabel": "Short description",
+  "@postGenShortDescriptionLabel": {
+    "description": "Label for description field"
+  },
+  "postGenVisibilityLabel": "Visibility",
+  "@postGenVisibilityLabel": {
+    "description": "Section label for visibility options"
+  },
+  "postGenVisibilityPrivate": "Private",
+  "@postGenVisibilityPrivate": {
+    "description": "Private visibility option"
+  },
+  "postGenVisibilityPrivateDesc": "Only visible to you",
+  "@postGenVisibilityPrivateDesc": {
+    "description": "Private visibility description"
+  },
+  "postGenVisibilityLinkOnly": "Link only",
+  "@postGenVisibilityLinkOnly": {
+    "description": "Link-only visibility option"
+  },
+  "postGenVisibilityLinkOnlyDesc": "Accessible only with the direct link",
+  "@postGenVisibilityLinkOnlyDesc": {
+    "description": "Link-only visibility description"
+  },
+  "postGenVisibilityPublic": "Public",
+  "@postGenVisibilityPublic": {
+    "description": "Public visibility option"
+  },
+  "postGenVisibilityPublicDesc": "Visible to everyone in the community",
+  "@postGenVisibilityPublicDesc": {
+    "description": "Public visibility description"
+  },
+  "postGenPublishButton": "Publish",
+  "@postGenPublishButton": {
+    "description": "Publish button in publish sheet"
+  },
+  "postGenMyPromptDefault": "My prompt",
+  "@postGenMyPromptDefault": {
+    "description": "Default prompt title fallback"
+  },
+
+  "postGenExportSheetTitle": "Export prompt",
+  "@postGenExportSheetTitle": {
+    "description": "Title of the export bottom sheet"
+  },
+  "postGenOptimizeForAI": "Optimize for AI",
+  "@postGenOptimizeForAI": {
+    "description": "Section label in export sheet"
+  },
+  "postGenOptimizedFor": "Prompt optimized for {ai}",
+  "@postGenOptimizedFor": {
+    "description": "Message showing which AI the prompt is optimized for",
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "postGenExportMethodLabel": "Export method",
+  "@postGenExportMethodLabel": {
+    "description": "Section label for export methods"
+  },
+  "postGenExportCompareAI": "Compare AI responses",
+  "@postGenExportCompareAI": {
+    "description": "Export option label for AI comparison"
+  },
+  "postGenExportCompareAIDesc": "Send to multiple AIs and compare results",
+  "@postGenExportCompareAIDesc": {
+    "description": "Export option description for AI comparison"
+  },
+  "postGenExportCopyClipboard": "Copy to clipboard",
+  "@postGenExportCopyClipboard": {
+    "description": "Export option label for clipboard copy"
+  },
+  "postGenExportCopyClipboardDesc": "Copy the prompt as text",
+  "@postGenExportCopyClipboardDesc": {
+    "description": "Export option description for clipboard copy"
+  },
+  "postGenExportCopyFullTextWeb": "Copy full text",
+  "@postGenExportCopyFullTextWeb": {
+    "description": "Export option label for web share"
+  },
+  "postGenExportShareAsTextMobile": "Share as text",
+  "@postGenExportShareAsTextMobile": {
+    "description": "Export option label for mobile share"
+  },
+  "postGenExportCopyClipboardWebDesc": "Copy the prompt to clipboard",
+  "@postGenExportCopyClipboardWebDesc": {
+    "description": "Export option web description for share"
+  },
+  "postGenExportShareAppsList": "WhatsApp, Telegram, Email...",
+  "@postGenExportShareAppsList": {
+    "description": "Export option mobile description for share"
+  },
+  "postGenExportDownloadPDFWeb": "Download PDF",
+  "@postGenExportDownloadPDFWeb": {
+    "description": "Export option label for PDF on web"
+  },
+  "postGenExportPDFMobile": "Export as PDF",
+  "@postGenExportPDFMobile": {
+    "description": "Export option label for PDF on mobile"
+  },
+  "postGenExportPDFWebDesc": "Direct download in browser",
+  "@postGenExportPDFWebDesc": {
+    "description": "Export option web description for PDF"
+  },
+  "postGenExportPDFMobileDesc": "Save the prompt as PDF",
+  "@postGenExportPDFMobileDesc": {
+    "description": "Export option mobile description for PDF"
+  },
+  "postGenExportDownloadTXTWeb": "Download TXT",
+  "@postGenExportDownloadTXTWeb": {
+    "description": "Export option label for TXT on web"
+  },
+  "postGenExportTXTMobile": "Export as TXT",
+  "@postGenExportTXTMobile": {
+    "description": "Export option label for TXT on mobile"
+  },
+  "postGenExportTXTWebDesc": "Direct download in browser",
+  "@postGenExportTXTWebDesc": {
+    "description": "Export option web description for TXT"
+  },
+  "postGenExportTXTMobileDesc": "Save the prompt as text file",
+  "@postGenExportTXTMobileDesc": {
+    "description": "Export option mobile description for TXT"
+  },
+
+  "postGenAICompareSheetTitle": "Compare AI responses",
+  "@postGenAICompareSheetTitle": {
+    "description": "Title of the AI comparison selection sheet"
+  },
+  "postGenAICompareSubtitle": "Select AIs to send the prompt to (min. 2)",
+  "@postGenAICompareSubtitle": {
+    "description": "Subtitle in AI comparison selection sheet"
+  },
+  "postGenSuggestedForCategory": "Suggested for {category}",
+  "@postGenSuggestedForCategory": {
+    "description": "Badge label for suggested AIs",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "postGenSuggestedBadge": "Suggested",
+  "@postGenSuggestedBadge": {
+    "description": "Badge on suggested AI checkbox"
+  },
+  "postGenStrongIn": "Strong in: {categories}",
+  "@postGenStrongIn": {
+    "description": "AI subtitle showing strengths",
+    "placeholders": {
+      "categories": {
+        "type": "String"
+      }
+    }
+  },
+  "postGenCompareCount": "Compare {count} AIs",
+  "@postGenCompareCount": {
+    "description": "Button label showing selected AI count",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "postGenSelectAtLeast2": "Select at least 2 AIs",
+  "@postGenSelectAtLeast2": {
+    "description": "Disabled button label when fewer than 2 AIs selected"
+  },
+
+  "postGenSuccessPromptSaved": "Prompt saved!",
+  "@postGenSuccessPromptSaved": {
+    "description": "Snackbar after saving the prompt"
+  },
+  "postGenSuccessPromptPublished": "Prompt shared with the community!",
+  "@postGenSuccessPromptPublished": {
+    "description": "Snackbar after publishing the prompt"
+  },
+  "postGenErrorImproveSection": "Couldn't improve the section",
+  "@postGenErrorImproveSection": {
+    "description": "Snackbar when AI section improvement fails"
+  },
+  "postGenSuccessSectionImproved": "Section improved!",
+  "@postGenSuccessSectionImproved": {
+    "description": "Snackbar after applying section improvement"
+  },
+  "postGenInfoNoTemplate": "No templates available for this section",
+  "@postGenInfoNoTemplate": {
+    "description": "Snackbar when no template exists for a section"
+  },
+  "postGenSuccessTemplateApplied": "Template applied! Customize the fields in [brackets]",
+  "@postGenSuccessTemplateApplied": {
+    "description": "Snackbar after applying a template"
+  },
+  "postGenErrorCopy": "Couldn't copy the prompt",
+  "@postGenErrorCopy": {
+    "description": "Snackbar when clipboard copy fails"
+  },
+  "postGenErrorShare": "Couldn't share the prompt",
+  "@postGenErrorShare": {
+    "description": "Snackbar when sharing fails"
+  },
+  "postGenSuccessPDFDownloaded": "PDF downloaded!",
+  "@postGenSuccessPDFDownloaded": {
+    "description": "Snackbar after PDF download on web"
+  },
+  "postGenSuccessTXTDownloaded": "TXT file downloaded!",
+  "@postGenSuccessTXTDownloaded": {
+    "description": "Snackbar after TXT download on web"
+  },
+  "postGenErrorExport": "Export failed",
+  "@postGenErrorExport": {
+    "description": "Snackbar when export fails"
+  },
+
+  "postGenHintTooShort": "Too short — add more specific details",
+  "@postGenHintTooShort": {
+    "description": "Weakness hint for short sections"
+  },
+  "postGenHintAddNumbers": "Add concrete numbers (limits, quantities, sizes)",
+  "@postGenHintAddNumbers": {
+    "description": "Weakness hint for sections lacking numbers"
+  },
+  "postGenHintBreakIntoBullets": "Break into bullet points or paragraphs for clarity",
+  "@postGenHintBreakIntoBullets": {
+    "description": "Weakness hint for long unstructured sections"
+  },
+  "postGenHintExpandDetails": "Expand with more specific and contextual details",
+  "@postGenHintExpandDetails": {
+    "description": "Weakness hint for sparse sections"
+  },
+  "postGenHintWeakSection": "Weak section — use 'Improve' to rewrite with AI",
+  "@postGenHintWeakSection": {
+    "description": "Weakness hint for very low scoring sections"
+  },
+  "postGenHintBeMoreSpecific": "Could be more specific — try adding concrete examples",
+  "@postGenHintBeMoreSpecific": {
+    "description": "Weakness hint for moderate sections"
+  },
+
+  "aiOptionGeneric": "Generic",
+  "@aiOptionGeneric": {
+    "description": "Display name for the generic AI option"
   }
 }

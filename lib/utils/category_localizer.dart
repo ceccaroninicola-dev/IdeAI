@@ -16,3 +16,11 @@ String localizeCategory(String categoryKey, BuildContext context) {
     default: return categoryKey;
   }
 }
+
+String localizeAIOption(String optionKey, BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
+  switch (optionKey) {
+    case 'Generico': return l10n.aiOptionGeneric;
+    default: return optionKey;
+  }
+}
