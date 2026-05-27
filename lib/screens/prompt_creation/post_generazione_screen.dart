@@ -1257,7 +1257,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
 
     // Pre-compila titolo dalla sessione
     final sessione = context.read<SessioneProvider>().sessione;
-    titoloController.text = sessione.categoria?.nome ?? AppLocalizations.of(context)!.postGenMyPromptDefault;
+    titoloController.text = sessione.categoria != null ? localizeCategory(sessione.categoria!.nome, context) : AppLocalizations.of(context)!.postGenMyPromptDefault;
     descrizioneController.text = sessione.fraseIniziale;
 
     showModalBottomSheet(
@@ -1860,7 +1860,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                             size: 16, color: colorScheme.primary),
                         const SizedBox(width: 6),
                         Text(
-                          AppLocalizations.of(context)!.postGenSuggestedForCategory(categoria),
+                          AppLocalizations.of(context)!.postGenSuggestedForCategory(localizeCategory(categoria, context)),
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -1941,7 +1941,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                             ],
                           ),
                           subtitle: Text(
-                            AppLocalizations.of(context)!.postGenStrongIn(ai.categorieForti.join(", ")),
+                            AppLocalizations.of(context)!.postGenStrongIn(ai.categorieForti.map((c) => localizeCategory(c, context)).join(", ")),
                             style: TextStyle(
                               fontSize: 12,
                               color: colorScheme.onSurfaceVariant,
