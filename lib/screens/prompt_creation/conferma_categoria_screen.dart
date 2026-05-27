@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ideai/config/app_routes.dart';
 import 'package:ideai/l10n/app_localizations.dart';
+import 'package:ideai/utils/category_localizer.dart';
 import 'package:ideai/providers/sessione_provider.dart';
 
 /// Schermata di conferma categoria — seconda fase del flusso.
@@ -89,7 +90,7 @@ class _ConfermaCategoriaScreenState extends State<ConfermaCategoriaScreen> {
 
                       // Nome della categoria
                       Text(
-                        categoria.nome,
+                        localizeCategory(categoria.nome, context),
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 6),
