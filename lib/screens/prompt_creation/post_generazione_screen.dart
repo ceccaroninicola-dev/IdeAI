@@ -431,7 +431,8 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
   Future<void> _miglioraSezione(int indice) async {
     setState(() => _sezioneMigliorandosi = indice);
     final provider = context.read<PromptGeneratoProvider>();
-    final risultato = await provider.miglioraSezione(indice);
+    final lang = Localizations.localeOf(context).languageCode;
+    final risultato = await provider.miglioraSezione(indice, lang: lang);
     if (!mounted) return;
     setState(() => _sezioneMigliorandosi = -1);
     if (risultato != null) {
@@ -1994,9 +1995,10 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
   /// Avvia il confronto navigando alla schermata dedicata
   void _avviaConfronto(PromptGenerato prompt, String categoria) {
     final confrontoProvider = context.read<ConfrontoAIProvider>();
+    final lang = Localizations.localeOf(context).languageCode;
 
     // Avvia il confronto (simulato)
-    confrontoProvider.avviaConfronto(prompt, categoria);
+    confrontoProvider.avviaConfronto(prompt, categoria, lang: lang);
 
     // Naviga alla schermata di confronto
     Navigator.of(context).pushNamed(AppRoutes.confrontoAI);

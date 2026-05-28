@@ -141,12 +141,14 @@ class _DomandeScreenState extends State<DomandeScreen> {
 
     final sessione = context.read<SessioneProvider>().sessione;
     final promptProvider = context.read<PromptGeneratoProvider>();
+    final lang = Localizations.localeOf(context).languageCode;
 
     // Avvia la generazione del prompt via AI
     promptProvider.generaPrompt(
       fraseIniziale: sessione.fraseIniziale,
       categoria: sessione.categoria?.nome ?? 'Scrittura',
       risposte: sessione.tutteLeRisposte,
+      lang: lang,
     );
 
     // Mostra l'interstitial prima di navigare (se disponibile e non su web)
@@ -344,7 +346,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
-                        onPressed: () => provider.approfondisci(),
+                        onPressed: () => provider.approfondisci(lang: Localizations.localeOf(context).languageCode),
                         icon: const Icon(Icons.search_rounded, size: 20),
                         label: Text(
                           livello == 1

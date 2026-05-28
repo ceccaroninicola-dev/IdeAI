@@ -403,10 +403,12 @@ class _DettaglioTemplateScreenState extends State<DettaglioTemplateScreen> {
   /// Avvia il flusso domande con il template come base
   void _personalizzaTemplate(PromptTemplate template) {
     final sessioneProvider = context.read<SessioneProvider>();
+    final lang = Localizations.localeOf(context).languageCode;
 
     // Avvia una sessione con la descrizione del template
     sessioneProvider.avviaSessione(
       '${template.titolo}: ${template.descrizione}',
+      lang: lang,
     );
 
     // Naviga alla conferma categoria

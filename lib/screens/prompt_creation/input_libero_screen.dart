@@ -77,9 +77,10 @@ class _InputLiberoScreenState extends State<InputLiberoScreen> {
 
     final provider = context.read<SessioneProvider>();
     final navigator = Navigator.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
 
     // Avvia la sessione con la frase dell'utente
-    await provider.avviaSessione(_testoController.text.trim());
+    await provider.avviaSessione(_testoController.text.trim(), lang: lang);
 
     // Mostra eventuale errore API (il flusso continua con dati fallback)
     if (mounted && provider.errore != null) {

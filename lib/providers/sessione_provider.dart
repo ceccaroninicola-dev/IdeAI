@@ -61,7 +61,7 @@ class SessioneProvider extends ChangeNotifier {
 
   /// Avvia una nuova sessione con la frase libera dell'utente.
   /// Esegue: categoria → punti focali → domande livello 1.
-  Future<void> avviaSessione(String fraseLibera) async {
+  Future<void> avviaSessione(String fraseLibera, {required String lang}) async {
     _sessione = SessionePrompt(fraseIniziale: fraseLibera);
     _staAnalizzando = true;
     _errore = null;
@@ -76,7 +76,7 @@ class SessioneProvider extends ChangeNotifier {
     try {
       debugPrint('[Sessione] STEP 1: Analisi categoria via AI...');
       final json = await api.chiamaAIJson(
-        systemPrompt: AiPrompts.analisiCategoria,
+        systemPrompt: AiPrompts.analisiCategoria(lang),
         messaggioUtente: fraseLibera,
         temperature: 0.3,
         maxTokens: 500,
@@ -110,7 +110,7 @@ class SessioneProvider extends ChangeNotifier {
     try {
       debugPrint('[Sessione] STEP 2: Generazione punti focali...');
       final json = await api.chiamaAIJson(
-        systemPrompt: AiPrompts.analisiPuntiFocali,
+        systemPrompt: AiPrompts.analisiPuntiFocali(lang),
         messaggioUtente: 'RICHIESTA UTENTE: "$fraseLibera"\n'
             'CATEGORIA: ${categoria.nome}\n'
             'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}',
@@ -130,7 +130,7 @@ class SessioneProvider extends ChangeNotifier {
     try {
       debugPrint('[Sessione] STEP 3: Generazione domande livello 1...');
       final json = await api.chiamaAIJson(
-        systemPrompt: AiPrompts.domandeLivello1,
+        systemPrompt: AiPrompts.domandeLivello1(lang),
         messaggioUtente: 'FRASE INIZIALE: "$fraseLibera"\n'
             'CATEGORIA: ${categoria.nome}\n'
             'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}\n'
@@ -206,7 +206,7 @@ class SessioneProvider extends ChangeNotifier {
 
   /// L'utente sceglie di approfondire: genera domande di livello successivo.
   /// Salva le risposte del livello corrente e prepara il prossimo.
-  Future<void> approfondisci() async {
+  Future<void> approfondisci({required String lang}) async {
     if (_sessione.livello >= 3) return;
 
     _staApprofondendo = true;
@@ -229,8 +229,8 @@ class SessioneProvider extends ChangeNotifier {
 
     // Scegli il prompt per il livello giusto
     final systemPrompt = livelloSuccessivo == 2
-        ? AiPrompts.domandeLivello2
-        : AiPrompts.domandeLivello3;
+        ? AiPrompts.domandeLivello2(lang)
+        : AiPrompts.domandeLivello3(lang);
 
     List<Domanda> nuoveDomande;
     try {
