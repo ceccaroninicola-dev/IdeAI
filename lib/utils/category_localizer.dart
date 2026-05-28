@@ -17,6 +17,19 @@ String localizeCategory(String categoryKey, BuildContext context) {
   }
 }
 
+String localizeSectionTitle(String titolo, BuildContext context) {
+  final lang = Localizations.localeOf(context).languageCode;
+  if (lang == 'it') return titolo;
+  switch (titolo) {
+    case 'Ruolo': return 'Role';
+    case 'Contesto': return 'Context';
+    case 'Istruzioni': return 'Instructions';
+    case 'Formato output': return 'Format';
+    case 'Vincoli': return 'Constraints';
+    default: return titolo;
+  }
+}
+
 String localizeAIOption(String optionKey, BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
   switch (optionKey) {

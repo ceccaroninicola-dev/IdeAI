@@ -55,7 +55,7 @@ class PromptGeneratoProvider extends ChangeNotifier {
     try {
       // Costruisci il messaggio con tutte le informazioni raccolte
       final messaggioUtente = _costruisciMessaggio(
-          fraseIniziale, categoria, risposte);
+          fraseIniziale, categoria, risposte, lang);
 
       debugPrint('[PromptGen] Chiamata AI in corso...');
       final json = await api.chiamaAIJson(
@@ -220,29 +220,45 @@ class PromptGeneratoProvider extends ChangeNotifier {
     String fraseIniziale,
     String categoria,
     Map<String, String> risposte,
+    String lang,
   ) {
+    final isEn = lang != 'it';
     final buffer = StringBuffer();
-    buffer.writeln('RICHIESTA ORIGINALE DELL\'UTENTE:');
+    buffer.writeln(isEn ? 'ORIGINAL USER REQUEST:' : 'RICHIESTA ORIGINALE DELL\'UTENTE:');
     buffer.writeln('"$fraseIniziale"');
     buffer.writeln('');
-    buffer.writeln('CATEGORIA: $categoria');
+    buffer.writeln(isEn ? 'CATEGORY: $categoria' : 'CATEGORIA: $categoria');
     buffer.writeln('');
     if (risposte.isNotEmpty) {
-      buffer.writeln('DATI RACCOLTI DALLE DOMANDE (risposte GREZZE da RIELABORARE):');
-      buffer.writeln('⚠️ Queste sono risposte brevi/abbreviate. NON copiarle, RISCRIVILE.');
+      buffer.writeln(isEn
+          ? 'DATA COLLECTED FROM QUESTIONS (RAW answers to be REWORKED):'
+          : 'DATI RACCOLTI DALLE DOMANDE (risposte GREZZE da RIELABORARE):');
+      buffer.writeln(isEn
+          ? '⚠️ These are short/abbreviated answers. Do NOT copy them, REWRITE them.'
+          : '⚠️ Queste sono risposte brevi/abbreviate. NON copiarle, RISCRIVILE.');
       buffer.writeln('');
       risposte.forEach((domanda, risposta) {
-        buffer.writeln('• Domanda: "$domanda"');
-        buffer.writeln('  Risposta: "$risposta"');
+        buffer.writeln(isEn ? '• Question: "$domanda"' : '• Domanda: "$domanda"');
+        buffer.writeln(isEn ? '  Answer: "$risposta"' : '  Risposta: "$risposta"');
         buffer.writeln('');
       });
     }
-    buffer.writeln('ISTRUZIONI FINALI:');
-    buffer.writeln('Genera il prompt finale RIELABORANDO completamente i dati qui sopra.');
-    buffer.writeln('Le risposte sono dati GREZZI — NON copiarle, INTEGRALE in frasi fluide.');
-    buffer.writeln('Il prompt deve INIZIARE con un verbo d\'azione (Scrivi, Genera, Crea, Analizza).');
-    buffer.writeln('Deve essere un\'istruzione DIRETTA pronta da incollare su un\'AI.');
-    buffer.writeln('MAI includere "Sì", "No", numeri isolati o parole singole senza contesto.');
+    buffer.writeln(isEn ? 'FINAL INSTRUCTIONS:' : 'ISTRUZIONI FINALI:');
+    buffer.writeln(isEn
+        ? 'Generate the final prompt by completely REWORKING the data above.'
+        : 'Genera il prompt finale RIELABORANDO completamente i dati qui sopra.');
+    buffer.writeln(isEn
+        ? 'The answers are RAW data - do NOT copy them, INTEGRATE them into fluent sentences.'
+        : 'Le risposte sono dati GREZZI — NON copiarle, INTEGRALE in frasi fluide.');
+    buffer.writeln(isEn
+        ? 'The prompt must START with an action verb (Write, Generate, Create, Analyze).'
+        : 'Il prompt deve INIZIARE con un verbo d\'azione (Scrivi, Genera, Crea, Analizza).');
+    buffer.writeln(isEn
+        ? 'It must be a DIRECT instruction ready to paste into an AI.'
+        : 'Deve essere un\'istruzione DIRETTA pronta da incollare su un\'AI.');
+    buffer.writeln(isEn
+        ? 'NEVER include "Yes", "No", isolated numbers or single words without context.'
+        : 'MAI includere "Sì", "No", numeri isolati o parole singole senza contesto.');
     return buffer.toString();
   }
 
