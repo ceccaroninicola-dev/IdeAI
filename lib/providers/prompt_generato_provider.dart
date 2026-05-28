@@ -41,6 +41,7 @@ class PromptGeneratoProvider extends ChangeNotifier {
     required String fraseIniziale,
     required String categoria,
     required Map<String, String> risposte,
+    required String lang,
   }) async {
     _staGenerando = true;
     _errore = null;
@@ -58,7 +59,7 @@ class PromptGeneratoProvider extends ChangeNotifier {
 
       debugPrint('[PromptGen] Chiamata AI in corso...');
       final json = await api.chiamaAIJson(
-        systemPrompt: AiPrompts.generazionePrompt,
+        systemPrompt: AiPrompts.generazionePrompt(lang),
         messaggioUtente: messaggioUtente,
         temperature: 0.7,
         maxTokens: 3000,
@@ -85,7 +86,7 @@ class PromptGeneratoProvider extends ChangeNotifier {
 
   /// Ottimizza il prompt per un'AI di destinazione specifica.
   /// Restituisce il testo ottimizzato.
-  Future<String?> ottimizzaPerAI(String nomeAI) async {
+  Future<String?> ottimizzaPerAI(String nomeAI, {required String lang}) async {
     if (_prompt == null) return null;
 
     // Se è già ottimizzato per la stessa AI, usa la cache
@@ -97,7 +98,7 @@ class PromptGeneratoProvider extends ChangeNotifier {
 
     try {
       final risultato = await api.chiamaAI(
-        systemPrompt: AiPrompts.ottimizzazionePerAI,
+        systemPrompt: AiPrompts.ottimizzazionePerAI(lang),
         messaggioUtente: 'AI di destinazione: $nomeAI\n\n'
             'Prompt originale:\n${_prompt!.testoCompleto}',
         temperature: 0.5,
@@ -191,13 +192,13 @@ class PromptGeneratoProvider extends ChangeNotifier {
 
   /// Migliora una singola sezione del prompt tramite AI.
   /// Restituisce il testo migliorato o null in caso di errore.
-  Future<String?> miglioraSezione(int indice) async {
+  Future<String?> miglioraSezione(int indice, {required String lang}) async {
     if (_prompt == null || indice >= _prompt!.sezioni.length) return null;
     final sezione = _prompt!.sezioni[indice];
     final api = ApiService();
     try {
       final risultato = await api.chiamaAI(
-        systemPrompt: AiPrompts.miglioramentoSezione,
+        systemPrompt: AiPrompts.miglioramentoSezione(lang),
         messaggioUtente: 'TITOLO SEZIONE: ${sezione.titolo}\n\n'
             'CONTENUTO ATTUALE:\n${sezione.contenuto}',
         temperature: 0.6,

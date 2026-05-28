@@ -1,12 +1,76 @@
 /// System prompt e template per le chiamate AI dell'app.
 /// Centralizza tutti i prompt usati internamente per analisi,
 /// generazione domande, generazione prompt e ottimizzazione.
+///
+/// Ogni prompt è disponibile in italiano e inglese.
+/// Il parametro [lang] (languageCode del device) seleziona la versione:
+/// 'it' → italiano, qualsiasi altro valore → inglese (fallback).
 class AiPrompts {
   AiPrompts._();
 
-  /// System prompt per l'analisi della frase iniziale dell'utente.
-  /// Rileva: categoria, sottocategoria, riepilogo, parole chiave, icona.
-  static const analisiCategoria = '''
+  /// Selettore lingua: italiano se 'it', inglese altrimenti.
+  static String _sel(String lang, String it, String en) =>
+      lang == 'it' ? it : en;
+
+  // ─────────────────────────────────────────────
+  // PROMPT PUBBLICI (con selettore lingua)
+  // ─────────────────────────────────────────────
+
+  /// Analisi della frase iniziale → categoria, sottocategoria, riepilogo.
+  static String analisiCategoria(String lang) =>
+      _sel(lang, _analisiCategoriaIt, _analisiCategoriaEn);
+
+  /// Analisi dei punti focali (Fase 0 invisibile).
+  static String analisiPuntiFocali(String lang) =>
+      _sel(lang, _analisiPuntiFocaliIt, _analisiPuntiFocaliEn);
+
+  /// Domande livello 1 — 5 domande macro.
+  static String domandeLivello1(String lang) =>
+      _sel(lang, _domandeLivello1It, _domandeLivello1En);
+
+  /// Domande livello 2 — approfondimento.
+  static String domandeLivello2(String lang) =>
+      _sel(lang, _domandeLivello2It, _domandeLivello2En);
+
+  /// Domande livello 3 — dettagli finali.
+  static String domandeLivello3(String lang) =>
+      _sel(lang, _domandeLivello3It, _domandeLivello3En);
+
+  /// Miglioramento di una singola sezione del prompt.
+  static String miglioramentoSezione(String lang) =>
+      _sel(lang, _miglioramentoSezioneIt, _miglioramentoSezioneEn);
+
+  /// Generazione del prompt finale strutturato.
+  static String generazionePrompt(String lang) =>
+      _sel(lang, _generazionePromptIt, _generazionePromptEn);
+
+  /// Ottimizzazione del prompt per un'AI specifica.
+  static String ottimizzazionePerAI(String lang) =>
+      _sel(lang, _ottimizzazionePerAIIt, _ottimizzazionePerAIEn);
+
+  /// Confronto multi-AI: prompt specifico per ogni AI simulata.
+  static String getConfrontoPerAI(String nomeAi, String lang) {
+    switch (nomeAi) {
+      case 'ChatGPT':
+        return _sel(lang, _confrontoChatGPTIt, _confrontoChatGPTEn);
+      case 'Claude':
+        return _sel(lang, _confrontoClaudeIt, _confrontoClaudeEn);
+      case 'Gemini':
+        return _sel(lang, _confrontoGeminiIt, _confrontoGeminiEn);
+      case 'Copilot':
+        return _sel(lang, _confrontoCopilotIt, _confrontoCopilotEn);
+      case 'Mistral':
+        return _sel(lang, _confrontoMistralIt, _confrontoMistralEn);
+      default:
+        return _sel(lang, _confrontoDefaultIt, _confrontoDefaultEn);
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // PROMPT ITALIANI (contenuto attuale)
+  // ─────────────────────────────────────────────
+
+  static const _analisiCategoriaIt = '''
 Sei il motore intelligente dell'app "IdeAI". L'utente ha scritto una frase
 che descrive cosa vuole ottenere con un'AI. Analizza la frase e rispondi in JSON.
 
@@ -22,9 +86,7 @@ Rispondi SOLO con questo JSON:
   "elementiChiave": ["parola1", "parola2", "parola3"]
 }''';
 
-  /// System prompt per l'analisi dei punti focali (Fase 0 — invisibile all'utente).
-  /// Genera 20-25 aspetti rilevanti della richiesta su cui basare le domande.
-  static const analisiPuntiFocali = '''
+  static const _analisiPuntiFocaliIt = '''
 Sei il motore di analisi dell'app "IdeAI". Data una richiesta utente e la sua categoria,
 genera una lista di 20-25 PUNTI FOCALI: aspetti, sotto-temi e dimensioni rilevanti
 dell'argomento su cui basare le domande successive.
@@ -50,8 +112,7 @@ Rispondi SOLO con questo JSON:
   "puntiFocali": ["punto1", "punto2", "punto3"]
 }''';
 
-  /// System prompt per le domande di Livello 1 — 5 domande macro sui punti focali.
-  static const domandeLivello1 = '''
+  static const _domandeLivello1It = '''
 Sei il motore di domande dell'app "IdeAI". Genera esattamente 5 DOMANDE MACRO
 che coprono i punti focali PIÙ IMPORTANTI della richiesta utente.
 
@@ -91,8 +152,7 @@ Rispondi SOLO con questo JSON:
 Per testoLibero: "opzioni": [], aggiungi "placeholder" descrittivo, niente valoreDefault.
 Per chipMultipli: opzioni sono tag selezionabili multipli, niente valoreDefault.''';
 
-  /// System prompt per le domande di Livello 2 — approfondimento risposte generiche.
-  static const domandeLivello2 = '''
+  static const _domandeLivello2It = '''
 Sei il motore di domande dell'app "IdeAI". LIVELLO 2 — APPROFONDIMENTO.
 
 Hai già le risposte del livello 1 (domande macro). Ora devi:
@@ -135,8 +195,7 @@ Rispondi SOLO con questo JSON:
 Per testoLibero: "opzioni": [], aggiungi "placeholder" descrittivo, niente valoreDefault.
 Per chipMultipli: opzioni sono tag selezionabili multipli, niente valoreDefault.''';
 
-  /// System prompt per le domande di Livello 3 — dettagli finali e completamento.
-  static const domandeLivello3 = '''
+  static const _domandeLivello3It = '''
 Sei il motore di domande dell'app "IdeAI". LIVELLO 3 — DETTAGLI FINALI.
 
 Hai le risposte dei livelli 1 e 2. Ora devi raccogliere gli ULTIMI DETTAGLI
@@ -183,9 +242,7 @@ Rispondi SOLO con questo JSON:
 Per testoLibero: "opzioni": [], aggiungi "placeholder" descrittivo, niente valoreDefault.
 Per chipMultipli: opzioni sono tag selezionabili multipli, niente valoreDefault.''';
 
-  /// System prompt per migliorare una singola sezione del prompt strutturato.
-  /// Riscrive la sezione in modo più dettagliato, specifico e efficace.
-  static const miglioramentoSezione = '''
+  static const _miglioramentoSezioneIt = '''
 Sei un esperto di prompt engineering. Ti viene data UNA SINGOLA SEZIONE
 di un prompt strutturato, con il suo titolo. Riscrivila in modo più
 dettagliato, specifico e efficace.
@@ -199,10 +256,7 @@ REGOLE:
 Rispondi SOLO con il testo migliorato della sezione.
 NON aggiungere titoli, etichette, JSON o altro. Solo il testo migliorato.''';
 
-  /// System prompt per la generazione del prompt finale strutturato.
-  /// Genera un prompt DIRETTO con tecniche avanzate di prompt engineering,
-  /// diviso in sezioni (Ruolo, Contesto, Istruzioni, Formato, Vincoli).
-  static const generazionePrompt = '''
+  static const _generazionePromptIt = '''
 Sei un esperto di prompt engineering. L'utente ti darà la sua richiesta originale
 e i dettagli raccolti. Tu devi generare un PROMPT DIRETTO pronto da incollare
 su qualsiasi AI (ChatGPT, Gemini, Claude, ecc.).
@@ -389,8 +443,7 @@ Rispondi SOLO con questo JSON:
 
 Icone suggerimenti: lightbulb, format_align_left, record_voice_over, block, add_circle.''';
 
-  /// System prompt per ottimizzare un prompt per un'AI specifica
-  static const ottimizzazionePerAI = '''
+  static const _ottimizzazionePerAIIt = '''
 Ti viene dato un prompt universale e il nome dell'AI di destinazione.
 Ottimizza il prompt per quella specifica AI.
 
@@ -416,26 +469,7 @@ Ottimizzazioni per AI (SENZA aggiungere ruoli):
 Rispondi SOLO con il prompt ottimizzato come testo puro (non JSON).
 Non aggiungere meta-commenti o spiegazioni.''';
 
-  /// System prompt per generare risposte simulate di diverse AI nel confronto.
-  /// Usa getConfrontoPerAI(nomeAi) per ottenere il prompt specifico per ogni AI.
-  static String getConfrontoPerAI(String nomeAi) {
-    switch (nomeAi) {
-      case 'ChatGPT':
-        return _confrontoChatGPT;
-      case 'Claude':
-        return _confrontoClaude;
-      case 'Gemini':
-        return _confrontoGemini;
-      case 'Copilot':
-        return _confrontoCopilot;
-      case 'Mistral':
-        return _confrontoMistral;
-      default:
-        return _confrontoDefault;
-    }
-  }
-
-  static const _confrontoChatGPT = '''
+  static const _confrontoChatGPTIt = '''
 Rispondi come farebbe ChatGPT al prompt dell'utente.
 Il tuo stile DEVE essere:
 - Tono conversazionale e amichevole, con emoji occasionali (📌, ✅, 💡, 🚀)
@@ -461,7 +495,7 @@ Rispondi SOLO con questo JSON:
   }
 }''';
 
-  static const _confrontoClaude = '''
+  static const _confrontoClaudeIt = '''
 Rispondi come farebbe Claude al prompt dell'utente.
 Il tuo stile DEVE essere:
 - Tono riflessivo, pacato e preciso, senza emoji
@@ -487,7 +521,7 @@ Rispondi SOLO con questo JSON:
   }
 }''';
 
-  static const _confrontoGemini = '''
+  static const _confrontoGeminiIt = '''
 Rispondi come farebbe Gemini al prompt dell'utente.
 Il tuo stile DEVE essere:
 - Tono informativo e pratico, orientato ai fatti
@@ -513,7 +547,7 @@ Rispondi SOLO con questo JSON:
   }
 }''';
 
-  static const _confrontoCopilot = '''
+  static const _confrontoCopilotIt = '''
 Rispondi come farebbe Copilot al prompt dell'utente.
 Il tuo stile DEVE essere:
 - Tono tecnico e diretto, vai dritto alla soluzione
@@ -538,7 +572,7 @@ Rispondi SOLO con questo JSON:
   }
 }''';
 
-  static const _confrontoMistral = '''
+  static const _confrontoMistralIt = '''
 Rispondi come farebbe Mistral al prompt dell'utente.
 Il tuo stile DEVE essere:
 - Tono analitico ed elegante, con tocco europeo
@@ -563,7 +597,7 @@ Rispondi SOLO con questo JSON:
   }
 }''';
 
-  static const _confrontoDefault = '''
+  static const _confrontoDefaultIt = '''
 Rispondi al prompt dell'utente in modo diretto e completo.
 
 IMPORTANTE: Rispondi DIRETTAMENTE alla richiesta dell'utente. Produci il risultato
@@ -580,4 +614,24 @@ Rispondi SOLO con questo JSON:
     "Qualità": 4.4
   }
 }''';
+
+  // ─────────────────────────────────────────────
+  // PROMPT INGLESI (placeholder — identici all'italiano per ora)
+  // TODO(Session 4-B): sostituire con traduzioni inglesi reali
+  // ─────────────────────────────────────────────
+
+  static const _analisiCategoriaEn = _analisiCategoriaIt;
+  static const _analisiPuntiFocaliEn = _analisiPuntiFocaliIt;
+  static const _domandeLivello1En = _domandeLivello1It;
+  static const _domandeLivello2En = _domandeLivello2It;
+  static const _domandeLivello3En = _domandeLivello3It;
+  static const _miglioramentoSezioneEn = _miglioramentoSezioneIt;
+  static const _generazionePromptEn = _generazionePromptIt;
+  static const _ottimizzazionePerAIEn = _ottimizzazionePerAIIt;
+  static const _confrontoChatGPTEn = _confrontoChatGPTIt;
+  static const _confrontoClaudeEn = _confrontoClaudeIt;
+  static const _confrontoGeminiEn = _confrontoGeminiIt;
+  static const _confrontoCopilotEn = _confrontoCopilotIt;
+  static const _confrontoMistralEn = _confrontoMistralIt;
+  static const _confrontoDefaultEn = _confrontoDefaultIt;
 }

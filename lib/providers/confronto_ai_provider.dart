@@ -94,7 +94,7 @@ class ConfrontoAIProvider extends ChangeNotifier {
 
   /// Avvia il confronto: genera risposte per ogni AI selezionata
   /// Usa GPT-4o-mini per simulare le risposte, con fallback fittizio
-  Future<void> avviaConfronto(PromptGenerato prompt, String categoria) async {
+  Future<void> avviaConfronto(PromptGenerato prompt, String categoria, {required String lang}) async {
     _staCaricando = true;
     notifyListeners();
 
@@ -106,7 +106,7 @@ class ConfrontoAIProvider extends ChangeNotifier {
 
       try {
         final json = await api.chiamaAIJson(
-          systemPrompt: AiPrompts.getConfrontoPerAI(nomeAi),
+          systemPrompt: AiPrompts.getConfrontoPerAI(nomeAi, lang),
           messaggioUtente:
               'Ecco il prompt dell\'utente a cui devi rispondere come $nomeAi:\n\n'
               '${prompt.testoCompleto}\n\n'
