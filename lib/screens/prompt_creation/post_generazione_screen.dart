@@ -43,8 +43,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
   /// Indice della sezione in fase di miglioramento AI (-1 = nessuna)
   int _sezioneMigliorandosi = -1;
 
-  /// Template predefiniti per tipo di sezione
-  static const _templatePerSezione = {
+  static const _templatePerSezioneIt = {
     'Ruolo': 'Agisci come un [esperto di X] con [Y anni di esperienza] '
         'specializzato in [Z]. Hai una profonda conoscenza di [ambito] e '
         'sei in grado di [competenza chiave].',
@@ -66,6 +65,34 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
         'tecnico].\nLingua: [lingua target].\nNon includere: [elementi da evitare].\n'
         'Formato: [markdown/testo semplice/HTML].',
   };
+
+  static const _templatePerSezioneEn = {
+    'Ruolo': 'Act as a [X expert] with [Y years of experience] '
+        'specialized in [Z]. You have deep knowledge of [domain] and '
+        'are able to [key skill].',
+    'Contesto': 'The user is [profile description] who needs '
+        '[main goal]. The context is [specific situation] with '
+        '[particular constraints or requirements]. The result will be used for '
+        '[final purpose].',
+    'Istruzioni': '1. [First action step]\n2. [Second action step]\n'
+        '3. [Third action step]\n4. [Fourth action step]\n\n'
+        'For each step, provide [type of detail required]. '
+        'Make sure to [quality requirement].',
+    'Formato output': 'Organize the response into:\n'
+        '1) Executive summary (max 3 lines)\n'
+        '2) Main body split into sections with headings\n'
+        '3) Bullet points for key points\n'
+        '4) Comparison table (if applicable)\n'
+        '5) Conclusion with next steps',
+    'Vincoli': 'Length: [X] words/characters.\nTone: [professional/informal/'
+        'technical].\nLanguage: [target language].\nDo not include: [elements to avoid].\n'
+        'Format: [markdown/plain text/HTML].',
+  };
+
+  Map<String, String> get _templatePerSezione {
+    final lang = Localizations.localeOf(context).languageCode;
+    return lang == 'it' ? _templatePerSezioneIt : _templatePerSezioneEn;
+  }
 
   @override
   void dispose() {
@@ -473,7 +500,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                     Icon(Icons.auto_awesome, color: colorScheme.primary, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      AppLocalizations.of(context)!.postGenImprovementTitle(sezione.titolo),
+                      AppLocalizations.of(context)!.postGenImprovementTitle(localizeSectionTitle(sezione.titolo, context)),
                       style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -574,7 +601,7 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
                         color: colorScheme.primary, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      AppLocalizations.of(context)!.postGenTemplateTitle(sezione.titolo),
+                      AppLocalizations.of(context)!.postGenTemplateTitle(localizeSectionTitle(sezione.titolo, context)),
                       style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -2404,7 +2431,7 @@ class _CardSezioneState extends State<_CardSezione> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      widget.sezione.titolo,
+                      localizeSectionTitle(widget.sezione.titolo, context),
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
