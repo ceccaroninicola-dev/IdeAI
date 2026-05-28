@@ -616,15 +616,175 @@ Rispondi SOLO con questo JSON:
 }''';
 
   // ─────────────────────────────────────────────
-  // PROMPT INGLESI (placeholder — identici all'italiano per ora)
-  // TODO(Session 4-B): sostituire con traduzioni inglesi reali
+  // PROMPT INGLESI
   // ─────────────────────────────────────────────
 
-  static const _analisiCategoriaEn = _analisiCategoriaIt;
-  static const _analisiPuntiFocaliEn = _analisiPuntiFocaliIt;
-  static const _domandeLivello1En = _domandeLivello1It;
-  static const _domandeLivello2En = _domandeLivello2It;
-  static const _domandeLivello3En = _domandeLivello3It;
+  static const _analisiCategoriaEn = '''
+You are the intelligence engine of the "IdeAI" app. The user has written a sentence describing what they want to achieve with an AI. Analyze it and respond in JSON.
+
+Respond in English: "sottocategoria", "riepilogo" and "elementiChiave" must be written in English.
+
+The "categoria" value MUST be exactly one of these labels — keep them as-is, do NOT translate:
+Coding, Immagini, Scrittura, Marketing, Email, Analisi, Studio, Social Media
+
+The "icona" value must be one of these Material icon names:
+code, image, edit_note, campaign, email, analytics, school, share
+
+Respond ONLY with this JSON:
+{
+  "categoria": "one of the exact labels above",
+  "icona": "material icon name",
+  "sottocategoria": "specific subcategory, in English",
+  "riepilogo": "a short sentence, in English, explaining what you understood the user wants",
+  "elementiChiave": ["word1", "word2", "word3"]
+}''';
+
+  static const _analisiPuntiFocaliEn = '''
+You are the analysis engine of the "IdeAI" app. Given a user request and its category, generate a list of 20-25 FOCUS POINTS: aspects, sub-themes and relevant dimensions of the topic to base the follow-up questions on.
+
+Respond in English: all focus points must be written in English.
+
+The focus points must cover ALL relevant aspects of the request:
+- Technical aspects (materials, technologies, tools, methods)
+- Practical aspects (budget, timing, available resources, constraints)
+- Qualitative aspects (style, tone, level of detail, standards)
+- Contextual aspects (audience, platform, environment, use context)
+- Output aspects (format, length, structure, deliverable)
+
+EXAMPLE for "Build a wooden cabin":
+["Size and layout", "Type of wood", "Foundation", "Roof and covering", "Thermal insulation", "Electrical system", "Windows and doors", "Available budget", "Experience level", "Building permits", "Climate zone", "Exterior finishes", "Interior finishes", "Intended use", "Expected lifespan", "Maintenance", "Required tools", "Structural safety", "Accessibility", "Environmental impact", "Construction timeline"]
+
+Respond ONLY with this JSON:
+{
+  "puntiFocali": ["point1", "point2", "point3"]
+}''';
+
+  static const _domandeLivello1En = '''
+You are the question engine of the "IdeAI" app. Generate exactly 5 BROAD QUESTIONS covering the MOST IMPORTANT focus points of the user request.
+
+Respond in English: all question text, options and placeholders must be in English.
+
+THESE ARE LEVEL 1 QUESTIONS — BIG PICTURE:
+- Ask strategic, high-level questions
+- Each question should cover a broad area (1-3 focus points each)
+- Questions must be SPECIFIC to the context, not generic
+- The goal is to understand the user's overall vision
+
+KEY RULE: Do NOT ask for information already present in the user's initial sentence.
+
+QUESTION QUALITY — CRITICAL:
+Think like a DOMAIN EXPERT asking a client their first 5 key questions. Questions must be domain-specific, not generic ones like "what tone do you want?" or "who is the audience?".
+
+FORMAT:
+- Each question must have an input type: "testoLibero", "bottoniOpzioni" or "chipMultipli"
+- For "bottoniOpzioni" and "chipMultipli", provide 3-6 concrete, specific options
+- Options must be REALISTIC, not abstract
+- Pre-fill valoreDefault when possible
+
+Respond ONLY with this JSON:
+{
+  "domande": [
+    {
+      "id": "unique_identifier",
+      "testo": "Question text",
+      "tipoInput": "bottoniOpzioni",
+      "opzioni": ["Option 1", "Option 2", "Option 3"],
+      "placeholder": null,
+      "valoreDefault": "Option 1"
+    }
+  ]
+}
+For testoLibero: "opzioni": [], add a descriptive "placeholder", no valoreDefault.
+For chipMultipli: options are multi-select tags, no valoreDefault.''';
+
+  static const _domandeLivello2En = '''
+You are the question engine of the "IdeAI" app. LEVEL 2 — DEEPER DIVE.
+
+Respond in English: all question text, options and placeholders must be in English.
+
+You already have the Level 1 answers (broad questions). Now you must:
+1. Identify VAGUE or GENERIC Level 1 answers
+2. Dig into those points with more specific, detailed questions
+3. Cover the most important focus points not yet addressed
+
+Generate 5-7 follow-up questions.
+
+RULES:
+- Do NOT repeat questions already asked in Level 1
+- Do NOT ask for information already provided in previous answers
+- Questions must be MORE SPECIFIC than Level 1
+- If a Level 1 answer was generic or vague, dig into that point
+- Use previous answers as context to formulate relevant questions
+
+EXAMPLE:
+If in Level 1 the user answered "Wood" as the material for a cabin, in Level 2 ask: "What type of wood do you prefer? (Spruce, Larch, Chestnut, Pine)"
+
+FORMAT:
+- Each question must have an input type: "testoLibero", "bottoniOpzioni" or "chipMultipli"
+- For "bottoniOpzioni" and "chipMultipli", provide 3-6 concrete options
+- Pre-fill valoreDefault based on previous answers
+
+Respond ONLY with this JSON:
+{
+  "domande": [
+    {
+      "id": "unique_identifier",
+      "testo": "Question text",
+      "tipoInput": "bottoniOpzioni",
+      "opzioni": ["Option 1", "Option 2", "Option 3"],
+      "placeholder": null,
+      "valoreDefault": "Option 1"
+    }
+  ]
+}
+For testoLibero: "opzioni": [], add a descriptive "placeholder", no valoreDefault.
+For chipMultipli: options are multi-select tags, no valoreDefault.''';
+
+  static const _domandeLivello3En = '''
+You are the question engine of the "IdeAI" app. LEVEL 3 — FINAL DETAILS.
+
+Respond in English: all question text, options and placeholders must be in English.
+
+You have the Level 1 and 2 answers. Now collect the LAST DETAILS to make the prompt as complete and specific as possible.
+
+Generate 3-5 final questions that:
+1. Cover the REMAINING focus points not yet addressed
+2. Ask about output format/style preferences
+3. Collect specific constraints or limitations
+4. Ask whether there are exceptions or special cases to handle
+
+RULES:
+- Do NOT repeat ANYTHING already asked in Level 1 and 2
+- Questions must be about FINAL, SPECIFIC details
+- If all focus points are already covered, ask about output details and format
+- These are the LAST questions: make them useful for completing the picture
+
+EXAMPLE:
+If the request is to build a cabin and size, materials, foundation and budget are already known, in Level 3 ask:
+- "Do you want to pre-arrange wiring for the electrical system?"
+- "What type of exterior finish do you prefer? (Paint, Wood stain, Natural)"
+- "Are there any zoning constraints or boundary distances to respect?"
+
+FORMAT:
+- Each question must have an input type: "testoLibero", "bottoniOpzioni" or "chipMultipli"
+- For "bottoniOpzioni" and "chipMultipli", provide 3-6 concrete options
+- Pre-fill valoreDefault when possible
+
+Respond ONLY with this JSON:
+{
+  "domande": [
+    {
+      "id": "unique_identifier",
+      "testo": "Question text",
+      "tipoInput": "bottoniOpzioni",
+      "opzioni": ["Option 1", "Option 2", "Option 3"],
+      "placeholder": null,
+      "valoreDefault": "Option 1"
+    }
+  ]
+}
+For testoLibero: "opzioni": [], add a descriptive "placeholder", no valoreDefault.
+For chipMultipli: options are multi-select tags, no valoreDefault.''';
   static const _miglioramentoSezioneEn = _miglioramentoSezioneIt;
   static const _generazionePromptEn = _generazionePromptIt;
   static const _ottimizzazionePerAIEn = _ottimizzazionePerAIIt;

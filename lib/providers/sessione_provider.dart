@@ -111,9 +111,13 @@ class SessioneProvider extends ChangeNotifier {
       debugPrint('[Sessione] STEP 2: Generazione punti focali...');
       final json = await api.chiamaAIJson(
         systemPrompt: AiPrompts.analisiPuntiFocali(lang),
-        messaggioUtente: 'RICHIESTA UTENTE: "$fraseLibera"\n'
-            'CATEGORIA: ${categoria.nome}\n'
-            'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}',
+        messaggioUtente: lang == 'it'
+            ? 'RICHIESTA UTENTE: "$fraseLibera"\n'
+                'CATEGORIA: ${categoria.nome}\n'
+                'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}'
+            : 'USER REQUEST: "$fraseLibera"\n'
+                'CATEGORY: ${categoria.nome}\n'
+                'SUBCATEGORY: ${categoria.sottocategoria ?? "N/A"}',
         temperature: 0.5,
         maxTokens: 1500,
       );
@@ -131,11 +135,17 @@ class SessioneProvider extends ChangeNotifier {
       debugPrint('[Sessione] STEP 3: Generazione domande livello 1...');
       final json = await api.chiamaAIJson(
         systemPrompt: AiPrompts.domandeLivello1(lang),
-        messaggioUtente: 'FRASE INIZIALE: "$fraseLibera"\n'
-            'CATEGORIA: ${categoria.nome}\n'
-            'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}\n'
-            'ELEMENTI CHIAVE: ${categoria.elementiChiave.join(", ")}\n'
-            'PUNTI FOCALI: ${puntiFocali.join("; ")}',
+        messaggioUtente: lang == 'it'
+            ? 'FRASE INIZIALE: "$fraseLibera"\n'
+                'CATEGORIA: ${categoria.nome}\n'
+                'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}\n'
+                'ELEMENTI CHIAVE: ${categoria.elementiChiave.join(", ")}\n'
+                'PUNTI FOCALI: ${puntiFocali.join("; ")}'
+            : 'INITIAL SENTENCE: "$fraseLibera"\n'
+                'CATEGORY: ${categoria.nome}\n'
+                'SUBCATEGORY: ${categoria.sottocategoria ?? "N/A"}\n'
+                'KEY ELEMENTS: ${categoria.elementiChiave.join(", ")}\n'
+                'FOCUS POINTS: ${puntiFocali.join("; ")}',
         temperature: 0.6,
         maxTokens: 2000,
       );
@@ -237,10 +247,15 @@ class SessioneProvider extends ChangeNotifier {
       debugPrint('[Sessione] Approfondimento livello $livelloSuccessivo...');
       final json = await api.chiamaAIJson(
         systemPrompt: systemPrompt,
-        messaggioUtente: 'FRASE INIZIALE: "${_sessione.fraseIniziale}"\n'
-            'CATEGORIA: ${_sessione.categoria?.nome ?? "Generale"}\n'
-            'PUNTI FOCALI: ${_sessione.puntiFocali.join("; ")}\n\n'
-            'RISPOSTE GIÀ RACCOLTE:\n$contesto',
+        messaggioUtente: lang == 'it'
+            ? 'FRASE INIZIALE: "${_sessione.fraseIniziale}"\n'
+                'CATEGORIA: ${_sessione.categoria?.nome ?? "Generale"}\n'
+                'PUNTI FOCALI: ${_sessione.puntiFocali.join("; ")}\n\n'
+                'RISPOSTE GIÀ RACCOLTE:\n$contesto'
+            : 'INITIAL SENTENCE: "${_sessione.fraseIniziale}"\n'
+                'CATEGORY: ${_sessione.categoria?.nome ?? "General"}\n'
+                'FOCUS POINTS: ${_sessione.puntiFocali.join("; ")}\n\n'
+                'ANSWERS COLLECTED SO FAR:\n$contesto',
         temperature: 0.6,
         maxTokens: 3000,
       );
