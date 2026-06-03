@@ -25,6 +25,9 @@ class PromptGeneratoProvider extends ChangeNotifier {
   /// Testo originale del prompt (prima di modifiche manuali)
   String? _testoOriginale;
 
+  // TODO(session-4-B-tech-debt): _lang field is stateful; runtime locale switch
+  // between entry points may yield stale value. Migrate to explicit lang propagation
+  // (parameter on aggiornaSezione/applicaSuggerimento + UI call-sites) after launch.
   /// Lingua corrente per chiavi display (punteggi, titoli fallback)
   String _lang = 'it';
 
