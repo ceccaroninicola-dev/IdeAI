@@ -107,10 +107,13 @@ class ConfrontoAIProvider extends ChangeNotifier {
       try {
         final json = await api.chiamaAIJson(
           systemPrompt: AiPrompts.getConfrontoPerAI(nomeAi, lang),
-          messaggioUtente:
-              'Ecco il prompt dell\'utente a cui devi rispondere come $nomeAi:\n\n'
-              '${prompt.testoCompleto}\n\n'
-              'Categoria: $categoria',
+          messaggioUtente: lang == 'it'
+              ? 'Ecco il prompt dell\'utente a cui devi rispondere come $nomeAi:\n\n'
+                  '${prompt.testoCompleto}\n\n'
+                  'Categoria: $categoria'
+              : 'Here is the user\'s prompt you must respond to as $nomeAi:\n\n'
+                  '${prompt.testoCompleto}\n\n'
+                  'Category: $categoria',
           temperature: 0.9,
           maxTokens: 2000,
         );
