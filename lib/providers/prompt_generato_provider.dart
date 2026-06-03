@@ -25,6 +25,12 @@ class PromptGeneratoProvider extends ChangeNotifier {
   /// Testo originale del prompt (prima di modifiche manuali)
   String? _testoOriginale;
 
+  // TODO(session-4-B-tech-debt): _lang field is stateful; runtime locale switch
+  // between entry points may yield stale value. Migrate to explicit lang propagation
+  // (parameter on aggiornaSezione/applicaSuggerimento + UI call-sites) after launch.
+  /// Lingua corrente per chiavi display (punteggi, titoli fallback)
+  String _lang = 'it';
+
   // -- Getter --
 
   PromptGenerato? get prompt => _prompt;
@@ -47,6 +53,7 @@ class PromptGeneratoProvider extends ChangeNotifier {
     _errore = null;
     _promptOttimizzato = null;
     _aiOttimizzata = null;
+    _lang = lang;
     notifyListeners();
 
     final api = ApiService();
@@ -152,16 +159,18 @@ class PromptGeneratoProvider extends ChangeNotifier {
   }
 
   /// Carica un prompt da un template della libreria
-  void caricaDaTemplate(PromptTemplate template) {
+  void caricaDaTemplate(PromptTemplate template, {required String lang}) {
+    _lang = lang;
+    final isEn = lang != 'it';
     _prompt = PromptGenerato(
       sezioni: template.sezioni,
       punteggioGlobale: template.popolarita,
       punteggiCriteri: {
-        'Chiarezza': (template.popolarita * 0.95).clamp(0.0, 5.0),
-        'Specificità': (template.popolarita * 0.90).clamp(0.0, 5.0),
-        'Completezza': (template.popolarita * 0.92).clamp(0.0, 5.0),
-        'Struttura': (template.popolarita * 0.98).clamp(0.0, 5.0),
-        'Coerenza': (template.popolarita * 0.96).clamp(0.0, 5.0),
+        (isEn ? 'Clarity' : 'Chiarezza'): (template.popolarita * 0.95).clamp(0.0, 5.0),
+        (isEn ? 'Specificity' : 'Specificità'): (template.popolarita * 0.90).clamp(0.0, 5.0),
+        (isEn ? 'Completeness' : 'Completezza'): (template.popolarita * 0.92).clamp(0.0, 5.0),
+        (isEn ? 'Structure' : 'Struttura'): (template.popolarita * 0.98).clamp(0.0, 5.0),
+        (isEn ? 'Coherence' : 'Coerenza'): (template.popolarita * 0.96).clamp(0.0, 5.0),
       },
       suggerimenti: const [],
     );
@@ -338,21 +347,22 @@ class PromptGeneratoProvider extends ChangeNotifier {
 
     final fattore = (lunghezzaTotale / 800).clamp(0.5, 1.0);
     final base = 3.5;
+    final isEn = _lang != 'it';
 
     _prompt = _prompt!.conPunteggiAggiornati(
       punteggioGlobale: double.parse(
         (base + (1.5 * fattore)).toStringAsFixed(1),
       ),
       punteggiCriteri: {
-        'Chiarezza': double.parse(
+        (isEn ? 'Clarity' : 'Chiarezza'): double.parse(
             (3.8 + (1.2 * fattore)).clamp(0.0, 5.0).toStringAsFixed(1)),
-        'Specificità': double.parse(
+        (isEn ? 'Specificity' : 'Specificità'): double.parse(
             (3.2 + (1.5 * fattore)).clamp(0.0, 5.0).toStringAsFixed(1)),
-        'Completezza': double.parse(
+        (isEn ? 'Completeness' : 'Completezza'): double.parse(
             (3.5 + (1.3 * fattore)).clamp(0.0, 5.0).toStringAsFixed(1)),
-        'Struttura': double.parse(
+        (isEn ? 'Structure' : 'Struttura'): double.parse(
             (4.0 + (0.8 * fattore)).clamp(0.0, 5.0).toStringAsFixed(1)),
-        'Coerenza': double.parse(
+        (isEn ? 'Coherence' : 'Coerenza'): double.parse(
             (3.9 + (1.0 * fattore)).clamp(0.0, 5.0).toStringAsFixed(1)),
       },
     );
@@ -366,16 +376,17 @@ class PromptGeneratoProvider extends ChangeNotifier {
     Map<String, String> risposte,
   ) {
     final sezioni = _generaSezioni(fraseIniziale, categoria, risposte);
+    final isEn = _lang != 'it';
 
     return PromptGenerato(
       sezioni: sezioni,
       punteggioGlobale: 4.2,
-      punteggiCriteri: const {
-        'Chiarezza': 4.5,
-        'Specificità': 3.8,
-        'Completezza': 4.0,
-        'Struttura': 4.6,
-        'Coerenza': 4.3,
+      punteggiCriteri: {
+        (isEn ? 'Clarity' : 'Chiarezza'): 4.5,
+        (isEn ? 'Specificity' : 'Specificità'): 3.8,
+        (isEn ? 'Completeness' : 'Completezza'): 4.0,
+        (isEn ? 'Structure' : 'Struttura'): 4.6,
+        (isEn ? 'Coherence' : 'Coerenza'): 4.3,
       },
       suggerimenti: _generaSuggerimenti(sezioni),
     );
@@ -448,21 +459,22 @@ class PromptGeneratoProvider extends ChangeNotifier {
 
   /// Restituisce il titolo della sezione in base alla categoria
   String _titoloPerCategoria(String categoria) {
+    final isEn = _lang != 'it';
     switch (categoria) {
       case 'Scrittura':
-        return 'Istruzione Testo';
+        return isEn ? 'Text instruction' : 'Istruzione Testo';
       case 'Marketing':
-        return 'Istruzione Marketing';
+        return isEn ? 'Marketing instruction' : 'Istruzione Marketing';
       case 'Email':
-        return 'Istruzione Email';
+        return isEn ? 'Email instruction' : 'Istruzione Email';
       case 'Analisi':
-        return 'Istruzione Analisi';
+        return isEn ? 'Analysis instruction' : 'Istruzione Analisi';
       case 'Studio':
-        return 'Istruzione Studio';
+        return isEn ? 'Study instruction' : 'Istruzione Studio';
       case 'Social Media':
-        return 'Istruzione Social';
+        return isEn ? 'Social instruction' : 'Istruzione Social';
       default:
-        return 'Istruzione';
+        return isEn ? 'Instruction' : 'Istruzione';
     }
   }
 

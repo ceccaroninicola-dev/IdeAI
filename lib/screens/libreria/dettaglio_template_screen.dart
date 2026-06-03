@@ -394,7 +394,8 @@ class _DettaglioTemplateScreenState extends State<DettaglioTemplateScreen> {
     final promptProvider = context.read<PromptGeneratoProvider>();
 
     // Genera il prompt dal template
-    promptProvider.caricaDaTemplate(template);
+    final lang = Localizations.localeOf(context).languageCode;
+    promptProvider.caricaDaTemplate(template, lang: lang);
 
     // Naviga alla post-generazione
     Navigator.of(context).pushNamed(AppRoutes.postGenerazione);

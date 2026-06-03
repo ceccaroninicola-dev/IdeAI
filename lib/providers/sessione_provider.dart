@@ -24,6 +24,12 @@ class SessioneProvider extends ChangeNotifier {
   /// Eventuale errore durante le chiamate API
   String? _errore;
 
+  // TODO(session-4-B-tech-debt): _lang field is stateful; runtime locale switch
+  // between entry points may yield stale value. Migrate to explicit lang propagation
+  // after launch.
+  /// Lingua corrente per fallback (riepilogo, domande, stopwords)
+  String _lang = 'it';
+
   // -- Getter --
 
   SessionePrompt get sessione => _sessione;
@@ -65,6 +71,7 @@ class SessioneProvider extends ChangeNotifier {
     _sessione = SessionePrompt(fraseIniziale: fraseLibera);
     _staAnalizzando = true;
     _errore = null;
+    _lang = lang;
     notifyListeners();
 
     final api = ApiService();
@@ -355,6 +362,8 @@ class SessioneProvider extends ChangeNotifier {
   CategoriaRilevata _rilevaCategoria(String frase) {
     final fraseLower = frase.toLowerCase();
 
+    final isEn = _lang != 'it';
+
     if (fraseLower.contains('codice') ||
         fraseLower.contains('programm') ||
         fraseLower.contains('funzione') ||
@@ -366,9 +375,10 @@ class SessioneProvider extends ChangeNotifier {
       return CategoriaRilevata(
         nome: 'Coding',
         icona: 'code',
-        riepilogo:
-            'Vuoi creare un prompt per assistenza nella programmazione.',
-        sottocategoria: 'Sviluppo Software',
+        riepilogo: isEn
+            ? 'You want to create a prompt for programming assistance.'
+            : 'Vuoi creare un prompt per assistenza nella programmazione.',
+        sottocategoria: isEn ? 'Software Development' : 'Sviluppo Software',
         elementiChiave: _estraiElementiChiave(frase),
       );
     }
@@ -381,9 +391,10 @@ class SessioneProvider extends ChangeNotifier {
       return CategoriaRilevata(
         nome: 'Immagini',
         icona: 'image',
-        riepilogo:
-            'Vuoi creare un prompt per generare immagini o contenuti visivi.',
-        sottocategoria: 'Generazione Immagini',
+        riepilogo: isEn
+            ? 'You want to create a prompt for generating images or visual content.'
+            : 'Vuoi creare un prompt per generare immagini o contenuti visivi.',
+        sottocategoria: isEn ? 'Image Generation' : 'Generazione Immagini',
         elementiChiave: _estraiElementiChiave(frase),
       );
     }
@@ -397,8 +408,9 @@ class SessioneProvider extends ChangeNotifier {
       return CategoriaRilevata(
         nome: 'Scrittura',
         icona: 'edit_note',
-        riepilogo:
-            'Vuoi creare un prompt per scrivere contenuti per i social media.',
+        riepilogo: isEn
+            ? 'You want to create a prompt for writing social media content.'
+            : 'Vuoi creare un prompt per scrivere contenuti per i social media.',
         sottocategoria: 'Social Media / Marketing',
         elementiChiave: _estraiElementiChiave(frase),
       );
@@ -411,9 +423,10 @@ class SessioneProvider extends ChangeNotifier {
       return CategoriaRilevata(
         nome: 'Scrittura',
         icona: 'edit_note',
-        riepilogo:
-            'Vuoi creare un prompt per scrivere email o comunicazioni.',
-        sottocategoria: 'Comunicazione',
+        riepilogo: isEn
+            ? 'You want to create a prompt for writing emails or communications.'
+            : 'Vuoi creare un prompt per scrivere email o comunicazioni.',
+        sottocategoria: isEn ? 'Communication' : 'Comunicazione',
         elementiChiave: _estraiElementiChiave(frase),
       );
     }
@@ -421,22 +434,31 @@ class SessioneProvider extends ChangeNotifier {
     return CategoriaRilevata(
       nome: 'Scrittura',
       icona: 'edit_note',
-      riepilogo:
-          'Vuoi creare un prompt per generare testo o contenuti scritti.',
-      sottocategoria: 'Generale',
+      riepilogo: isEn
+          ? 'You want to create a prompt for generating text or written content.'
+          : 'Vuoi creare un prompt per generare testo o contenuti scritti.',
+      sottocategoria: isEn ? 'General' : 'Generale',
       elementiChiave: _estraiElementiChiave(frase),
     );
   }
 
   /// Estrae parole chiave dalla frase (fallback senza AI)
   List<String> _estraiElementiChiave(String frase) {
-    final paroleComuni = {
-      'voglio', 'vorrei', 'creare', 'fare', 'un', 'una', 'il', 'la', 'lo',
-      'le', 'gli', 'di', 'a', 'da', 'in', 'con', 'su', 'per', 'tra', 'fra',
-      'che', 'come', 'mi', 'ho', 'bisogno', 'aiutami', 'scrivi', 'genera',
-      'crea', 'fammi', 'puoi', 'potresti', 'e', 'o', 'ma', 'non', 'del',
-      'dei', 'delle', 'della', 'dello', 'al', 'alla', 'alle',
-    };
+    final paroleComuni = _lang != 'it'
+        ? {
+            'i', 'you', 'the', 'a', 'an', 'want', 'would', 'like', 'please',
+            'need', 'write', 'create', 'make', 'do', 'that', 'this', 'with',
+            'for', 'of', 'in', 'on', 'at', 'to', 'and', 'or', 'but', 'is',
+            'are', 'be', 'my', 'your', 'some', 'any', 'all',
+          }
+        : {
+            'voglio', 'vorrei', 'creare', 'fare', 'un', 'una', 'il', 'la',
+            'lo', 'le', 'gli', 'di', 'a', 'da', 'in', 'con', 'su', 'per',
+            'tra', 'fra', 'che', 'come', 'mi', 'ho', 'bisogno', 'aiutami',
+            'scrivi', 'genera', 'crea', 'fammi', 'puoi', 'potresti', 'e',
+            'o', 'ma', 'non', 'del', 'dei', 'delle', 'della', 'dello', 'al',
+            'alla', 'alle',
+          };
 
     return frase
         .toLowerCase()
@@ -449,30 +471,31 @@ class SessioneProvider extends ChangeNotifier {
 
   /// Genera domande fittizie di livello 1 (fallback senza AI)
   List<Domanda> _generaDomandeFittizie(String categoria) {
+    final isEn = _lang != 'it';
     switch (categoria) {
       case 'Coding':
-        return const [
-          Domanda(id: 'linguaggio', testo: 'In quale linguaggio stai lavorando?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Python', 'JavaScript', 'Dart/Flutter', 'Java', 'Altro'], valoreDefault: 'Python'),
-          Domanda(id: 'tipo_aiuto', testo: 'Che tipo di aiuto ti serve?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Scrivere codice nuovo', 'Correggere un bug', 'Ottimizzare', 'Spiegare']),
-          Domanda(id: 'contesto', testo: 'Descrivi brevemente il contesto del progetto.', tipoInput: TipoInput.testoLibero, placeholder: 'Es. App web con React per gestire...'),
-          Domanda(id: 'livello_dettaglio', testo: 'Quanto dettagliata vuoi la risposta?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Solo codice', 'Codice con commenti', 'Spiegazione passo passo', 'Tutorial completo'], valoreDefault: 'Codice con commenti'),
-          Domanda(id: 'requisiti_extra', testo: 'Requisiti specifici?', tipoInput: TipoInput.chipMultipli, opzioni: ['Performance', 'Sicurezza', 'Test', 'Documentazione', 'Semplicità']),
+        return [
+          Domanda(id: 'linguaggio', testo: isEn ? 'What programming language are you working with?' : 'In quale linguaggio stai lavorando?', tipoInput: TipoInput.bottoniOpzioni, opzioni: const ['Python', 'JavaScript', 'Dart/Flutter', 'Java', 'Altro'], valoreDefault: 'Python'),
+          Domanda(id: 'tipo_aiuto', testo: isEn ? 'What kind of help do you need?' : 'Che tipo di aiuto ti serve?', tipoInput: TipoInput.bottoniOpzioni, opzioni: isEn ? const ['Write new code', 'Fix a bug', 'Optimize', 'Explain'] : const ['Scrivere codice nuovo', 'Correggere un bug', 'Ottimizzare', 'Spiegare']),
+          Domanda(id: 'contesto', testo: isEn ? 'Briefly describe the project context.' : 'Descrivi brevemente il contesto del progetto.', tipoInput: TipoInput.testoLibero, placeholder: isEn ? 'E.g. React web app to manage...' : 'Es. App web con React per gestire...'),
+          Domanda(id: 'livello_dettaglio', testo: isEn ? 'How detailed should the answer be?' : 'Quanto dettagliata vuoi la risposta?', tipoInput: TipoInput.bottoniOpzioni, opzioni: isEn ? const ['Code only', 'Code with comments', 'Step-by-step explanation', 'Full tutorial'] : const ['Solo codice', 'Codice con commenti', 'Spiegazione passo passo', 'Tutorial completo'], valoreDefault: isEn ? 'Code with comments' : 'Codice con commenti'),
+          Domanda(id: 'requisiti_extra', testo: isEn ? 'Any specific requirements?' : 'Requisiti specifici?', tipoInput: TipoInput.chipMultipli, opzioni: isEn ? const ['Performance', 'Security', 'Tests', 'Documentation', 'Simplicity'] : const ['Performance', 'Sicurezza', 'Test', 'Documentazione', 'Semplicità']),
         ];
       case 'Immagini':
-        return const [
-          Domanda(id: 'stile', testo: 'Quale stile visivo preferisci?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Fotorealistico', 'Illustrazione digitale', 'Cartoon / Anime', 'Arte astratta', 'Minimalista']),
-          Domanda(id: 'soggetto', testo: 'Descrivi il soggetto dell\'immagine.', tipoInput: TipoInput.testoLibero, placeholder: 'Es. Un gatto che legge un libro...'),
-          Domanda(id: 'atmosfera', testo: 'Che atmosfera vuoi comunicare?', tipoInput: TipoInput.chipMultipli, opzioni: ['Luminosa', 'Cupa', 'Romantica', 'Futuristica', 'Nostalgica', 'Energetica']),
-          Domanda(id: 'colori', testo: 'Preferenze sui colori?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Caldi', 'Freddi', 'Bianco e nero', 'Pastello', 'Nessuna'], valoreDefault: 'Nessuna'),
-          Domanda(id: 'formato', testo: 'Formato/dimensione?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Quadrato 1:1', 'Orizzontale 16:9', 'Verticale 9:16', 'Libero']),
+        return [
+          Domanda(id: 'stile', testo: isEn ? 'What visual style do you prefer?' : 'Quale stile visivo preferisci?', tipoInput: TipoInput.bottoniOpzioni, opzioni: isEn ? const ['Photorealistic', 'Digital illustration', 'Cartoon / Anime', 'Abstract art', 'Minimalist'] : const ['Fotorealistico', 'Illustrazione digitale', 'Cartoon / Anime', 'Arte astratta', 'Minimalista']),
+          Domanda(id: 'soggetto', testo: isEn ? 'Describe the subject of the image.' : 'Descrivi il soggetto dell\'immagine.', tipoInput: TipoInput.testoLibero, placeholder: isEn ? 'E.g. A cat reading a book...' : 'Es. Un gatto che legge un libro...'),
+          Domanda(id: 'atmosfera', testo: isEn ? 'What atmosphere do you want to convey?' : 'Che atmosfera vuoi comunicare?', tipoInput: TipoInput.chipMultipli, opzioni: isEn ? const ['Bright', 'Dark', 'Romantic', 'Futuristic', 'Nostalgic', 'Energetic'] : const ['Luminosa', 'Cupa', 'Romantica', 'Futuristica', 'Nostalgica', 'Energetica']),
+          Domanda(id: 'colori', testo: isEn ? 'Color preferences?' : 'Preferenze sui colori?', tipoInput: TipoInput.bottoniOpzioni, opzioni: isEn ? const ['Warm', 'Cool', 'Black and white', 'Pastel', 'None'] : const ['Caldi', 'Freddi', 'Bianco e nero', 'Pastello', 'Nessuna'], valoreDefault: isEn ? 'None' : 'Nessuna'),
+          Domanda(id: 'formato', testo: isEn ? 'Format/dimensions?' : 'Formato/dimensione?', tipoInput: TipoInput.bottoniOpzioni, opzioni: isEn ? const ['Square 1:1', 'Landscape 16:9', 'Portrait 9:16', 'Free'] : const ['Quadrato 1:1', 'Orizzontale 16:9', 'Verticale 9:16', 'Libero']),
         ];
       default:
-        return const [
-          Domanda(id: 'tipo_contenuto', testo: 'Che tipo di contenuto vuoi creare?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Post social', 'Email', 'Articolo / Blog', 'Testo creativo', 'Altro']),
-          Domanda(id: 'tono', testo: 'Quale tono vuoi usare?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Formale', 'Informale', 'Ironico', 'Ispirazionale', 'Tecnico'], valoreDefault: 'Informale'),
-          Domanda(id: 'pubblico', testo: 'A chi è rivolto?', tipoInput: TipoInput.chipMultipli, opzioni: ['Professionisti', 'Studenti', 'Pubblico generico', 'Manager', 'Creativi']),
-          Domanda(id: 'lunghezza', testo: 'Quanto lungo il risultato?', tipoInput: TipoInput.bottoniOpzioni, opzioni: ['Breve (1-2 paragrafi)', 'Medio (3-5 paragrafi)', 'Lungo (articolo completo)'], valoreDefault: 'Medio (3-5 paragrafi)'),
-          Domanda(id: 'dettagli_extra', testo: 'Dettagli specifici da includere?', tipoInput: TipoInput.testoLibero, placeholder: 'Es. Menziona il lancio del prodotto...'),
+        return [
+          Domanda(id: 'tipo_contenuto', testo: isEn ? 'What type of content do you want to create?' : 'Che tipo di contenuto vuoi creare?', tipoInput: TipoInput.bottoniOpzioni, opzioni: isEn ? const ['Social post', 'Email', 'Article / Blog', 'Creative text', 'Other'] : const ['Post social', 'Email', 'Articolo / Blog', 'Testo creativo', 'Altro']),
+          Domanda(id: 'tono', testo: isEn ? 'What tone do you want to use?' : 'Quale tono vuoi usare?', tipoInput: TipoInput.bottoniOpzioni, opzioni: isEn ? const ['Formal', 'Informal', 'Ironic', 'Inspirational', 'Technical'] : const ['Formale', 'Informale', 'Ironico', 'Ispirazionale', 'Tecnico'], valoreDefault: isEn ? 'Informal' : 'Informale'),
+          Domanda(id: 'pubblico', testo: isEn ? 'Who is the target audience?' : 'A chi è rivolto?', tipoInput: TipoInput.chipMultipli, opzioni: isEn ? const ['Professionals', 'Students', 'General audience', 'Managers', 'Creatives'] : const ['Professionisti', 'Studenti', 'Pubblico generico', 'Manager', 'Creativi']),
+          Domanda(id: 'lunghezza', testo: isEn ? 'How long should the result be?' : 'Quanto lungo il risultato?', tipoInput: TipoInput.bottoniOpzioni, opzioni: isEn ? const ['Short (1-2 paragraphs)', 'Medium (3-5 paragraphs)', 'Long (full article)'] : const ['Breve (1-2 paragrafi)', 'Medio (3-5 paragrafi)', 'Lungo (articolo completo)'], valoreDefault: isEn ? 'Medium (3-5 paragraphs)' : 'Medio (3-5 paragrafi)'),
+          Domanda(id: 'dettagli_extra', testo: isEn ? 'Specific details to include?' : 'Dettagli specifici da includere?', tipoInput: TipoInput.testoLibero, placeholder: isEn ? 'E.g. Mention the product launch...' : 'Es. Menziona il lancio del prodotto...'),
         ];
     }
   }
