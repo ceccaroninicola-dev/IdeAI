@@ -416,32 +416,40 @@ class PromptGeneratoProvider extends ChangeNotifier {
     // e aggiunge i dettagli raccolti dalle domande
     String contenuto;
 
+    final isEn = _lang != 'it';
+
     switch (categoria) {
       case 'Coding':
         final linguaggio = risposte['linguaggio'] ?? '';
         final linguaggioDesc = linguaggio.isNotEmpty ? ' in $linguaggio' : '';
         contenuto = '$fraseIniziale.$linguaggioDesc '
-            'Il codice deve essere pulito, ben documentato e seguire le '
-            'best practices. Gestisci i casi limite e gli errori.';
+            '${isEn ? 'The code must be clean, well documented, and follow best practices. Handle edge cases and errors.' : 'Il codice deve essere pulito, ben documentato e seguire le best practices. Gestisci i casi limite e gli errori.'}';
         if (extra.isNotEmpty) contenuto += ' $extra';
         break;
 
       case 'Immagini':
         final stile = risposte['stile'] ?? '';
-        final stileDesc = stile.isNotEmpty ? ' Stile: $stile.' : '';
+        final stileDesc = stile.isNotEmpty
+            ? ' ${isEn ? 'Style' : 'Stile'}: $stile.'
+            : '';
         final atmosfera = risposte['atmosfera'] ?? '';
-        final atmosferaDesc = atmosfera.isNotEmpty ? ' Atmosfera: $atmosfera.' : '';
-        contenuto = 'Genera un\'immagine: $fraseIniziale.$stileDesc$atmosferaDesc '
-            'Composizione ben bilanciata con punto focale chiaro. '
-            'Alta risoluzione, senza elementi testuali nell\'immagine.';
+        final atmosferaDesc = atmosfera.isNotEmpty
+            ? ' ${isEn ? 'Atmosphere' : 'Atmosfera'}: $atmosfera.'
+            : '';
+        contenuto = '${isEn ? 'Generate an image' : 'Genera un\'immagine'}: $fraseIniziale.$stileDesc$atmosferaDesc '
+            '${isEn ? 'Well-balanced composition with a clear focal point. High resolution, no text elements in the image.' : 'Composizione ben bilanciata con punto focale chiaro. Alta risoluzione, senza elementi testuali nell\'immagine.'}';
         if (extra.isNotEmpty) contenuto += ' $extra';
         break;
 
       default:
         final tono = risposte['tono'] ?? '';
-        final tonoDesc = tono.isNotEmpty ? ' Tono: $tono.' : '';
+        final tonoDesc = tono.isNotEmpty
+            ? ' ${isEn ? 'Tone' : 'Tono'}: $tono.'
+            : '';
         final lunghezza = risposte['lunghezza'] ?? '';
-        final lunghezzaDesc = lunghezza.isNotEmpty ? ' Lunghezza: $lunghezza.' : '';
+        final lunghezzaDesc = lunghezza.isNotEmpty
+            ? ' ${isEn ? 'Length' : 'Lunghezza'}: $lunghezza.'
+            : '';
         contenuto = '$fraseIniziale.$tonoDesc$lunghezzaDesc';
         if (extra.isNotEmpty) contenuto += ' $extra';
         break;
@@ -505,44 +513,51 @@ class PromptGeneratoProvider extends ChangeNotifier {
   ) {
     final contenuto = sezioni[0].contenuto;
     final isImmagine = sezioni[0].titolo == 'Descrizione Immagine';
+    final isEn = _lang != 'it';
 
     if (isImmagine) {
       return [
         SuggerimentoMiglioramento(
-          etichetta: 'Più dettagli visivi',
+          etichetta: isEn ? 'More visual details' : 'Più dettagli visivi',
           icona: 'lightbulb',
           sezioneIndice: 0,
           testoPrima: contenuto,
-          testoDopo:
-              '$contenuto '
-              'Dettagli aggiuntivi: texture realistiche, riflessi naturali, '
-              'micro-dettagli sulle superfici.',
-          descrizione:
-              'Aggiunge dettagli visivi specifici per un\'immagine '
-              'più ricca e realistica.',
+          testoDopo: isEn
+              ? '$contenuto '
+                'Additional details: realistic textures, natural reflections, '
+                'micro-details on surfaces.'
+              : '$contenuto '
+                'Dettagli aggiuntivi: texture realistiche, riflessi naturali, '
+                'micro-dettagli sulle superfici.',
+          descrizione: isEn
+              ? 'Adds specific visual details to improve the image.'
+              : 'Aggiunge dettagli visivi specifici per un\'immagine '
+                'più ricca e realistica.',
         ),
         SuggerimentoMiglioramento(
-          etichetta: 'Migliora illuminazione',
+          etichetta: isEn ? 'Improve lighting' : 'Migliora illuminazione',
           icona: 'lightbulb',
           sezioneIndice: 0,
           testoPrima: contenuto,
           testoDopo: contenuto.replaceFirst(
-              'illuminazione naturale',
-              'illuminazione cinematografica con rim light e ombre profonde'),
-          descrizione:
-              'Rende l\'illuminazione più drammatica e professionale.',
+              isEn ? 'natural lighting' : 'illuminazione naturale',
+              isEn ? 'cinematic lighting with rim light and deep shadows' : 'illuminazione cinematografica con rim light e ombre profonde'),
+          descrizione: isEn
+              ? 'Makes the lighting more dramatic and refined.'
+              : 'Rende l\'illuminazione più drammatica e professionale.',
         ),
         SuggerimentoMiglioramento(
-          etichetta: 'Aggiungi qualità',
+          etichetta: isEn ? 'Add quality' : 'Aggiungi qualità',
           icona: 'add_circle',
           sezioneIndice: 0,
           testoPrima: contenuto,
           testoDopo:
               '$contenuto '
               '8K, ultra detailed, award-winning, professional quality.',
-          descrizione:
-              'Aggiunge tag di qualità per risultati più '
-              'dettagliati e professionali.',
+          descrizione: isEn
+              ? 'Adds quality tags for a more polished image.'
+              : 'Aggiunge tag di qualità per risultati più '
+                'dettagliati e professionali.',
         ),
       ];
     }
@@ -550,43 +565,55 @@ class PromptGeneratoProvider extends ChangeNotifier {
     // Suggerimenti per tutte le altre categorie (sezione unica)
     return [
       SuggerimentoMiglioramento(
-        etichetta: 'Aggiungi esempio',
+        etichetta: isEn ? 'Add example' : 'Aggiungi esempio',
         icona: 'lightbulb',
         sezioneIndice: 0,
         testoPrima: contenuto,
-        testoDopo:
-            '$contenuto\n\n'
-            'Esempio di risultato atteso: [descrivi qui un esempio concreto '
-            'del risultato che vorresti ottenere].',
-        descrizione:
-            'Aggiunge un esempio concreto di output atteso '
-            'per guidare meglio l\'AI nella generazione.',
+        testoDopo: isEn
+            ? '$contenuto\n\n'
+              'Expected result example: [describe here a concrete example '
+              'of the result you would like to get].'
+            : '$contenuto\n\n'
+              'Esempio di risultato atteso: [descrivi qui un esempio concreto '
+              'del risultato che vorresti ottenere].',
+        descrizione: isEn
+            ? 'Adds a concrete example to clarify the request.'
+            : 'Aggiunge un esempio concreto di output atteso '
+              'per guidare meglio l\'AI nella generazione.',
       ),
       SuggerimentoMiglioramento(
-        etichetta: 'Più specifico',
+        etichetta: isEn ? 'More specific' : 'Più specifico',
         icona: 'format_align_left',
         sezioneIndice: 0,
         testoPrima: contenuto,
-        testoDopo:
-            '$contenuto '
-            'Struttura il risultato con: titolo, sottotitoli, '
-            'corpo principale diviso in sezioni chiare.',
-        descrizione:
-            'Aggiunge dettagli sulla struttura '
-            'del formato di output per risultati più precisi.',
+        testoDopo: isEn
+            ? '$contenuto '
+              'Structure the result with: title, subtitles, '
+              'main body divided into clear sections.'
+            : '$contenuto '
+              'Struttura il risultato con: titolo, sottotitoli, '
+              'corpo principale diviso in sezioni chiare.',
+        descrizione: isEn
+            ? 'Adds structural details for a more precise result.'
+            : 'Aggiunge dettagli sulla struttura '
+              'del formato di output per risultati più precisi.',
       ),
       SuggerimentoMiglioramento(
-        etichetta: 'Aggiungi vincoli',
+        etichetta: isEn ? 'Add constraints' : 'Aggiungi vincoli',
         icona: 'block',
         sezioneIndice: 0,
         testoPrima: contenuto,
-        testoDopo:
-            '$contenuto '
-            'Limita la risposta a massimo 500 parole. '
-            'Non includere riferimenti generici o contenuti banali.',
-        descrizione:
-            'Aggiunge vincoli specifici per '
-            'controllare meglio l\'output generato.',
+        testoDopo: isEn
+            ? '$contenuto '
+              'Limit the response to a maximum of 500 words. '
+              'Do not include generic references or trivial content.'
+            : '$contenuto '
+              'Limita la risposta a massimo 500 parole. '
+              'Non includere riferimenti generici o contenuti banali.',
+        descrizione: isEn
+            ? 'Adds specific constraints to guide the output.'
+            : 'Aggiunge vincoli specifici per '
+              'controllare meglio l\'output generato.',
       ),
     ];
   }
