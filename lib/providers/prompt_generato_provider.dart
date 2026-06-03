@@ -99,8 +99,11 @@ class PromptGeneratoProvider extends ChangeNotifier {
     try {
       final risultato = await api.chiamaAI(
         systemPrompt: AiPrompts.ottimizzazionePerAI(lang),
-        messaggioUtente: 'AI di destinazione: $nomeAI\n\n'
-            'Prompt originale:\n${_prompt!.testoCompleto}',
+        messaggioUtente: lang == 'it'
+            ? 'AI di destinazione: $nomeAI\n\n'
+                'Prompt originale:\n${_prompt!.testoCompleto}'
+            : 'Target AI: $nomeAI\n\n'
+                'Original prompt:\n${_prompt!.testoCompleto}',
         temperature: 0.5,
         maxTokens: 2000,
       );
@@ -199,8 +202,11 @@ class PromptGeneratoProvider extends ChangeNotifier {
     try {
       final risultato = await api.chiamaAI(
         systemPrompt: AiPrompts.miglioramentoSezione(lang),
-        messaggioUtente: 'TITOLO SEZIONE: ${sezione.titolo}\n\n'
-            'CONTENUTO ATTUALE:\n${sezione.contenuto}',
+        messaggioUtente: lang == 'it'
+            ? 'TITOLO SEZIONE: ${sezione.titolo}\n\n'
+                'CONTENUTO ATTUALE:\n${sezione.contenuto}'
+            : 'SECTION TITLE: ${_sectionTitleForAi(sezione.titolo, lang)}\n\n'
+                'CURRENT CONTENT:\n${sezione.contenuto}',
         temperature: 0.6,
         maxTokens: 1500,
       );
@@ -212,6 +218,18 @@ class PromptGeneratoProvider extends ChangeNotifier {
   }
 
   // -- Metodi privati --
+
+  static String _sectionTitleForAi(String titoloIt, String lang) {
+    if (lang == 'it') return titoloIt;
+    switch (titoloIt) {
+      case 'Ruolo': return 'Role';
+      case 'Contesto': return 'Context';
+      case 'Istruzioni': return 'Instructions';
+      case 'Formato output': return 'Format';
+      case 'Vincoli': return 'Constraints';
+      default: return titoloIt;
+    }
+  }
 
   /// Costruisce il messaggio per l'AI con tutte le informazioni raccolte.
   /// Le risposte sono presentate come coppie domanda→risposta per dare
