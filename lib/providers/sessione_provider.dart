@@ -112,64 +112,42 @@ class SessioneProvider extends ChangeNotifier {
       categoria = _rilevaCategoria(fraseLibera);
     }
 
-    // STEP 2: Genera i punti focali (fase 0 invisibile)
+    // STEP 2: Punti focali + domande livello 1 (chiamata unificata)
     List<String> puntiFocali = [];
+    List<Domanda> domande;
     try {
-      debugPrint('[Sessione] STEP 2: Generazione punti focali...');
+      debugPrint('[Sessione] STEP 2: Punti focali + domande livello 1 (unificato)...');
       final json = await api.chiamaAIJson(
-        systemPrompt: AiPrompts.analisiPuntiFocali(lang),
+        systemPrompt: AiPrompts.domandeLivello1Unificato(lang),
         messaggioUtente: lang == 'it'
             ? 'RICHIESTA UTENTE: "$fraseLibera"\n'
                 'CATEGORIA: ${categoria.nome}\n'
-                'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}'
+                'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}\n'
+                'ELEMENTI CHIAVE: ${categoria.elementiChiave.join(", ")}'
             : 'USER REQUEST: "$fraseLibera"\n'
                 'CATEGORY: ${categoria.nome}\n'
-                'SUBCATEGORY: ${categoria.sottocategoria ?? "N/A"}',
-        temperature: 0.5,
-        maxTokens: 1500,
-      );
-      final lista = json['puntiFocali'] as List<dynamic>? ?? [];
-      puntiFocali = lista.map((e) => e.toString()).toList();
-      debugPrint('[Sessione] STEP 2: ${puntiFocali.length} punti focali generati');
-    } catch (e) {
-      debugPrint('[Sessione] STEP 2: Errore punti focali → $e');
-      // Non critico: le domande del livello 1 possono funzionare senza
-    }
-
-    // STEP 3: Genera le 5 domande macro (livello 1)
-    List<Domanda> domande;
-    try {
-      debugPrint('[Sessione] STEP 3: Generazione domande livello 1...');
-      final json = await api.chiamaAIJson(
-        systemPrompt: AiPrompts.domandeLivello1(lang),
-        messaggioUtente: lang == 'it'
-            ? 'FRASE INIZIALE: "$fraseLibera"\n'
-                'CATEGORIA: ${categoria.nome}\n'
-                'SOTTOCATEGORIA: ${categoria.sottocategoria ?? "N/A"}\n'
-                'ELEMENTI CHIAVE: ${categoria.elementiChiave.join(", ")}\n'
-                'PUNTI FOCALI: ${puntiFocali.join("; ")}'
-            : 'INITIAL SENTENCE: "$fraseLibera"\n'
-                'CATEGORY: ${categoria.nome}\n'
                 'SUBCATEGORY: ${categoria.sottocategoria ?? "N/A"}\n'
-                'KEY ELEMENTS: ${categoria.elementiChiave.join(", ")}\n'
-                'FOCUS POINTS: ${puntiFocali.join("; ")}',
-        temperature: 0.6,
-        maxTokens: 2000,
+                'KEY ELEMENTS: ${categoria.elementiChiave.join(", ")}',
+        temperature: 0.5,
+        maxTokens: 2500,
       );
+      final listaFocali = json['puntiFocali'] as List<dynamic>? ?? [];
+      puntiFocali = listaFocali.map((e) => e.toString()).toList();
+      debugPrint('[Sessione] STEP 2: ${puntiFocali.length} punti focali generati');
       domande = _parsaDomande(json);
-      debugPrint('[Sessione] STEP 3: ${domande.length} domande livello 1');
+      debugPrint('[Sessione] STEP 2: ${domande.length} domande livello 1');
       if (categoriaViaAI && _errore == null) {
         // tutto ok
       } else if (!categoriaViaAI && _errore != null) {
         debugPrint('[Sessione] Domande OK ma categoria fallback');
       }
     } on ApiException catch (e) {
-      debugPrint('[Sessione] STEP 3: Errore API → ${e.messaggio}');
+      debugPrint('[Sessione] STEP 2: Errore API → ${e.messaggio}');
       _errore ??= e.messaggio;
       domande = _generaDomandeFittizie(categoria.nome);
     } catch (e, stack) {
-      debugPrint('[Sessione] STEP 3: Eccezione inattesa → $e');
-      debugPrint('[Sessione] STEP 3: Stack → $stack');
+      debugPrint('[Sessione] STEP 2: Eccezione inattesa → $e');
+      debugPrint('[Sessione] STEP 2: Stack → $stack');
       _errore ??= 'Errore inatteso durante la generazione delle domande.';
       domande = _generaDomandeFittizie(categoria.nome);
     }

@@ -24,6 +24,10 @@ class AiPrompts {
   static String analisiPuntiFocali(String lang) =>
       _sel(lang, _analisiPuntiFocaliIt, _analisiPuntiFocaliEn);
 
+  /// Punti focali + domande livello 1 in una sola chiamata.
+  static String domandeLivello1Unificato(String lang) =>
+      _sel(lang, _domandeLivello1UnificatoIt, _domandeLivello1UnificatoEn);
+
   /// Domande livello 1 — 5 domande macro.
   static String domandeLivello1(String lang) =>
       _sel(lang, _domandeLivello1It, _domandeLivello1En);
@@ -1096,4 +1100,104 @@ Respond ONLY with this JSON:
     "Quality": 4.4
   }
 }''';
+
+  // ─────────────────────────────────────────────
+  // PROMPT UNIFICATO: punti focali + domande L1
+  // ─────────────────────────────────────────────
+
+  static const _domandeLivello1UnificatoIt = '''
+Sei il motore di domande dell'app "IdeAI". Ricevi la frase iniziale dell'utente, la categoria rilevata e la sottocategoria. In UN SOLO passaggio devi:
+
+1. IDENTIFICARE 15-20 PUNTI FOCALI: aspetti, sotto-temi e dimensioni rilevanti della richiesta su cui basare le domande. Coprono:
+   - Aspetti tecnici (materiali, tecnologie, strumenti, metodi)
+   - Aspetti pratici (budget, tempistiche, risorse disponibili, vincoli)
+   - Aspetti qualitativi (stile, tono, livello di dettaglio, standard)
+   - Aspetti contestuali (destinatario, piattaforma, ambiente, contesto d'uso)
+   - Aspetti di output (formato, lunghezza, struttura, deliverable)
+
+2. GENERARE 5 DOMANDE MACRO (livello 1) che coprono i punti focali PIÙ IMPORTANTI.
+
+QUESTE SONO DOMANDE DI LIVELLO 1 — PANORAMICA GENERALE:
+- Poni domande strategiche e ad alto livello
+- Ogni domanda deve coprire un'area ampia (1-3 punti focali ciascuna)
+- Le domande devono essere SPECIFICHE al contesto, non generiche
+- L'obiettivo è capire la visione d'insieme dell'utente
+
+REGOLA FONDAMENTALE: NON chiedere informazioni già presenti nella frase iniziale.
+
+QUALITÀ DELLE DOMANDE — CRITICO:
+Pensa come un ESPERTO DEL SETTORE che fa i primi 5 quesiti chiave a un cliente.
+Le domande devono essere specifiche al dominio, non generiche tipo "che tono vuoi?" o "qual è il pubblico?".
+
+TIPO DI INPUT — REGOLE:
+- Usa "bottoniOpzioni" quando la risposta appartiene a un insieme finito e prevedibile (es. tono, lunghezza, linguaggio, livello di formalità, pubblico target). Fornisci 3-6 opzioni. L'ULTIMA opzione dell'array deve SEMPRE essere "Altro / specifica..." per permettere all'utente di inserire un valore personalizzato.
+- Usa "testoLibero" quando la risposta è genuinamente aperta e specifica dell'utente (es. argomento concreto, dettagli unici del suo caso).
+- Usa "chipMultipli" per selezioni multiple (es. tag, caratteristiche). L'ultima opzione deve essere "Altro / specifica...".
+- Pre-compila il valoreDefault quando possibile (MAI su "Altro / specifica...").
+
+Rispondi SOLO con questo JSON:
+{
+  "puntiFocali": ["punto1", "punto2", "...fino a 15-20 punti"],
+  "domande": [
+    {
+      "id": "identificativo_univoco",
+      "testo": "Testo della domanda",
+      "tipoInput": "bottoniOpzioni",
+      "opzioni": ["Opzione 1", "Opzione 2", "Opzione 3", "Altro / specifica..."],
+      "placeholder": null,
+      "valoreDefault": "Opzione 1"
+    }
+  ]
+}
+
+Per testoLibero: "opzioni": [], aggiungi "placeholder" descrittivo, niente valoreDefault.
+Per chipMultipli: opzioni sono tag selezionabili multipli, niente valoreDefault.''';
+
+  static const _domandeLivello1UnificatoEn = '''
+You are the question engine of the "IdeAI" app. You receive the user's initial sentence, the detected category and subcategory. In a SINGLE pass you must:
+
+1. IDENTIFY 15-20 FOCUS POINTS: aspects, sub-themes and relevant dimensions of the request on which to base the questions. They cover:
+   - Technical aspects (materials, technologies, tools, methods)
+   - Practical aspects (budget, timelines, available resources, constraints)
+   - Qualitative aspects (style, tone, level of detail, standards)
+   - Contextual aspects (audience, platform, environment, use case)
+   - Output aspects (format, length, structure, deliverables)
+
+2. GENERATE 5 BROAD QUESTIONS (level 1) covering the MOST IMPORTANT focus points.
+
+Respond in English: all question text, options and placeholders must be in English.
+
+THESE ARE LEVEL 1 QUESTIONS — BIG PICTURE:
+- Ask strategic, high-level questions
+- Each question should cover a broad area (1-3 focus points each)
+- Questions must be SPECIFIC to the context, not generic
+- The goal is to understand the user's overall vision
+
+KEY RULE: Do NOT ask for information already present in the user's initial sentence.
+
+QUESTION QUALITY — CRITICAL:
+Think like a DOMAIN EXPERT asking a client their first 5 key questions. Questions must be domain-specific, not generic ones like "what tone do you want?" or "who is the audience?".
+
+INPUT TYPE — RULES:
+- Use "bottoniOpzioni" when the answer belongs to a finite, predictable set (e.g. tone, length, language, formality level, target audience). Provide 3-6 options. The LAST option in the array must ALWAYS be "Other / specify..." to let the user enter a custom value.
+- Use "testoLibero" when the answer is genuinely open-ended and user-specific (e.g. concrete topic, unique details of their case).
+- Use "chipMultipli" for multiple selections (e.g. tags, features). The last option must be "Other / specify...".
+- Pre-fill valoreDefault when possible (NEVER on "Other / specify...").
+
+Respond ONLY with this JSON:
+{
+  "puntiFocali": ["point1", "point2", "...up to 15-20 points"],
+  "domande": [
+    {
+      "id": "unique_identifier",
+      "testo": "Question text",
+      "tipoInput": "bottoniOpzioni",
+      "opzioni": ["Option 1", "Option 2", "Option 3", "Other / specify..."],
+      "placeholder": null,
+      "valoreDefault": "Option 1"
+    }
+  ]
+}
+For testoLibero: "opzioni": [], add a descriptive "placeholder", no valoreDefault.
+For chipMultipli: options are multi-select tags, no valoreDefault.''';
 }
