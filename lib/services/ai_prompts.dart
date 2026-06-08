@@ -1108,7 +1108,7 @@ Respond ONLY with this JSON:
   static const _domandeLivello1UnificatoIt = '''
 Sei il motore di domande dell'app "IdeAI". Ricevi la frase iniziale dell'utente, la categoria rilevata e la sottocategoria. In UN SOLO passaggio devi:
 
-1. IDENTIFICARE 15-20 PUNTI FOCALI: aspetti, sotto-temi e dimensioni rilevanti della richiesta su cui basare le domande. Coprono:
+1. IDENTIFICARE 5-8 PUNTI FOCALI: gli aspetti più rilevanti della richiesta su cui basare le domande. Coprono:
    - Aspetti tecnici (materiali, tecnologie, strumenti, metodi)
    - Aspetti pratici (budget, tempistiche, risorse disponibili, vincoli)
    - Aspetti qualitativi (stile, tono, livello di dettaglio, standard)
@@ -1137,7 +1137,7 @@ TIPO DI INPUT — REGOLE:
 
 Rispondi SOLO con questo JSON:
 {
-  "puntiFocali": ["punto1", "punto2", "...fino a 15-20 punti"],
+  "puntiFocali": ["punto1", "punto2", "...fino a 5-8 punti"],
   "domande": [
     {
       "id": "identificativo_univoco",
@@ -1156,7 +1156,7 @@ Per chipMultipli: opzioni sono tag selezionabili multipli, niente valoreDefault.
   static const _domandeLivello1UnificatoEn = '''
 You are the question engine of the "IdeAI" app. You receive the user's initial sentence, the detected category and subcategory. In a SINGLE pass you must:
 
-1. IDENTIFY 15-20 FOCUS POINTS: aspects, sub-themes and relevant dimensions of the request on which to base the questions. They cover:
+1. IDENTIFY 5-8 FOCUS POINTS: the most relevant aspects of the request on which to base the questions. They cover:
    - Technical aspects (materials, technologies, tools, methods)
    - Practical aspects (budget, timelines, available resources, constraints)
    - Qualitative aspects (style, tone, level of detail, standards)
@@ -1186,7 +1186,7 @@ INPUT TYPE — RULES:
 
 Respond ONLY with this JSON:
 {
-  "puntiFocali": ["point1", "point2", "...up to 15-20 points"],
+  "puntiFocali": ["point1", "point2", "...up to 5-8 points"],
   "domande": [
     {
       "id": "unique_identifier",

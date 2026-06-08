@@ -11,6 +11,13 @@ import 'package:ideai/widgets/barra_avanzamento.dart';
 import 'package:ideai/widgets/banner_ad_widget.dart';
 import 'package:ideai/services/ad_service.dart';
 
+/// Verifica se la domanda ha un'opzione di inserimento manuale.
+/// Convenzione: l'ultima opzione che termina con "..." è la voce
+/// "Altro / specifica..." (o "Other / specify..."), indipendente dalla lingua.
+bool _haOpzioneManuale(Domanda domanda) {
+  return domanda.opzioni.isNotEmpty && domanda.opzioni.last.endsWith('...');
+}
+
 /// Schermata delle domande adattive — terza fase del flusso.
 /// Design minimal stile Apple: card pulite, teal accento, animazioni fluide.
 class DomandeScreen extends StatefulWidget {
@@ -23,6 +30,9 @@ class DomandeScreen extends StatefulWidget {
 class _DomandeScreenState extends State<DomandeScreen> {
   // Controller per il campo di testo libero
   final _testoController = TextEditingController();
+
+  // Controller per il campo "Altro / specifica..."
+  final _altroController = TextEditingController();
 
   // Opzione selezionata per i bottoni opzioni (selezione singola)
   String? _opzioneSelezionata;
@@ -46,12 +56,14 @@ class _DomandeScreenState extends State<DomandeScreen> {
   @override
   void dispose() {
     _testoController.dispose();
+    _altroController.dispose();
     super.dispose();
   }
 
   /// Resetta lo stato di input quando si cambia domanda
   void _resetInput(Domanda domanda, String? rispostaPrecedente) {
     _testoController.clear();
+    _altroController.clear();
     _opzioneSelezionata = null;
     _chipSelezionati.clear();
 
@@ -62,11 +74,24 @@ class _DomandeScreenState extends State<DomandeScreen> {
           _testoController.text = rispostaPrecedente;
           break;
         case TipoInput.bottoniOpzioni:
-          _opzioneSelezionata = rispostaPrecedente;
+          if (_haOpzioneManuale(domanda) &&
+              !domanda.opzioni.contains(rispostaPrecedente)) {
+            _opzioneSelezionata = domanda.opzioni.last;
+            _altroController.text = rispostaPrecedente;
+          } else {
+            _opzioneSelezionata = rispostaPrecedente;
+          }
           break;
         case TipoInput.chipMultipli:
-          _chipSelezionati
-              .addAll(rispostaPrecedente.split(', ').where((s) => s.isNotEmpty));
+          for (final item
+              in rispostaPrecedente.split(', ').where((s) => s.isNotEmpty)) {
+            if (domanda.opzioni.contains(item)) {
+              _chipSelezionati.add(item);
+            } else if (_haOpzioneManuale(domanda)) {
+              _chipSelezionati.add(domanda.opzioni.last);
+              _altroController.text = item;
+            }
+          }
           break;
       }
     } else if (domanda.valoreDefault != null) {
@@ -87,26 +112,47 @@ class _DomandeScreenState extends State<DomandeScreen> {
   }
 
   /// Verifica se l'utente ha fornito una risposta valida
-  bool _rispostaValida(TipoInput tipo) {
-    switch (tipo) {
+  bool _rispostaValida(Domanda domanda) {
+    switch (domanda.tipoInput) {
       case TipoInput.testoLibero:
         return _testoController.text.trim().isNotEmpty;
       case TipoInput.bottoniOpzioni:
-        return _opzioneSelezionata != null;
+        if (_opzioneSelezionata == null) return false;
+        if (_haOpzioneManuale(domanda) &&
+            _opzioneSelezionata == domanda.opzioni.last) {
+          return _altroController.text.trim().isNotEmpty;
+        }
+        return true;
       case TipoInput.chipMultipli:
-        return _chipSelezionati.isNotEmpty;
+        if (_chipSelezionati.isEmpty) return false;
+        if (_haOpzioneManuale(domanda) &&
+            _chipSelezionati.contains(domanda.opzioni.last)) {
+          return _altroController.text.trim().isNotEmpty;
+        }
+        return true;
     }
   }
 
   /// Restituisce la risposta formattata in base al tipo di input
-  String _getRisposta(TipoInput tipo) {
-    switch (tipo) {
+  String _getRisposta(Domanda domanda) {
+    switch (domanda.tipoInput) {
       case TipoInput.testoLibero:
         return _testoController.text.trim();
       case TipoInput.bottoniOpzioni:
+        if (_haOpzioneManuale(domanda) &&
+            _opzioneSelezionata == domanda.opzioni.last) {
+          return _altroController.text.trim();
+        }
         return _opzioneSelezionata ?? '';
       case TipoInput.chipMultipli:
-        return _chipSelezionati.join(', ');
+        final chips = Set<String>.from(_chipSelezionati);
+        if (_haOpzioneManuale(domanda) &&
+            chips.contains(domanda.opzioni.last)) {
+          chips.remove(domanda.opzioni.last);
+          final altroTesto = _altroController.text.trim();
+          if (altroTesto.isNotEmpty) chips.add(altroTesto);
+        }
+        return chips.join(', ');
     }
   }
 
@@ -116,9 +162,9 @@ class _DomandeScreenState extends State<DomandeScreen> {
     final domanda = provider.domandaCorrente;
     if (domanda == null) return;
 
-    if (!_rispostaValida(domanda.tipoInput)) return;
+    if (!_rispostaValida(domanda)) return;
 
-    provider.rispondiDomanda(_getRisposta(domanda.tipoInput));
+    provider.rispondiDomanda(_getRisposta(domanda));
 
     // Se il livello è completato, non navigare automaticamente:
     // il build() mostrerà la schermata di scelta Genera/Approfondisci.
@@ -325,6 +371,37 @@ class _DomandeScreenState extends State<DomandeScreen> {
                 ),
               ),
 
+              // FIX 2 — Errore visibile: mostra il messaggio d'errore con
+              // "Riprova" se l'approfondimento è fallito dopo i retry.
+              if (provider.errore != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.warning_amber_rounded,
+                            color: colorScheme.onErrorContainer, size: 22),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            provider.errore!,
+                            style: TextStyle(
+                              color: colorScheme.onErrorContainer,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
               // Bottoni azione
               Column(
                 children: [
@@ -341,17 +418,26 @@ class _DomandeScreenState extends State<DomandeScreen> {
                     ),
                   ),
                   // Bottone secondario: Approfondisci (solo se livello < 3)
+                  // FIX 2 — Disabilita durante _staApprofondendo per
+                  // prevenire doppi tap concorrenti.
                   if (puoApprofondire) ...[
                     const SizedBox(height: 12),
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
-                        onPressed: () => provider.approfondisci(lang: Localizations.localeOf(context).languageCode),
+                        onPressed: provider.staApprofondendo
+                            ? null
+                            : () {
+                                provider.cancellaErrore();
+                                provider.approfondisci(lang: Localizations.localeOf(context).languageCode);
+                              },
                         icon: const Icon(Icons.search_rounded, size: 20),
                         label: Text(
-                          livello == 1
-                              ? l10n.questioningDeepen
-                              : l10n.questioningLastDetails,
+                          provider.errore != null
+                              ? l10n.questioningRetry
+                              : livello == 1
+                                  ? l10n.questioningDeepen
+                                  : l10n.questioningLastDetails,
                         ),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -511,6 +597,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
                 provider: provider,
                 colorScheme: colorScheme,
                 testoController: _testoController,
+                altroController: _altroController,
                 opzioneSelezionata: _opzioneSelezionata,
                 chipSelezionati: _chipSelezionati,
                 onResetInput: _resetInput,
@@ -528,6 +615,7 @@ class _DomandeScreenState extends State<DomandeScreen> {
                 onInviaRisposta: _inviRisposta,
                 onGeneraOra: _generaOra,
                 onTestoChanged: () => setState(() {}),
+                onAltroChanged: () => setState(() {}),
               ),
             ),
             // Banner pubblicitario in basso (solo su mobile, non su web)
@@ -547,6 +635,7 @@ class _DomandeBody extends StatefulWidget {
   final SessioneProvider provider;
   final ColorScheme colorScheme;
   final TextEditingController testoController;
+  final TextEditingController altroController;
   final String? opzioneSelezionata;
   final Set<String> chipSelezionati;
   final void Function(Domanda, String?) onResetInput;
@@ -555,6 +644,7 @@ class _DomandeBody extends StatefulWidget {
   final VoidCallback onInviaRisposta;
   final VoidCallback onGeneraOra;
   final VoidCallback onTestoChanged;
+  final VoidCallback onAltroChanged;
 
   const _DomandeBody({
     required this.domanda,
@@ -562,6 +652,7 @@ class _DomandeBody extends StatefulWidget {
     required this.provider,
     required this.colorScheme,
     required this.testoController,
+    required this.altroController,
     required this.opzioneSelezionata,
     required this.chipSelezionati,
     required this.onResetInput,
@@ -570,6 +661,7 @@ class _DomandeBody extends StatefulWidget {
     required this.onInviaRisposta,
     required this.onGeneraOra,
     required this.onTestoChanged,
+    required this.onAltroChanged,
   });
 
   @override
@@ -898,6 +990,38 @@ class _DomandeBodyState extends State<_DomandeBody> {
           ),
         );
       }).toList(),
+      if (_haOpzioneManuale(widget.domanda) &&
+          widget.opzioneSelezionata == widget.domanda.opzioni.last)
+        Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: TextField(
+            controller: widget.altroController,
+            onChanged: (_) => widget.onAltroChanged(),
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.questioningInputPlaceholder,
+              hintStyle: TextStyle(
+                color: widget.colorScheme.onSurfaceVariant
+                    .withValues(alpha: 0.6),
+              ),
+              filled: true,
+              fillColor: widget.colorScheme.surfaceContainerLow,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: widget.colorScheme.primary,
+                  width: 2,
+                ),
+              ),
+              contentPadding: const EdgeInsets.all(18),
+            ),
+          ),
+        ),
+    ],
     );
   }
 
@@ -946,6 +1070,38 @@ class _DomandeBodyState extends State<_DomandeBody> {
             );
           }).toList(),
         ),
+        // TextField per inserimento manuale quando "Altro" chip è selezionato
+        if (_haOpzioneManuale(widget.domanda) &&
+            widget.chipSelezionati.contains(widget.domanda.opzioni.last))
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: TextField(
+              controller: widget.altroController,
+              onChanged: (_) => widget.onAltroChanged(),
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.questioningInputPlaceholder,
+                hintStyle: TextStyle(
+                  color: widget.colorScheme.onSurfaceVariant
+                      .withValues(alpha: 0.6),
+                ),
+                filled: true,
+                fillColor: widget.colorScheme.surfaceContainerLow,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide(
+                    color: widget.colorScheme.primary,
+                    width: 2,
+                  ),
+                ),
+                contentPadding: const EdgeInsets.all(18),
+              ),
+            ),
+          ),
         // Riepilogo dei chip selezionati
         if (widget.chipSelezionati.isNotEmpty) ...[
           const SizedBox(height: 16),
@@ -1054,13 +1210,24 @@ class _DomandeBodyState extends State<_DomandeBody> {
 
   /// Verifica se la risposta corrente è valida
   bool _isRispostaValida() {
-    switch (widget.domanda.tipoInput) {
+    final domanda = widget.domanda;
+    switch (domanda.tipoInput) {
       case TipoInput.testoLibero:
         return widget.testoController.text.trim().isNotEmpty;
       case TipoInput.bottoniOpzioni:
-        return widget.opzioneSelezionata != null;
+        if (widget.opzioneSelezionata == null) return false;
+        if (_haOpzioneManuale(domanda) &&
+            widget.opzioneSelezionata == domanda.opzioni.last) {
+          return widget.altroController.text.trim().isNotEmpty;
+        }
+        return true;
       case TipoInput.chipMultipli:
-        return widget.chipSelezionati.isNotEmpty;
+        if (widget.chipSelezionati.isEmpty) return false;
+        if (_haOpzioneManuale(domanda) &&
+            widget.chipSelezionati.contains(domanda.opzioni.last)) {
+          return widget.altroController.text.trim().isNotEmpty;
+        }
+        return true;
     }
   }
 }

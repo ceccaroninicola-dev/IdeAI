@@ -439,6 +439,10 @@
   "@questioningLastDetails": {
     "description": "Button label to go to level 3 (final details)"
   },
+  "questioningRetry": "Retry",
+  "@questioningRetry": {
+    "description": "Button label to retry after a failed deepening attempt"
+  },
   "questioningGenerateNowButton": "Generate now",
   "@questioningGenerateNowButton": {
     "description": "Primary button to generate the prompt from level completion screen"

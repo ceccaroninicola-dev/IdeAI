@@ -105,6 +105,7 @@
   "questioningPreparingQuestions": "Preparo le domande di approfondimento...",
   "questioningDeepen": "Approfondisci le risposte",
   "questioningLastDetails": "Ultimi dettagli",
+  "questioningRetry": "Riprova",
   "questioningGenerateNowButton": "Genera ora",
   "questioningFallbackTitle": "Domande",
   "questioningCancelTooltip": "Annulla sessione",

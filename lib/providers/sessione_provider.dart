@@ -227,37 +227,57 @@ class SessioneProvider extends ChangeNotifier {
         ? AiPrompts.domandeLivello2(lang)
         : AiPrompts.domandeLivello3(lang);
 
-    List<Domanda> nuoveDomande;
-    try {
-      debugPrint('[Sessione] Approfondimento livello $livelloSuccessivo...');
-      final json = await api.chiamaAIJson(
-        systemPrompt: systemPrompt,
-        messaggioUtente: lang == 'it'
-            ? 'FRASE INIZIALE: "${_sessione.fraseIniziale}"\n'
-                'CATEGORIA: ${_sessione.categoria?.nome ?? "Generale"}\n'
-                'PUNTI FOCALI: ${_sessione.puntiFocali.join("; ")}\n\n'
-                'RISPOSTE GIÀ RACCOLTE:\n$contesto'
-            : 'INITIAL SENTENCE: "${_sessione.fraseIniziale}"\n'
-                'CATEGORY: ${_sessione.categoria?.nome ?? "General"}\n'
-                'FOCUS POINTS: ${_sessione.puntiFocali.join("; ")}\n\n'
-                'ANSWERS COLLECTED SO FAR:\n$contesto',
-        temperature: 0.6,
-        maxTokens: 3000,
-      );
-      nuoveDomande = _parsaDomande(json);
-      debugPrint('[Sessione] ${nuoveDomande.length} domande livello $livelloSuccessivo');
-    } on ApiException catch (e) {
-      debugPrint('[Sessione] Errore approfondimento → ${e.messaggio}');
-      _errore = e.messaggio;
-      nuoveDomande = [];
-    } catch (e) {
-      debugPrint('[Sessione] Eccezione approfondimento → $e');
-      _errore = 'Errore durante l\'approfondimento.';
-      nuoveDomande = [];
+    // FIX 1 — Retry automatico: ritenta fino a 3 volte totali se la chiamata
+    // o il parsing falliscono. Distingue due casi:
+    //   - Fallimento (eccezione o zero domande parsate con successo da un
+    //     JSON contenente elementi malformati) → ritenta.
+    //   - Risposta legittima (JSON valido, lista "domande" assente o vuota
+    //     nel payload originale) → _parsaDomande restituisce il fallback
+    //     fittizio, che non è vuoto, quindi non si ritenta.
+    // L'utente vede solo lo spinner; l'errore appare solo dopo il terzo
+    // fallimento consecutivo.
+    const maxTentativi = 3;
+    List<Domanda> nuoveDomande = [];
+    String? ultimoErrore;
+
+    final messaggioUtente = lang == 'it'
+        ? 'FRASE INIZIALE: "${_sessione.fraseIniziale}"\n'
+            'CATEGORIA: ${_sessione.categoria?.nome ?? "Generale"}\n'
+            'PUNTI FOCALI: ${_sessione.puntiFocali.join("; ")}\n\n'
+            'RISPOSTE GIÀ RACCOLTE:\n$contesto'
+        : 'INITIAL SENTENCE: "${_sessione.fraseIniziale}"\n'
+            'CATEGORY: ${_sessione.categoria?.nome ?? "General"}\n'
+            'FOCUS POINTS: ${_sessione.puntiFocali.join("; ")}\n\n'
+            'ANSWERS COLLECTED SO FAR:\n$contesto';
+
+    for (var tentativo = 1; tentativo <= maxTentativi; tentativo++) {
+      try {
+        debugPrint('[Sessione] Approfondimento livello $livelloSuccessivo '
+            '(tentativo $tentativo/$maxTentativi)...');
+        final json = await api.chiamaAIJson(
+          systemPrompt: systemPrompt,
+          messaggioUtente: messaggioUtente,
+          temperature: 0.6,
+          maxTokens: 3000,
+        );
+        nuoveDomande = _parsaDomande(json);
+        debugPrint('[Sessione] ${nuoveDomande.length} domande livello $livelloSuccessivo');
+        if (nuoveDomande.isNotEmpty) break;
+        ultimoErrore = 'Il modello non ha generato domande valide.';
+        debugPrint('[Sessione] Nessuna domanda valida, tentativo $tentativo/$maxTentativi');
+      } on ApiException catch (e) {
+        ultimoErrore = e.messaggio;
+        debugPrint('[Sessione] Errore approfondimento (tentativo $tentativo) → ${e.messaggio}');
+      } catch (e) {
+        ultimoErrore = 'Errore durante l\'approfondimento.';
+        debugPrint('[Sessione] Eccezione approfondimento (tentativo $tentativo) → $e');
+      }
     }
 
+    // FIX 2 (parte provider) — Se dopo tutti i retry non ci sono domande,
+    // setta _errore in modo che la UI lo mostri con "Riprova".
     if (nuoveDomande.isEmpty) {
-      // Se non si riescono a generare domande, torna allo stato precedente
+      _errore = ultimoErrore ?? 'Impossibile generare le domande.';
       _staApprofondendo = false;
       notifyListeners();
       return;
@@ -299,25 +319,38 @@ class SessioneProvider extends ChangeNotifier {
 
   // -- Parsing risposta AI --
 
-  /// Parsa le domande dalla risposta JSON dell'AI
+  // FIX 3a — Parsing difensivo: valida ogni elemento singolarmente,
+  // scarta quelli malformati invece di far crashare l'intero batch.
+  // Restituisce solo le domande parsate con successo.
   List<Domanda> _parsaDomande(Map<String, dynamic> json) {
     final listaDomande = json['domande'] as List<dynamic>? ?? [];
     if (listaDomande.isEmpty) return _generaDomandeFittizie('Scrittura');
 
-    return listaDomande.map((d) {
-      final mappa = d as Map<String, dynamic>;
-      return Domanda(
-        id: mappa['id'] as String? ?? 'q_${listaDomande.indexOf(d)}',
-        testo: mappa['testo'] as String? ?? 'Domanda',
-        tipoInput: _parsaTipoInput(mappa['tipoInput'] as String?),
-        opzioni: (mappa['opzioni'] as List<dynamic>?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            [],
-        placeholder: mappa['placeholder'] as String?,
-        valoreDefault: mappa['valoreDefault'] as String?,
-      );
-    }).toList();
+    final domande = <Domanda>[];
+    for (var i = 0; i < listaDomande.length; i++) {
+      try {
+        final d = listaDomande[i];
+        if (d is! Map<String, dynamic>) {
+          debugPrint('[Sessione] _parsaDomande: elemento $i non è una mappa, scartato');
+          continue;
+        }
+        final mappa = d;
+        domande.add(Domanda(
+          id: mappa['id'] as String? ?? 'q_$i',
+          testo: mappa['testo'] as String? ?? 'Domanda',
+          tipoInput: _parsaTipoInput(mappa['tipoInput'] as String?),
+          opzioni: (mappa['opzioni'] as List<dynamic>?)
+                  ?.map((e) => e.toString())
+                  .toList() ??
+              [],
+          placeholder: mappa['placeholder'] as String?,
+          valoreDefault: mappa['valoreDefault'] as String?,
+        ));
+      } catch (e) {
+        debugPrint('[Sessione] _parsaDomande: elemento $i malformato ($e), scartato');
+      }
+    }
+    return domande;
   }
 
   /// Converte la stringa del tipo input nel enum

@@ -30,6 +30,8 @@ const OPENAI_BASE = 'https://api.openai.com';
 
 export default {
   async fetch(request, env) {
+    const tIn = Date.now();
+
     // Gestisci le richieste preflight CORS (OPTIONS)
     if (request.method === 'OPTIONS') {
       return rispostaCors(request, new Response(null, { status: 204 }));
@@ -71,21 +73,33 @@ export default {
     }
 
     try {
+      const tBeforeOpenai = Date.now();
       const rispostaOpenAI = await fetch(urlOpenAI, {
         method: 'POST',
         headers: headerInoltro,
         body: request.body,
       });
+      const tAfterOpenai = Date.now();
 
-      // Crea una nuova risposta con gli header CORS
+      const openaiMs = tAfterOpenai - tBeforeOpenai;
+      const workerTotalMs = tAfterOpenai - tIn;
+
+      console.log(`[LATENCY] openai_ms=${openaiMs} worker_total_ms=${workerTotalMs} path=${percorso} status=${rispostaOpenAI.status}`);
+
+      const headers = new Headers(rispostaOpenAI.headers);
+      headers.set('X-OpenAI-Duration-Ms', String(openaiMs));
+      headers.set('X-Worker-Duration-Ms', String(workerTotalMs));
+
       const risposta = new Response(rispostaOpenAI.body, {
         status: rispostaOpenAI.status,
         statusText: rispostaOpenAI.statusText,
-        headers: rispostaOpenAI.headers,
+        headers,
       });
 
       return rispostaCors(request, risposta);
     } catch (errore) {
+      const workerTotalMs = Date.now() - tIn;
+      console.log(`[LATENCY] error openai_err=${errore.message} worker_total_ms=${workerTotalMs} path=${percorso}`);
       return rispostaCors(request, new Response(
         JSON.stringify({ error: `Errore proxy: ${errore.message}` }),
         { status: 502, headers: { 'Content-Type': 'application/json' } }
@@ -114,6 +128,7 @@ function rispostaCors(request, risposta) {
 
   headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
   headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  headers.set('Access-Control-Expose-Headers', 'X-OpenAI-Duration-Ms, X-Worker-Duration-Ms');
   headers.set('Access-Control-Max-Age', '86400');
 
   return new Response(risposta.body, {
