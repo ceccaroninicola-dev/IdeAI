@@ -879,7 +879,8 @@ class _DomandeBodyState extends State<_DomandeBody> {
   /// Input di tipo bottoni opzioni — card Apple-style con selezione singola
   Widget _buildInputBottoni(bool isDark) {
     return Column(
-      children: widget.domanda.opzioni.map((opzione) {
+      children: [
+      ...widget.domanda.opzioni.map((opzione) {
         final selezionato = widget.opzioneSelezionata == opzione;
         return Padding(
           padding: const EdgeInsets.only(bottom: 10),
