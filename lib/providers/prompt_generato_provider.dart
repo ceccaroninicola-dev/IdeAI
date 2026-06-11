@@ -428,18 +428,55 @@ class PromptGeneratoProvider extends ChangeNotifier {
         break;
 
       case 'Immagini':
+        // Le immagini usano 4 sezioni dedicate (stessa struttura del flusso AI)
         final stile = risposte['stile'] ?? '';
-        final stileDesc = stile.isNotEmpty
-            ? ' ${isEn ? 'Style' : 'Stile'}: $stile.'
-            : '';
         final atmosfera = risposte['atmosfera'] ?? '';
-        final atmosferaDesc = atmosfera.isNotEmpty
-            ? ' ${isEn ? 'Atmosphere' : 'Atmosfera'}: $atmosfera.'
-            : '';
-        contenuto = '${isEn ? 'Generate an image' : 'Genera un\'immagine'}: $fraseIniziale.$stileDesc$atmosferaDesc '
-            '${isEn ? 'Well-balanced composition with a clear focal point. High resolution, no text elements in the image.' : 'Composizione ben bilanciata con punto focale chiaro. Alta risoluzione, senza elementi testuali nell\'immagine.'}';
-        if (extra.isNotEmpty) contenuto += ' $extra';
-        break;
+        // Gli altri dettagli (escludendo stile e atmosfera, già usati
+        // nelle rispettive sezioni) confluiscono in "Soggetto e scena"
+        final altriDettagli = StringBuffer();
+        risposte.forEach((chiave, valore) {
+          if (valore.isNotEmpty && chiave != 'stile' && chiave != 'atmosfera') {
+            altriDettagli.write(' $valore.');
+          }
+        });
+        return [
+          SezionePrompt(
+            titolo: 'Soggetto e scena',
+            icona: 'image',
+            contenuto:
+                '${isEn ? 'Generate an image' : 'Genera un\'immagine'}: '
+                '$fraseIniziale.${altriDettagli.toString().trimRight()}',
+            colore: 0xFF2196F3,
+          ),
+          SezionePrompt(
+            titolo: 'Stile visivo',
+            icona: 'palette',
+            contenuto: stile.isNotEmpty
+                ? '${isEn ? 'Visual style' : 'Stile visivo'}: $stile.'
+                : (isEn
+                    ? 'Photorealistic style with a high level of detail.'
+                    : 'Stile fotorealistico con alto livello di dettaglio.'),
+            colore: 0xFFAD1457,
+          ),
+          SezionePrompt(
+            titolo: 'Colore e atmosfera',
+            icona: 'brightness',
+            contenuto: atmosfera.isNotEmpty
+                ? '${isEn ? 'Atmosphere' : 'Atmosfera'}: $atmosfera.'
+                : (isEn
+                    ? 'Natural lighting with an atmosphere consistent with the subject.'
+                    : 'Illuminazione naturale e atmosfera coerente con il soggetto.'),
+            colore: 0xFFFF9800,
+          ),
+          SezionePrompt(
+            titolo: 'Composizione e tecnica',
+            icona: 'crop',
+            contenuto: isEn
+                ? 'Well-balanced composition with a clear focal point. High resolution, sharp details.'
+                : 'Composizione ben bilanciata con punto focale chiaro. Alta risoluzione, dettagli nitidi.',
+            colore: 0xFF4CAF50,
+          ),
+        ];
 
       default:
         final tono = risposte['tono'] ?? '';
@@ -507,12 +544,13 @@ class PromptGeneratoProvider extends ChangeNotifier {
   }
 
   /// Genera suggerimenti di miglioramento contestuali (fallback).
-  /// Tutti i prompt sono ora a sezione unica (istruzione diretta).
+  /// Le immagini hanno 4 sezioni dedicate, le altre categorie sezione unica.
   List<SuggerimentoMiglioramento> _generaSuggerimenti(
     List<SezionePrompt> sezioni,
   ) {
     final contenuto = sezioni[0].contenuto;
-    final isImmagine = sezioni[0].titolo == 'Descrizione Immagine';
+    final isImmagine =
+        sezioni.length >= 4 && sezioni[0].titolo == 'Soggetto e scena';
     final isEn = _lang != 'it';
 
     if (isImmagine) {
@@ -537,11 +575,14 @@ class PromptGeneratoProvider extends ChangeNotifier {
         SuggerimentoMiglioramento(
           etichetta: isEn ? 'Improve lighting' : 'Migliora illuminazione',
           icona: 'lightbulb',
-          sezioneIndice: 0,
-          testoPrima: contenuto,
-          testoDopo: contenuto.replaceFirst(
-              isEn ? 'natural lighting' : 'illuminazione naturale',
-              isEn ? 'cinematic lighting with rim light and deep shadows' : 'illuminazione cinematografica con rim light e ombre profonde'),
+          // Agisce sulla sezione "Colore e atmosfera"
+          sezioneIndice: 2,
+          testoPrima: sezioni[2].contenuto,
+          testoDopo: isEn
+              ? '${sezioni[2].contenuto} '
+                'Cinematic lighting with rim light and deep shadows.'
+              : '${sezioni[2].contenuto} '
+                'Illuminazione cinematografica con rim light e ombre profonde.',
           descrizione: isEn
               ? 'Makes the lighting more dramatic and refined.'
               : 'Rende l\'illuminazione più drammatica e professionale.',
@@ -549,10 +590,11 @@ class PromptGeneratoProvider extends ChangeNotifier {
         SuggerimentoMiglioramento(
           etichetta: isEn ? 'Add quality' : 'Aggiungi qualità',
           icona: 'add_circle',
-          sezioneIndice: 0,
-          testoPrima: contenuto,
+          // Agisce sulla sezione "Composizione e tecnica"
+          sezioneIndice: 3,
+          testoPrima: sezioni[3].contenuto,
           testoDopo:
-              '$contenuto '
+              '${sezioni[3].contenuto} '
               '8K, ultra detailed, award-winning, professional quality.',
           descrizione: isEn
               ? 'Adds quality tags for a more polished image.'

@@ -344,7 +344,17 @@ Per ANALISI/STUDIO:
 - Step-by-step nella spiegazione
 - Quiz/domande di verifica per lo studio
 
-TECNICHE UNIVERSALI (applica dove pertinente):
+Per IMMAGINI (categoria "Immagini"):
+- NON applicare le tecniche testuali qui sopra (niente soluzioni alternative,
+  niente tabelle, niente step-by-step): il prompt è una DESCRIZIONE VISIVA
+- Arricchisci la descrizione come farebbe un art director: illuminazione
+  specifica, materiali e texture, profondità di campo, dettagli atmosferici
+- Specifica parametri tecnici utili: inquadratura, prospettiva, aspect ratio,
+  livello di qualità e dettaglio
+- Usa linguaggio visivo concreto (es. "luce dorata radente al tramonto"
+  invece di "bella luce")
+
+TECNICHE UNIVERSALI (applica dove pertinente, MAI per la categoria Immagini):
 - "Fornisci almeno 2-3 soluzioni/approcci alternativi"
 - "Per ogni soluzione, elenca pro e contro"
 - "Procedi passo dopo passo nella spiegazione"
@@ -376,8 +386,13 @@ FORMATO OUTPUT — PROMPT DIVISO IN SEZIONI
 Riscrivi le informazioni raccolte in un prompt unico, fluido e professionale.
 Non elencare le risposte una dopo l'altra, ma integrale in un testo coerente.
 
-Dividi il prompt in 5 sezioni nell'output JSON:
+⚠️ La struttura delle sezioni DIPENDE dalla categoria:
+- Categoria "Immagini" → usa le 4 SEZIONI IMMAGINI (vedi sotto)
+- TUTTE le altre categorie → usa le 5 SEZIONI STANDARD (vedi sotto)
 
+───────────────────────────────────────────────
+SEZIONI STANDARD (tutte le categorie TRANNE Immagini)
+───────────────────────────────────────────────
 1. RUOLO: Descrivi brevemente il ruolo che l'AI deve assumere
    (es. "Agisci come un architetto specializzato in costruzioni in legno")
 2. CONTESTO: Spiega la situazione e le esigenze dell'utente
@@ -389,9 +404,62 @@ Dividi il prompt in 5 sezioni nell'output JSON:
 5. VINCOLI: Limiti e parametri specifici
    (es. "Budget massimo 3000€, livello principiante, zona climatica temperata...")
 
+───────────────────────────────────────────────
+SEZIONI IMMAGINI (SOLO per la categoria "Immagini")
+───────────────────────────────────────────────
+Il prompt per immagini NON deve avere ruolo, contesto o vincoli astratti:
+è una descrizione visiva diretta, come la scriverebbe un art director.
+
+1. SOGGETTO E SCENA: cosa appare nell'immagine — soggetto principale, azione,
+   ambientazione, elementi secondari. Se l'utente ha chiesto del testo
+   nell'immagine, specifica QUI le parole esatte e la loro posizione.
+2. STILE VISIVO: stile artistico (fotorealistico, illustrazione, 3D, acquerello,
+   pixel art...), riferimenti estetici, livello di dettaglio.
+3. COLORE E ATMOSFERA: palette colori, illuminazione, mood, ora del giorno, meteo.
+4. COMPOSIZIONE E TECNICA: inquadratura, prospettiva, formato/aspect ratio,
+   profondità di campo, qualità (es. alta risoluzione, dettagli nitidi).
+
+Regole specifiche per le immagini:
+- Ogni sezione DESCRIVE l'immagine, non dà istruzioni all'utente
+- MAI includere budget, tempistiche o vincoli organizzativi
+- NON vietare il testo nell'immagine: se l'utente lo ha chiesto, includilo
+  con le parole esatte; se non ne ha parlato, semplicemente non menzionarlo
+- REGOLA DI OMISSIONE: se l'utente ha risposto a una domanda indicando
+  un'ASSENZA (es. "nessun budget", "nessun vincolo", "consegna immediata",
+  "nessuna preferenza", "nessuna eccezione"), OMETTI completamente
+  quell'aspetto dal prompt. NON scrivere frasi come "non ci sono limiti"
+  o "nessun budget previsto". Questa regola ha PRIORITÀ sulla Regola
+  Critica N.2: per le immagini, le assenze non vanno verbalizzate,
+  vanno taciute. Un prompt-immagine descrive solo ciò che DEVE esserci.
+- CASO IMAGE-TO-IMAGE: se l'utente parte da un'immagine di riferimento
+  da trasformare (lo capisci dalla richiesta iniziale: "foto allegata",
+  "questa immagine", "trasforma", "rendi in stile"), allora:
+  (a) la sezione "Soggetto e scena" deve APRIRE con il promemoria tra
+      parentesi quadre "[Allega la tua immagine di riferimento prima di
+      inviare questo prompt]";
+  (b) NON descrivere il contenuto dell'immagine come se lo conoscessi —
+      tu non l'hai vista;
+  (c) descrivi invece la TRASFORMAZIONE da applicare, facendo riferimento
+      all'immagine allegata (es. "Partendo dall'immagine allegata, trasforma
+      lo stile in anime fantasy mantenendo i volti e la composizione
+      originali").
+- COERENZA: fondi il tipo di immagine e lo stile in modo COERENTE, mai
+  contraddittorio. Se l'utente vuole "fotografia" e "fantasy", scrivi
+  "illustrazione fotorealistica di stampo fantasy" o simili — NON
+  "immagine realistica" seguito da "stile fantasy", che si contraddicono.
+- Nel JSON usa ESATTAMENTE questi titoli, icone e colori:
+  {"titolo": "Soggetto e scena", "icona": "image", "colore": 4280391411}
+  {"titolo": "Stile visivo", "icona": "palette", "colore": 4289533015}
+  {"titolo": "Colore e atmosfera", "icona": "brightness", "colore": 4294940672}
+  {"titolo": "Composizione e tecnica", "icona": "crop", "colore": 4283215696}
+- punteggioGlobale, punteggiCriteri e suggerimenti seguono lo stesso
+  schema JSON delle altre categorie
+
 Se una sezione non è rilevante per la richiesta, lasciala VUOTA ("contenuto": "").
 
-Rispondi SOLO con questo JSON:
+Rispondi SOLO con questo JSON (l'esempio mostra le 5 sezioni standard;
+per la categoria "Immagini" l'array "sezioni" contiene invece le 4 sezioni
+Immagini con i titoli, le icone e i colori indicati sopra):
 {
   "sezioni": [
     {
@@ -873,7 +941,12 @@ For ANALYSIS/STUDY:
 - Sources and references
 - Step-by-step in the explanation
 - Quiz/review questions for studying
-UNIVERSAL TECHNIQUES (apply where relevant):
+For IMAGES (category "Immagini"):
+- Do NOT apply the text-oriented techniques above (no alternative solutions, no tables, no step-by-step): the prompt is a VISUAL DESCRIPTION
+- Enrich the description like an art director would: specific lighting, materials and textures, depth of field, atmospheric details
+- Specify useful technical parameters: framing, perspective, aspect ratio, quality and detail level
+- Use concrete visual language (e.g. "golden grazing light at sunset" instead of "nice light")
+UNIVERSAL TECHNIQUES (apply where relevant, NEVER for the Immagini category):
 - "Provide at least 2-3 alternative solutions/approaches"
 - "For each solution, list pros and cons"
 - "Proceed step by step in the explanation"
@@ -901,20 +974,46 @@ OUTPUT FORMAT — PROMPT DIVIDED INTO SECTIONS
 ═══════════════════════════════════════════════
 Rewrite the collected information into a single, fluent, professional prompt.
 Do not list the answers one after another; integrate them into coherent text.
-Divide the prompt into 5 sections in the JSON output:
+The section structure DEPENDS on the category:
+- Category "Immagini" -> use the 4 IMAGE SECTIONS (see below)
+- ALL other categories -> use the 5 STANDARD SECTIONS (see below)
+
+STANDARD SECTIONS (every category EXCEPT Immagini):
 1. ROLE: Briefly describe the role the AI must take (e.g. "Act as an architect specialized in wooden constructions")
 2. CONTEXT: Explain the user's situation and needs (e.g. "The user wants to build a 2.5x3m wooden cabin...")
 3. INSTRUCTIONS: The main task with all details, including advanced techniques (e.g. "Design the cabin with 2-3 alternative solutions...")
 4. OUTPUT FORMAT: How the result must be structured (e.g. "Organize into: comparison table, materials list, step-by-step guide...")
 5. CONSTRAINTS: Specific limits and parameters (e.g. "Maximum budget 3000 EUR, beginner level, temperate climate zone...")
+
+IMAGE SECTIONS (ONLY for category "Immagini"):
+The image prompt must NOT have an abstract role, context or constraints: it is a direct VISUAL DESCRIPTION, written like an art director would.
+1. SUBJECT AND SCENE: what appears in the image - main subject, action, setting, secondary elements. If the user asked for text inside the image, specify HERE the exact words and their position.
+2. VISUAL STYLE: artistic style (photorealistic, illustration, 3D, watercolor, pixel art...), aesthetic references, level of detail.
+3. COLOR AND ATMOSPHERE: color palette, lighting, mood, time of day, weather.
+4. COMPOSITION AND TECHNIQUE: framing, perspective, format/aspect ratio, depth of field, quality (e.g. high resolution, sharp details).
+Image-specific rules:
+- Each section DESCRIBES the image, it does not give instructions to the user
+- NEVER include budget, deadlines or organizational constraints
+- Do NOT forbid text in the image: if the user asked for it, include the exact words; if they did not mention it, simply do not bring it up
+- OMISSION RULE: if the user answered a question indicating an ABSENCE (e.g. "no budget", "no constraints", "immediate delivery", "no preference", "no exceptions"), completely OMIT that aspect from the prompt. Do NOT write sentences like "there are no limits" or "no budget planned". This rule takes PRIORITY over Critical Rule #2: for images, absences must not be verbalized, they must be left unsaid. An image prompt describes only what MUST be there.
+- IMAGE-TO-IMAGE CASE: if the user starts from a reference image to transform (you can tell from the initial request: "attached photo", "this image", "transform", "render in the style of"), then: (a) the "Soggetto e scena" section must OPEN with the reminder in square brackets "[Attach your reference image before sending this prompt]"; (b) do NOT describe the content of the image as if you knew it - you have not seen it; (c) describe instead the TRANSFORMATION to apply, referring to the attached image (e.g. "Starting from the attached image, transform the style into fantasy anime while keeping the original faces and composition")
+- CONSISTENCY: blend the image type and the style in a COHERENT way, never contradictory. If the user wants "photography" and "fantasy", write "photorealistic fantasy-style illustration" or similar - NOT "realistic image" followed by "fantasy style", which contradict each other
+- In the JSON use EXACTLY these titles, icons and colors:
+  {"titolo": "Soggetto e scena", "icona": "image", "colore": 4280391411}
+  {"titolo": "Stile visivo", "icona": "palette", "colore": 4289533015}
+  {"titolo": "Colore e atmosfera", "icona": "brightness", "colore": 4294940672}
+  {"titolo": "Composizione e tecnica", "icona": "crop", "colore": 4283215696}
+- punteggioGlobale, punteggiCriteri and suggerimenti follow the same JSON schema as the other categories
+
 If a section is not relevant to the request, leave it EMPTY ("contenuto": "").
 
 CRITICAL JSON RULE - section titles must stay in Italian:
 The "titolo" value of each section MUST be exactly one of these Italian labels - keep them as-is, do NOT translate (they are internal identifiers):
-"Ruolo", "Contesto", "Istruzioni", "Formato output", "Vincoli"
+- Standard sections: "Ruolo", "Contesto", "Istruzioni", "Formato output", "Vincoli"
+- Image sections: "Soggetto e scena", "Stile visivo", "Colore e atmosfera", "Composizione e tecnica"
 The "contenuto" of each section must be in English. Only the "titolo" stays Italian.
 
-Respond ONLY with this JSON:
+Respond ONLY with this JSON (the example shows the 5 standard sections; for category "Immagini" the "sezioni" array contains the 4 image sections with the titles, icons and colors listed above):
 {
   "sezioni": [
     {"titolo": "Ruolo", "icona": "person", "contenuto": "Act as...", "colore": 4283215696},

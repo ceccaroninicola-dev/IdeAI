@@ -26,6 +26,11 @@ String localizeSectionTitle(String titolo, BuildContext context) {
     case 'Istruzioni': return 'Instructions';
     case 'Formato output': return 'Format';
     case 'Vincoli': return 'Constraints';
+    // Titoli delle sezioni dedicate alla categoria Immagini
+    case 'Soggetto e scena': return 'Subject and scene';
+    case 'Stile visivo': return 'Visual style';
+    case 'Colore e atmosfera': return 'Color and atmosphere';
+    case 'Composizione e tecnica': return 'Composition and technique';
     default: return titolo;
   }
 }

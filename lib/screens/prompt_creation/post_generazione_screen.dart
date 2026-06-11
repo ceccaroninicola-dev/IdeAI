@@ -117,6 +117,15 @@ class _PostGenerazioneScreenState extends State<PostGenerazioneScreen> {
         return Icons.lightbulb_outline;
       case 'record_voice_over':
         return Icons.record_voice_over_outlined;
+      // Icone delle sezioni dedicate alla categoria Immagini
+      case 'image':
+        return Icons.image_outlined;
+      case 'palette':
+        return Icons.palette_outlined;
+      case 'brightness':
+        return Icons.wb_sunny_outlined;
+      case 'crop':
+        return Icons.crop;
       default:
         return Icons.auto_awesome;
     }

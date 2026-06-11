@@ -41,6 +41,15 @@ class _DettaglioPromptPubblicoScreenState
         return Icons.format_align_left;
       case 'block':
         return Icons.block;
+      // Icone delle sezioni dedicate alla categoria Immagini
+      case 'image':
+        return Icons.image_outlined;
+      case 'palette':
+        return Icons.palette_outlined;
+      case 'brightness':
+        return Icons.wb_sunny_outlined;
+      case 'crop':
+        return Icons.crop;
       default:
         return Icons.article_outlined;
     }
