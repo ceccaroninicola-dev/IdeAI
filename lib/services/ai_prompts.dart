@@ -457,9 +457,17 @@ Regole specifiche per le immagini:
 
 Se una sezione non è rilevante per la richiesta, lasciala VUOTA ("contenuto": "").
 
-Rispondi SOLO con questo JSON (l'esempio mostra le 5 sezioni standard;
-per la categoria "Immagini" l'array "sezioni" contiene invece le 4 sezioni
-Immagini con i titoli, le icone e i colori indicati sopra):
+⛔ VINCOLO STRUTTURALE ASSOLUTO:
+- Categoria "Immagini" → l'array "sezioni" contiene ESATTAMENTE 4 elementi
+  (le 4 sezioni immagine). MAI aggiungere una quinta sezione: niente "Vincoli",
+  niente "Ruolo", niente "Contesto". I vincoli/assenze dell'utente NON vanno
+  messi in una sezione dedicata: vanno omessi (vedi regola di omissione).
+- Tutte le altre categorie → l'array "sezioni" contiene ESATTAMENTE 5 elementi
+  (le 5 sezioni standard).
+
+═══════════════════════════════════════════════
+ESEMPIO JSON — CATEGORIE STANDARD (tutte tranne Immagini)
+═══════════════════════════════════════════════
 {
   "sezioni": [
     {
@@ -500,6 +508,56 @@ Immagini con i titoli, le icone e i colori indicati sopra):
     "Completezza": 4.0,
     "Struttura": 4.6,
     "Coerenza": 4.3
+  },
+  "suggerimenti": [
+    {
+      "etichetta": "Breve etichetta",
+      "icona": "lightbulb",
+      "sezioneIndice": 0,
+      "testoPrima": "testo attuale della sezione",
+      "testoDopo": "testo migliorato della sezione",
+      "descrizione": "spiegazione del miglioramento"
+    }
+  ]
+}
+
+═══════════════════════════════════════════════
+ESEMPIO JSON — CATEGORIA IMMAGINI (esattamente 4 sezioni, MAI 5)
+═══════════════════════════════════════════════
+{
+  "sezioni": [
+    {
+      "titolo": "Soggetto e scena",
+      "icona": "image",
+      "contenuto": "Un faro su una scogliera a picco sul mare...",
+      "colore": 4280391411
+    },
+    {
+      "titolo": "Stile visivo",
+      "icona": "palette",
+      "contenuto": "Illustrazione digitale fotorealistica...",
+      "colore": 4289533015
+    },
+    {
+      "titolo": "Colore e atmosfera",
+      "icona": "brightness",
+      "contenuto": "Palette fredda con toni blu e grigi...",
+      "colore": 4294940672
+    },
+    {
+      "titolo": "Composizione e tecnica",
+      "icona": "crop",
+      "contenuto": "Inquadratura dal basso, grandangolo...",
+      "colore": 4283215696
+    }
+  ],
+  "punteggioGlobale": 3.6,
+  "punteggiCriteri": {
+    "Chiarezza": 3.8,
+    "Specificità": 3.5,
+    "Completezza": 3.4,
+    "Struttura": 3.9,
+    "Coerenza": 3.7
   },
   "suggerimenti": [
     {
@@ -1007,13 +1065,19 @@ Image-specific rules:
 
 If a section is not relevant to the request, leave it EMPTY ("contenuto": "").
 
+ABSOLUTE STRUCTURAL CONSTRAINT:
+- Category "Immagini" -> the "sezioni" array contains EXACTLY 4 elements (the 4 image sections). NEVER add a fifth section: no "Vincoli", no "Ruolo", no "Contesto". User constraints/absences do NOT go in a dedicated section: they must be omitted (see omission rule).
+- All other categories -> the "sezioni" array contains EXACTLY 5 elements (the 5 standard sections).
+
 CRITICAL JSON RULE - section titles must stay in Italian:
 The "titolo" value of each section MUST be exactly one of these Italian labels - keep them as-is, do NOT translate (they are internal identifiers):
 - Standard sections: "Ruolo", "Contesto", "Istruzioni", "Formato output", "Vincoli"
 - Image sections: "Soggetto e scena", "Stile visivo", "Colore e atmosfera", "Composizione e tecnica"
 The "contenuto" of each section must be in English. Only the "titolo" stays Italian.
 
-Respond ONLY with this JSON (the example shows the 5 standard sections; for category "Immagini" the "sezioni" array contains the 4 image sections with the titles, icons and colors listed above):
+===============================================
+JSON EXAMPLE - STANDARD CATEGORIES (all except Immagini)
+===============================================
 {
   "sezioni": [
     {"titolo": "Ruolo", "icona": "person", "contenuto": "Act as...", "colore": 4283215696},
@@ -1024,6 +1088,23 @@ Respond ONLY with this JSON (the example shows the 5 standard sections; for cate
   ],
   "punteggioGlobale": 4.2,
   "punteggiCriteri": {"Clarity": 4.5, "Specificity": 3.8, "Completeness": 4.0, "Structure": 4.6, "Coherence": 4.3},
+  "suggerimenti": [
+    {"etichetta": "Short label", "icona": "lightbulb", "sezioneIndice": 0, "testoPrima": "current section text", "testoDopo": "improved section text", "descrizione": "explanation of the improvement"}
+  ]
+}
+
+===============================================
+JSON EXAMPLE - CATEGORY IMMAGINI (exactly 4 sections, NEVER 5)
+===============================================
+{
+  "sezioni": [
+    {"titolo": "Soggetto e scena", "icona": "image", "contenuto": "A lighthouse on a cliff overlooking the sea...", "colore": 4280391411},
+    {"titolo": "Stile visivo", "icona": "palette", "contenuto": "Photorealistic digital illustration...", "colore": 4289533015},
+    {"titolo": "Colore e atmosfera", "icona": "brightness", "contenuto": "Cool palette with blue and grey tones...", "colore": 4294940672},
+    {"titolo": "Composizione e tecnica", "icona": "crop", "contenuto": "Low angle shot, wide angle lens...", "colore": 4283215696}
+  ],
+  "punteggioGlobale": 3.6,
+  "punteggiCriteri": {"Clarity": 3.8, "Specificity": 3.5, "Completeness": 3.4, "Structure": 3.9, "Coherence": 3.7},
   "suggerimenti": [
     {"etichetta": "Short label", "icona": "lightbulb", "sezioneIndice": 0, "testoPrima": "current section text", "testoDopo": "improved section text", "descrizione": "explanation of the improvement"}
   ]
